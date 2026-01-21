@@ -1,0 +1,131 @@
+.section {
+  padding: var(--space-3xl) 0;
+}
+
+.container {
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+}
+
+.title {
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: gap var(--transition-fast);
+}
+
+.viewAll:hover {
+  gap: var(--space-sm);
+}
+
+.viewAll svg {
+  width: 18px;
+  height: 18px;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.articles {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.sidebar {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Wellness Preview in Sidebar */
+.wellnessPreview {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.wellnessTitle {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-md);
+}
+
+.wellnessImages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.wellnessImage {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-primary-muted) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagePlaceholder {
+  color: var(--color-primary);
+  opacity: 0.5;
+}
+
+.imagePlaceholder svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .articles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--space-xl);
+  }
+
+  .grid {
+    grid-template-columns: 1fr 300px;
+  }
+
+  .articles {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sidebar {
+    display: flex;
+  }
+}

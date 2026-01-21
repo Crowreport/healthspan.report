@@ -1,0 +1,28 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+}
+
+.adSection {
+  padding: var(--space-lg) 0;
+  background: var(--color-bg);
+}
+
+.adContainer {
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 1024px) {
+  .adContainer {
+    padding: 0 var(--space-xl);
+  }
+}

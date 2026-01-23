@@ -10,6 +10,9 @@ export default function VideoThumbnail({
   video,
   variant = "default",
 }: VideoThumbnailProps) {
+  const hasImage =
+    video.thumbnailUrl && !video.thumbnailUrl.includes("placeholder");
+
   return (
     <a
       href={video.videoUrl}
@@ -18,19 +21,38 @@ export default function VideoThumbnail({
       className={`${styles.thumbnail} ${styles[variant]}`}
     >
       <div className={styles.imageWrapper}>
-        <div
-          className={styles.image}
-          style={{
-            background: `linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)`,
-          }}
-        >
-          <span className={styles.playIcon}>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </span>
-        </div>
-        <span className={styles.duration}>{video.duration}</span>
+        {hasImage ? (
+          <div
+            className={styles.image}
+            style={{
+              backgroundImage: `url(${video.thumbnailUrl})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <span className={styles.playIcon}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </div>
+        ) : (
+          <div
+            className={styles.image}
+            style={{
+              background: `linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)`,
+            }}
+          >
+            <span className={styles.playIcon}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </div>
+        )}
+        {video.duration && (
+          <span className={styles.duration}>{video.duration}</span>
+        )}
       </div>
 
       <div className={styles.content}>
@@ -38,7 +60,7 @@ export default function VideoThumbnail({
         <div className={styles.meta}>
           <span className={styles.channel}>{video.channelName}</span>
           <span className={styles.stats}>
-            {video.views} · {video.publishedAt}
+            {video.views && `${video.views} · `}{video.publishedAt}
           </span>
         </div>
       </div>

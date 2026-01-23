@@ -104,6 +104,63 @@
   height: 32px;
 }
 
+/* Loading Skeleton */
+.skeleton {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.skeletonImage {
+  aspect-ratio: 16/9;
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-surface) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonContent {
+  padding: var(--space-md);
+}
+
+.skeletonTitle {
+  height: 1.5rem;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonExcerpt {
+  height: 3rem;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonMeta {
+  height: 1rem;
+  width: 60%;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Tablet */
 @media (min-width: 640px) {
   .articles {

@@ -146,8 +146,8 @@ export const topChannels: Channel[] = [
     description:
       "Deep dives into longevity science, metabolic health, and evidence-based medicine.",
     subscriberCount: "2.1M",
-    avatarUrl: "/images/channel-attia.jpg",
-    channelUrl: "https://youtube.com/@peterattia",
+    avatarUrl: "https://yt3.googleusercontent.com/ytc/AIdro_nT2cZ7apv6QIFN_xQEfTMSb5MG4e8piTaHTy-4u2hZBA=s176-c-k-c0x00ffffff-no-rj",
+    channelUrl: "https://youtube.com/@peterattiamd",
   },
   {
     id: "2",
@@ -155,7 +155,7 @@ export const topChannels: Channel[] = [
     description:
       "Neuroscience-based tools for optimizing brain health, performance, and longevity.",
     subscriberCount: "5.8M",
-    avatarUrl: "/images/channel-huberman.jpg",
+    avatarUrl: "https://yt3.googleusercontent.com/5ONImZvpa9_hYK12Xek2E2JLzRc732DWsZMX2F-AZ1cTCdWLGxkAMGKfwzaLXcSwGB-Ci_RaK3E=s176-c-k-c0x00ffffff-no-rj",
     channelUrl: "https://youtube.com/@hubermanlab",
   },
   {
@@ -164,7 +164,7 @@ export const topChannels: Channel[] = [
     description:
       "Dr. Rhonda Patrick discusses micronutrients, genetics, and aging research.",
     subscriberCount: "1.4M",
-    avatarUrl: "/images/channel-patrick.jpg",
+    avatarUrl: "https://yt3.googleusercontent.com/ytc/AIdro_kZBYd0K4locFcqzPPBNSYprwKiSoUEV5McMAL7DCmCRg=s176-c-k-c0x00ffffff-no-rj",
     channelUrl: "https://youtube.com/@foundmyfitness",
   },
 ];

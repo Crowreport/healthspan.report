@@ -14,6 +14,7 @@
     "next": "16.1.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "rss-parser": "^3.13.0",
     "zustand": "^5.0.10"
   },
   "devDependencies": {

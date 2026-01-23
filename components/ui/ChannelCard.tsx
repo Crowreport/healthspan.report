@@ -6,6 +6,9 @@ interface ChannelCardProps {
 }
 
 export default function ChannelCard({ channel }: ChannelCardProps) {
+  const hasAvatar =
+    channel.avatarUrl && !channel.avatarUrl.includes("placeholder");
+
   return (
     <a
       href={channel.channelUrl}
@@ -14,14 +17,22 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
       className={styles.card}
     >
       <div className={styles.avatar}>
-        <div
-          className={styles.avatarImage}
-          style={{
-            background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)`,
-          }}
-        >
-          <span className={styles.initial}>{channel.name.charAt(0)}</span>
-        </div>
+        {hasAvatar ? (
+          <img
+            src={channel.avatarUrl}
+            alt={channel.name}
+            className={styles.avatarImage}
+          />
+        ) : (
+          <div
+            className={styles.avatarPlaceholder}
+            style={{
+              background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)`,
+            }}
+          >
+            <span className={styles.initial}>{channel.name.charAt(0)}</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.content}>

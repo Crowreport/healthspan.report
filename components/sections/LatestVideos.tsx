@@ -1,10 +1,79 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { VideoThumbnail } from "@/components/ui";
-import { latestVideos } from "@/data/mockData";
+import { latestVideos as mockVideos } from "@/data/mockData";
+import {
+  formatRelativeDate,
+  extractYouTubeVideoId,
+} from "@/lib/rss/rssFetcher";
+import type { Video } from "@/types";
+import type { RSSAPIResponse, RSSSource } from "@/types/rss";
 import styles from "./LatestVideos.module.css";
 
+function mapRSSToVideos(sources: RSSSource[]): Video[] {
+  const videos: Video[] = [];
+
+  for (const source of sources) {
+    for (const item of source.articles) {
+      const videoId = extractYouTubeVideoId(item.link);
+      const thumbnail =
+        item.thumbnail ||
+        (videoId
+          ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+          : "/images/placeholder-video.jpg");
+
+      videos.push({
+        id: item.link,
+        title: item.title,
+        thumbnailUrl: thumbnail,
+        channelName: source.source.title,
+        views: "", // Not available from RSS
+        publishedAt: formatRelativeDate(item.pubDate),
+        duration: "", // Not available from RSS
+        videoUrl: item.link,
+      });
+    }
+  }
+
+  // Sort by date and limit
+  return videos
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    )
+    .slice(0, 5);
+}
+
 export default function LatestVideos() {
-  const featured = latestVideos[0];
-  const remaining = latestVideos.slice(1);
+  const [videos, setVideos] = useState<Video[]>(mockVideos);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchVideos() {
+      try {
+        const response = await fetch("/api/rss?type=video");
+        if (!response.ok) throw new Error("Failed to fetch videos");
+
+        const data: RSSAPIResponse = await response.json();
+        const mappedVideos = mapRSSToVideos(data.sources);
+
+        if (mappedVideos.length > 0) {
+          setVideos(mappedVideos);
+        }
+      } catch (err) {
+        console.error("Failed to fetch RSS videos:", err);
+        // Keep mock data on error
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchVideos();
+  }, []);
+
+  const featured = videos[0];
+  const remaining = videos.slice(1);
 
   return (
     <section className={styles.section}>
@@ -36,14 +105,34 @@ export default function LatestVideos() {
         <div className={styles.grid}>
           {/* Featured Video */}
           <div className={styles.featured}>
-            <VideoThumbnail video={featured} variant="large" />
+            {isLoading ? (
+              <div className={styles.skeleton}>
+                <div className={styles.skeletonImage} />
+                <div className={styles.skeletonContent}>
+                  <div className={styles.skeletonTitle} />
+                  <div className={styles.skeletonMeta} />
+                </div>
+              </div>
+            ) : (
+              featured && <VideoThumbnail video={featured} variant="large" />
+            )}
           </div>
 
           {/* Video Grid */}
           <div className={styles.videoGrid}>
-            {remaining.map((video) => (
-              <VideoThumbnail key={video.id} video={video} />
-            ))}
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className={styles.skeleton}>
+                    <div className={styles.skeletonImage} />
+                    <div className={styles.skeletonContent}>
+                      <div className={styles.skeletonTitle} />
+                      <div className={styles.skeletonMeta} />
+                    </div>
+                  </div>
+                ))
+              : remaining.map((video) => (
+                  <VideoThumbnail key={video.id} video={video} />
+                ))}
           </div>
         </div>
       </div>

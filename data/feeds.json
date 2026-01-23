@@ -1,0 +1,47 @@
+{
+  "feeds": [
+    {
+      "url": "https://peterattiamd.com/feed/",
+      "type": "article",
+      "image": "/images/sources/peter-attia.jpg"
+    },
+    {
+      "url": "https://www.foundmyfitness.com/feed",
+      "type": "article",
+      "image": "/images/sources/foundmyfitness.jpg"
+    },
+    {
+      "url": "https://examine.com/feed/",
+      "type": "article",
+      "image": "/images/sources/examine.jpg"
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC2D2CMWXMOVWx7giW1n3LIg",
+      "type": "video",
+      "isTopChannel": true,
+      "image": "/images/channels/huberman.jpg"
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCIaH-gZIVC432YRjNVvnyCA",
+      "type": "video",
+      "isTopChannel": true,
+      "image": "/images/channels/attia.jpg"
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNI0qOojpkhsUtaQ4_2NUhQ",
+      "type": "video",
+      "isTopChannel": true,
+      "image": "/images/channels/foundmyfitness.jpg"
+    },
+    {
+      "url": "https://www.lifespan.io/feed/",
+      "type": "topic",
+      "image": "/images/sources/lifespan-io.jpg"
+    },
+    {
+      "url": "https://www.fightaging.org/feed/",
+      "type": "topic",
+      "image": "/images/sources/fightaging.jpg"
+    }
+  ]
+}

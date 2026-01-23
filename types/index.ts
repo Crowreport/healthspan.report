@@ -8,6 +8,7 @@ export interface Article {
   readTime: string;
   imageUrl: string;
   slug: string;
+  externalUrl?: string; // Link to original article (for RSS-sourced content)
 }
 
 export interface Video {
@@ -45,6 +46,7 @@ export interface TrendingTopic {
   imageUrl: string;
   slug: string;
   isFeatured?: boolean;
+  externalUrl?: string; // Link to original article (for RSS-sourced content)
 }
 
 export interface NavItem {

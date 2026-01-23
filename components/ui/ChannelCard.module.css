@@ -25,6 +25,13 @@
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,7 +100,8 @@
     padding: var(--space-md);
   }
 
-  .avatarImage {
+  .avatarImage,
+  .avatarPlaceholder {
     width: 48px;
     height: 48px;
   }

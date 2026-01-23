@@ -172,6 +172,88 @@
   overflow: hidden;
 }
 
+/* Loading Skeleton */
+.skeleton {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.skeletonImage {
+  aspect-ratio: 16/9;
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-surface) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonContent {
+  padding: var(--space-xl);
+}
+
+.skeletonCategory {
+  height: 0.75rem;
+  width: 80px;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.skeletonTitle {
+  height: 1.5rem;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.skeletonExcerpt {
+  height: 3rem;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.skeletonCard {
+  display: flex;
+  gap: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+}
+
+.skeletonCardImage {
+  flex-shrink: 0;
+  width: 100px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-surface) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonCardContent {
+  flex: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Tablet */
 @media (min-width: 640px) {
   .regularTopics {

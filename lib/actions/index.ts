@@ -6,3 +6,4 @@ export * from "./categories";
 export * from "./channels";
 export * from "./videos";
 export * from "./topics";
+export * from "./rss";

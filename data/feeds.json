@@ -3,45 +3,53 @@
     {
       "url": "https://peterattiamd.com/feed/",
       "type": "article",
-      "image": "/images/sources/peter-attia.jpg"
+      "image": "/images/sources/peter-attia.jpg",
+      "name": "Peter Attia MD"
     },
     {
       "url": "https://www.foundmyfitness.com/feed",
       "type": "article",
-      "image": "/images/sources/foundmyfitness.jpg"
+      "image": "/images/sources/foundmyfitness.jpg",
+      "name": "FoundMyFitness"
     },
     {
       "url": "https://examine.com/feed/",
       "type": "article",
-      "image": "/images/sources/examine.jpg"
+      "image": "/images/sources/examine.jpg",
+      "name": "Examine.com"
     },
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC2D2CMWXMOVWx7giW1n3LIg",
       "type": "video",
       "isTopChannel": true,
-      "image": "/images/channels/huberman.jpg"
+      "image": "/images/channels/huberman.jpg",
+      "name": "Huberman Lab"
     },
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCIaH-gZIVC432YRjNVvnyCA",
       "type": "video",
       "isTopChannel": true,
-      "image": "/images/channels/attia.jpg"
+      "image": "/images/channels/attia.jpg",
+      "name": "Peter Attia MD"
     },
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNI0qOojpkhsUtaQ4_2NUhQ",
       "type": "video",
       "isTopChannel": true,
-      "image": "/images/channels/foundmyfitness.jpg"
+      "image": "/images/channels/foundmyfitness.jpg",
+      "name": "FoundMyFitness"
     },
     {
       "url": "https://www.lifespan.io/feed/",
       "type": "topic",
-      "image": "/images/sources/lifespan-io.jpg"
+      "image": "/images/sources/lifespan-io.jpg",
+      "name": "Lifespan.io"
     },
     {
       "url": "https://www.fightaging.org/feed/",
       "type": "topic",
-      "image": "/images/sources/fightaging.jpg"
+      "image": "/images/sources/fightaging.jpg",
+      "name": "Fight Aging!"
     }
   ]
 }

@@ -6,6 +6,9 @@ import type {
   DBChannel,
   DBVideoWithChannel,
   DBTopicWithCategory,
+  DBRSSSource,
+  DBRSSItemWithSource,
+  RSSContentType,
 } from "@/types/database";
 
 // ============================================================================
@@ -354,3 +357,146 @@ export const fetchHomepageData = cache(async () => {
     channels,
   };
 });
+
+// -----------------------------------------------------------------------------
+// RSS Sources and Items
+// -----------------------------------------------------------------------------
+
+export const fetchRSSSources = cache(
+  async (options?: {
+    contentType?: RSSContentType;
+    activeOnly?: boolean;
+    featuredOnly?: boolean;
+  }): Promise<DBRSSSource[]> => {
+    const supabase = await createClient();
+
+    let query = supabase
+      .from("rss_sources")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (options?.contentType) {
+      query = query.eq("content_type", options.contentType);
+    }
+
+    if (options?.activeOnly !== false) {
+      query = query.eq("is_active", true);
+    }
+
+    if (options?.featuredOnly) {
+      query = query.eq("is_featured", true);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching RSS sources:", error);
+      return [];
+    }
+
+    return data as DBRSSSource[];
+  }
+);
+
+export const fetchRSSItems = cache(
+  async (options?: {
+    contentType?: RSSContentType;
+    sourceId?: string;
+    limit?: number;
+    offset?: number;
+    featuredOnly?: boolean;
+  }): Promise<DBRSSItemWithSource[]> => {
+    const supabase = await createClient();
+
+    // First get source IDs if filtering by content type
+    let sourceIds: string[] | null = null;
+    
+    if (options?.contentType) {
+      const { data: sources } = await supabase
+        .from("rss_sources")
+        .select("id")
+        .eq("content_type", options.contentType)
+        .eq("is_active", true);
+      
+      sourceIds = sources?.map((s) => s.id) || [];
+      
+      if (sourceIds.length === 0) {
+        return [];
+      }
+    }
+
+    let query = supabase
+      .from("rss_items")
+      .select(
+        `
+        *,
+        source:rss_sources(*)
+      `
+      )
+      .order("published_at", { ascending: false });
+
+    if (options?.sourceId) {
+      query = query.eq("source_id", options.sourceId);
+    } else if (sourceIds) {
+      query = query.in("source_id", sourceIds);
+    }
+
+    if (options?.featuredOnly) {
+      query = query.eq("is_featured", true);
+    }
+
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      query = query.range(
+        options.offset,
+        options.offset + (options.limit || 10) - 1
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching RSS items:", error);
+      return [];
+    }
+
+    return data as DBRSSItemWithSource[];
+  }
+);
+
+export const fetchYouTubeVideos = cache(
+  async (limit: number = 10): Promise<DBRSSItemWithSource[]> => {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("rss_items")
+      .select(
+        `
+        *,
+        source:rss_sources(*)
+      `
+      )
+      .not("youtube_video_id", "is", null)
+      .order("published_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("Error fetching YouTube videos:", error);
+      return [];
+    }
+
+    return data as DBRSSItemWithSource[];
+  }
+);
+
+export const fetchRSSItemsByType = cache(
+  async (
+    contentType: RSSContentType,
+    limit: number = 10
+  ): Promise<DBRSSItemWithSource[]> => {
+    return fetchRSSItems({ contentType, limit });
+  }
+);

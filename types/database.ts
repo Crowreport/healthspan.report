@@ -192,6 +192,125 @@ export interface UpdateTopicInput {
   display_order?: number;
 }
 
+// ============================================================================
+// RSS INGESTION TYPES
+// ============================================================================
+
+export type RSSContentType = "article" | "video" | "topic";
+
+export interface DBRSSSource {
+  id: string;
+  name: string;
+  slug: string;
+  feed_url: string;
+  website_url: string | null;
+  image_url: string | null;
+  description: string | null;
+  content_type: RSSContentType;
+  youtube_channel_id: string | null;
+  is_youtube_feed: boolean;
+  is_active: boolean;
+  is_featured: boolean;
+  last_fetched_at: string | null;
+  last_fetch_error: string | null;
+  fetch_count: number;
+  error_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DBRSSItem {
+  id: string;
+  source_id: string;
+  guid: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  external_url: string;
+  thumbnail_url: string | null;
+  author: string | null;
+  published_at: string;
+  duration: string | null;
+  youtube_video_id: string | null;
+  youtube_channel_name: string | null;
+  view_count: string | null;
+  is_featured: boolean;
+  ingested_at: string;
+  updated_at: string;
+}
+
+// RSS Item with joined source
+export interface DBRSSItemWithSource extends DBRSSItem {
+  source: DBRSSSource;
+}
+
+export interface DBRSSIngestionLog {
+  id: string;
+  started_at: string;
+  completed_at: string | null;
+  duration_ms: number | null;
+  sources_processed: number;
+  sources_failed: number;
+  items_ingested: number;
+  items_skipped: number;
+  items_failed: number;
+  status: "running" | "completed" | "failed" | "partial";
+  error_message: string | null;
+  details: Record<string, unknown> | null;
+}
+
+// Input types for RSS operations
+export interface CreateRSSSourceInput {
+  name: string;
+  slug: string;
+  feed_url: string;
+  website_url?: string;
+  image_url?: string;
+  description?: string;
+  content_type: RSSContentType;
+  youtube_channel_id?: string;
+  is_youtube_feed?: boolean;
+  is_active?: boolean;
+  is_featured?: boolean;
+}
+
+export interface UpdateRSSSourceInput {
+  name?: string;
+  slug?: string;
+  feed_url?: string;
+  website_url?: string | null;
+  image_url?: string | null;
+  description?: string | null;
+  content_type?: RSSContentType;
+  youtube_channel_id?: string | null;
+  is_youtube_feed?: boolean;
+  is_active?: boolean;
+  is_featured?: boolean;
+  last_fetched_at?: string | null;
+  last_fetch_error?: string | null;
+  fetch_count?: number;
+  error_count?: number;
+}
+
+export interface CreateRSSItemInput {
+  source_id: string;
+  guid: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content?: string;
+  external_url: string;
+  thumbnail_url?: string;
+  author?: string;
+  published_at: string;
+  duration?: string;
+  youtube_video_id?: string;
+  youtube_channel_name?: string;
+  view_count?: string;
+  is_featured?: boolean;
+}
+
 // Action result types
 export interface ActionResult<T> {
   data?: T;

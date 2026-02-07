@@ -22,6 +22,18 @@ export interface Video {
   videoUrl: string;
 }
 
+export interface Podcast {
+  id: string;
+  name: string;
+  description: string;
+  publisher: string;
+  publishedAt: string;
+  duration: string;
+  imageUrl: string;
+  podcastUrl: string;
+  views: string;
+}
+
 export interface Channel {
   id: string;
   name: string;

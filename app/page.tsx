@@ -6,6 +6,7 @@ import {
   TrendingTopics,
   LatestVideos,
   TopChannels,
+  TopPodcasts,
 } from "@/components/sections";
 import styles from "./page.module.css";
 
@@ -50,6 +51,9 @@ export default function Home() {
 
         {/* Top YouTube Channels */}
         <TopChannels />
+
+        {/* Top Podcasts */}
+        <TopPodcasts />
       </main>
 
       <Footer />

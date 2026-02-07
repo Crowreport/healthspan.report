@@ -1,0 +1,258 @@
+// Topic configuration: keywords for each topic
+// This ensures each topic page shows ONLY relevant content
+
+export interface TopicConfig {
+  name: string;
+  description: string;
+  icon: string;
+  keywords: string[];
+}
+
+export const topicConfigs: Record<string, TopicConfig> = {
+  "cellular-health": {
+    name: "Cellular Health",
+    description: "Explore the latest research on cellular health, aging, and longevity.",
+    icon: "🧬",
+    keywords: [
+      "cellular",
+      "cell",
+      "mitochondria",
+      "telomere",
+      "senescence",
+      "autophagy",
+      "dna repair",
+      "stem cell",
+      "epigenetic",
+      "aging mechanism",
+    ],
+  },
+  supplements: {
+    name: "Supplements",
+    description: "Evidence-based information on supplements for healthspan and longevity.",
+    icon: "💊",
+    keywords: [
+      "supplement",
+      "vitamin",
+      "mineral",
+      "nmn",
+      "nad",
+      "resveratrol",
+      "coq10",
+      "omega-3",
+      "magnesium",
+      "zinc",
+      "vitamin d",
+      "b12",
+      "multivitamin",
+    ],
+  },
+  nutrition: {
+    name: "Nutrition",
+    description: "Nutrition strategies and research for optimal health and longevity.",
+    icon: "🥗",
+    keywords: [
+      "nutrition",
+      "diet",
+      "food",
+      "meal",
+      "eating",
+      "calorie",
+      "protein",
+      "carb",
+      "fat",
+      "fiber",
+      "antioxidant",
+      "polyphenol",
+      "mediterranean",
+      "plant-based",
+    ],
+  },
+  fasting: {
+    name: "Fasting",
+    description: "Intermittent fasting, time-restricted eating, and their health benefits.",
+    icon: "⏰",
+    keywords: [
+      "fasting",
+      "intermittent fasting",
+      "if",
+      "time-restricted",
+      "tre",
+      "autophagy",
+      "ketosis",
+      "fasted",
+      "meal timing",
+      "eating window",
+    ],
+  },
+  exercise: {
+    name: "Exercise",
+    description: "Exercise protocols and fitness strategies for longevity.",
+    icon: "🏃",
+    keywords: [
+      "exercise",
+      "workout",
+      "training",
+      "fitness",
+      "strength",
+      "cardio",
+      "resistance",
+      "aerobic",
+      "anaerobic",
+      "muscle",
+      "endurance",
+      "hiit",
+      "zone 2",
+      "zone 5",
+    ],
+  },
+  sleep: {
+    name: "Sleep",
+    description: "Sleep optimization, circadian rhythms, and recovery strategies.",
+    icon: "😴",
+    keywords: [
+      "sleep",
+      "circadian",
+      "melatonin",
+      "insomnia",
+      "rem",
+      "rem sleep",
+      "deep sleep",
+      "sleep quality",
+      "sleep hygiene",
+      "bedtime",
+      "wake up",
+      "sleeping",
+      "slept",
+      "asleep",
+      "sleep cycle",
+      "sleep deprivation",
+    ],
+  },
+  "mental-health": {
+    name: "Mental Health",
+    description: "Mental wellness, cognitive health, and brain longevity strategies.",
+    icon: "🧠",
+    keywords: [
+      "mental health",
+      "cognitive",
+      "brain",
+      "neuro",
+      "mental",
+      "depression",
+      "anxiety",
+      "stress",
+      "mood",
+      "memory",
+      "focus",
+      "attention",
+      "dementia",
+      "alzheimer",
+    ],
+  },
+  hormones: {
+    name: "Hormones",
+    description: "Hormonal health, optimization, and age-related changes.",
+    icon: "⚗️",
+    keywords: [
+      "hormone",
+      "testosterone",
+      "estrogen",
+      "cortisol",
+      "insulin",
+      "thyroid",
+      "gh",
+      "growth hormone",
+      "dhea",
+      "hormonal",
+      "endocrine",
+    ],
+  },
+  protocols: {
+    name: "Protocols",
+    description: "Comprehensive longevity protocols and health optimization strategies.",
+    icon: "📋",
+    keywords: [
+      "protocol",
+      "routine",
+      "regimen",
+      "program",
+      "plan",
+      "strategy",
+      "optimization",
+      "longevity protocol",
+      "health protocol",
+    ],
+  },
+  research: {
+    name: "Research",
+    description: "Latest longevity research, studies, and scientific breakthroughs.",
+    icon: "🔬",
+    keywords: [
+      "research",
+      "study",
+      "studies",
+      "clinical trial",
+      "scientific",
+      "publication",
+      "journal",
+      "finding",
+      "discovery",
+      "evidence",
+      "data",
+      "analysis",
+    ],
+  },
+  biomarkers: {
+    name: "Biomarkers",
+    description: "Biomarker testing, tracking, and optimization for healthspan.",
+    icon: "📊",
+    keywords: [
+      "biomarker",
+      "blood test",
+      "lab test",
+      "cholesterol",
+      "glucose",
+      "hba1c",
+      "crp",
+      "testosterone",
+      "vitamin d",
+      "b12",
+      "testing",
+      "metrics",
+      "tracking",
+    ],
+  },
+  genetics: {
+    name: "Genetics",
+    description: "Genetic factors in longevity, personalized health, and genomics.",
+    icon: "🧪",
+    keywords: [
+      "genetic",
+      "gene",
+      "genome",
+      "dna",
+      "snp",
+      "mutation",
+      "hereditary",
+      "inherited",
+      "genomic",
+      "genotype",
+      "phenotype",
+      "ancestry",
+    ],
+  },
+};
+
+/**
+ * Get topic configuration by slug
+ */
+export function getTopicConfig(slug: string): TopicConfig | null {
+  return topicConfigs[slug] || null;
+}
+
+/**
+ * Get all topic slugs
+ */
+export function getAllTopicSlugs(): string[] {
+  return Object.keys(topicConfigs);
+}

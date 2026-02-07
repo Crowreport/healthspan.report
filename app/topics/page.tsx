@@ -9,18 +9,18 @@ export const metadata = {
 };
 
 const allTopics = [
-  { name: "Cellular Health", slug: "cellular-health", count: 24, icon: "🧬" },
-  { name: "Supplements", slug: "supplements", count: 42, icon: "💊" },
-  { name: "Nutrition", slug: "nutrition", count: 38, icon: "🥗" },
-  { name: "Fasting", slug: "fasting", count: 19, icon: "⏰" },
-  { name: "Exercise", slug: "exercise", count: 31, icon: "🏃" },
-  { name: "Sleep", slug: "sleep", count: 15, icon: "😴" },
-  { name: "Mental Health", slug: "mental-health", count: 22, icon: "🧠" },
-  { name: "Hormones", slug: "hormones", count: 18, icon: "⚗️" },
-  { name: "Protocols", slug: "protocols", count: 12, icon: "📋" },
-  { name: "Research", slug: "research", count: 56, icon: "🔬" },
-  { name: "Biomarkers", slug: "biomarkers", count: 27, icon: "📊" },
-  { name: "Genetics", slug: "genetics", count: 14, icon: "🧪" },
+  { name: "Cellular Health", slug: "cellular-health", icon: "🧬" },
+  { name: "Supplements", slug: "supplements", icon: "💊" },
+  { name: "Nutrition", slug: "nutrition", icon: "🥗" },
+  { name: "Fasting", slug: "fasting", icon: "⏰" },
+  { name: "Exercise", slug: "exercise", icon: "🏃" },
+  { name: "Sleep", slug: "sleep", icon: "😴" },
+  { name: "Mental Health", slug: "mental-health", icon: "🧠" },
+  { name: "Hormones", slug: "hormones", icon: "⚗️" },
+  { name: "Protocols", slug: "protocols", icon: "📋" },
+  { name: "Research", slug: "research", icon: "🔬" },
+  { name: "Biomarkers", slug: "biomarkers", icon: "📊" },
+  { name: "Genetics", slug: "genetics", icon: "🧪" },
 ];
 
 export default function TopicsPage() {
@@ -45,7 +45,6 @@ export default function TopicsPage() {
               >
                 <span className={styles.icon}>{topic.icon}</span>
                 <h3 className={styles.topicName}>{topic.name}</h3>
-                <span className={styles.count}>{topic.count} articles</span>
               </Link>
             ))}
           </div>

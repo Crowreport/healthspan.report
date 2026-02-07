@@ -190,6 +190,7 @@ export async function processFeed(
       source: {
         title: decodeHtmlEntities(feed.title || "Unknown Source"),
         link: feed.link || feedConfig.url,
+        feedUrl: feedConfig.url, // Store original feed URL for exact matching
         image: feedConfig.image || feed.image?.url,
         type: feedConfig.type,
       },

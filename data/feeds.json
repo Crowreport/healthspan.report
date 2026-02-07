@@ -2,301 +2,242 @@
   "feeds": [
     {
       "url": "https://peterattiamd.com/feed/",
-      "type": "article",
-      "image": "/images/sources/peter-attia.jpg"
+      "type": "article"
     },
     {
       "url": "https://www.foundmyfitness.com/feed",
-      "type": "article",
-      "image": "/images/sources/foundmyfitness.jpg"
+      "type": "article"
     },
     {
       "url": "https://examine.com/feed/",
-      "type": "article",
-      "image": "/images/sources/examine.jpg"
+      "type": "article"
     },
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC2D2CMWXMOVWx7giW1n3LIg",
       "type": "video",
-      "isTopChannel": true,
-      "image": "/images/channels/huberman.jpg"
+      "isTopChannel": true
     },
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCIaH-gZIVC432YRjNVvnyCA",
       "type": "video",
-      "isTopChannel": true,
-      "image": "/images/channels/attia.jpg"
+      "isTopChannel": true
     },
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNI0qOojpkhsUtaQ4_2NUhQ",
       "type": "video",
-      "isTopChannel": true,
-      "image": "/images/channels/foundmyfitness.jpg"
+      "isTopChannel": true
     },
     {
       "url": "https://www.lifespan.io/feed/",
-      "type": "topic",
-      "image": "/images/sources/lifespan-io.jpg"
+      "type": "topic"
     },
     {
       "url": "https://www.fightaging.org/feed/",
-      "type": "topic",
-      "image": "/images/sources/fightaging.jpg"
+      "type": "topic"
     },
     {
       "url": "https://longevity.technology/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-technology.jpg"
+      "type": "article"
     },
     {
       "url": "https://novoslabs.com/live-longer-slow-aging/feed",
-      "type": "article",
-      "image": "/images/sources/novos-labs.jpg"
+      "type": "article"
     },
     {
       "url": "https://oxfordhealthspan.com/blogs/all.atom",
-      "type": "article",
-      "image": "/images/sources/oxford-healthspan.jpg"
+      "type": "article"
     },
     {
       "url": "https://neurosciencenews.com/neuroscience-longevity/feed",
-      "type": "topic",
-      "image": "/images/sources/neuroscience-news.jpg"
+      "type": "topic"
     },
     {
       "url": "https://longevitycareclinic.com/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-care-clinic.jpg"
+      "type": "article"
     },
     {
       "url": "https://nutritionforlongevity.com/blogs/news.atom",
-      "type": "article",
-      "image": "/images/sources/nutrition-for-longevity.jpg"
+      "type": "article"
     },
     {
       "url": "https://princetonlongevitycenter.com/blog/feed",
-      "type": "article",
-      "image": "/images/sources/princeton-longevity-center.jpg"
+      "type": "article"
     },
     {
       "url": "https://anti-agingfirewalls.com/feed",
-      "type": "topic",
-      "image": "/images/sources/anti-aging-firewalls.jpg"
+      "type": "topic"
     },
     {
       "url": "https://asherlongevity.com/feed",
-      "type": "article",
-      "image": "/images/sources/asher-longevity.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevity.science/feed",
-      "type": "topic",
-      "image": "/images/sources/longevity-science.jpg"
+      "type": "topic"
     },
     {
       "url": "https://elizabethrenee.com/blog-feed.xml",
-      "type": "article",
-      "image": "/images/sources/elizabeth-renee.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevitybuilder.com/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-builder.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevitywellnessworldwide.com/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-wellness-worldwide.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevityadvice.com/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-advice.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevitypt.com.au/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-pt.jpg"
+      "type": "article"
     },
     {
       "url": "https://restorehlc.com/feed",
-      "type": "article",
-      "image": "/images/sources/restore-hlc.jpg"
+      "type": "article"
     },
     {
       "url": "https://ilc-alliance.org/feed",
-      "type": "topic",
-      "image": "/images/sources/ilc-alliance.jpg"
+      "type": "topic"
     },
     {
       "url": "https://longhealthylife.co/feed",
-      "type": "article",
-      "image": "/images/sources/long-healthy-life.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevitybynature.biz/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-by-nature.jpg"
+      "type": "article"
     },
     {
       "url": "https://yourlongevityblueprint.com/feed",
-      "type": "article",
-      "image": "/images/sources/your-longevity-blueprint.jpg"
+      "type": "article"
     },
     {
       "url": "https://buckinstitute.org/feed",
-      "type": "topic",
-      "image": "/images/sources/buck-institute.jpg"
+      "type": "topic"
     },
     {
       "url": "https://maryfurlong.com/feed",
-      "type": "article",
-      "image": "/images/sources/mary-furlong.jpg"
+      "type": "article"
     },
     {
       "url": "https://blog.insidetracker.com/rss.xml",
-      "type": "article",
-      "image": "/images/sources/inside-tracker.jpg"
+      "type": "article"
     },
     {
       "url": "https://studyfinds.org/category/longevity/feed",
-      "type": "topic",
-      "image": "/images/sources/study-finds.jpg"
+      "type": "topic"
     },
     {
       "url": "https://tlcdoctors.com/blogs/news.atom",
-      "type": "article",
-      "image": "/images/sources/tlc-doctors.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevityforyou.org/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-for-you.jpg"
+      "type": "article"
     },
     {
       "url": "https://humanpeople.co/blogs/blog.atom",
-      "type": "article",
-      "image": "/images/sources/human-people.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevity.stanford.edu/feed",
-      "type": "topic",
-      "image": "/images/sources/stanford-longevity.jpg"
+      "type": "topic"
     },
     {
       "url": "https://nia.nih.gov/taxonomy/term/40/feed",
-      "type": "topic",
-      "image": "/images/sources/nih.jpg"
+      "type": "topic"
     },
     {
       "url": "https://longevity.international/blog/feed",
-      "type": "topic",
-      "image": "/images/sources/longevity-international.jpg"
+      "type": "topic"
     },
     {
       "url": "https://thelongevityforum.com/feed",
-      "type": "topic",
-      "image": "/images/sources/longevity-forum.jpg"
+      "type": "topic"
     },
     {
       "url": "https://angellongevity.com/blog/feed",
-      "type": "article",
-      "image": "/images/sources/angel-longevity.jpg"
+      "type": "article"
     },
     {
       "url": "https://wholehealthlongevity.com/blog/feed",
-      "type": "article",
-      "image": "/images/sources/whole-health-longevity.jpg"
+      "type": "article"
     },
     {
       "url": "https://nutriop.com/blogs/news.atom",
-      "type": "article",
-      "image": "/images/sources/nutriop.jpg"
+      "type": "article"
     },
     {
       "url": "https://scienceblog.com/joshmitteldorf/feed",
-      "type": "topic",
-      "image": "/images/sources/josh-mitteldorf.jpg"
+      "type": "topic"
     },
     {
       "url": "https://longevityreview.com/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-review.jpg"
+      "type": "article"
     },
     {
       "url": "https://bluezones.com/articles/feed",
-      "type": "article",
-      "image": "/images/sources/blue-zones.jpg"
+      "type": "article"
     },
     {
       "url": "https://liveforever.club/blog/feed",
-      "type": "article",
-      "image": "/images/sources/live-forever-club.jpg"
+      "type": "article"
     },
     {
       "url": "https://healthylongevitychallenge.org/feed",
-      "type": "topic",
-      "image": "/images/sources/healthy-longevity-challenge.jpg"
+      "type": "topic"
     },
     {
       "url": "https://nickengerer.org/longevity-blog/feed",
-      "type": "article",
-      "image": "/images/sources/nick-engerer.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevitylive.com/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-live.jpg"
+      "type": "article"
     },
     {
       "url": "https://isl.fsu.edu/blog/feed",
-      "type": "topic",
-      "image": "/images/sources/fsu-isl.jpg"
+      "type": "topic"
     },
     {
       "url": "https://diamandis.com/blog/topic/longevity/feed",
-      "type": "article",
-      "image": "/images/sources/diamandis.jpg"
+      "type": "article"
     },
     {
       "url": "https://sergeyyoung.com/articles/feed",
-      "type": "article",
-      "image": "/images/sources/sergey-young.jpg"
+      "type": "article"
     },
     {
       "url": "https://agelessrx.com/blog/feed",
-      "type": "article",
-      "image": "/images/sources/ageless-rx.jpg"
+      "type": "article"
     },
     {
       "url": "https://geneticlifehacks.com/longevity/feed",
-      "type": "article",
-      "image": "/images/sources/genetic-lifehacks.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevebrands.com/blogs/news/feed",
-      "type": "article",
-      "image": "/images/sources/longeve-brands.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevitytech.fund/en/blog/feed",
-      "type": "article",
-      "image": "/images/sources/longevity-tech-fund.jpg"
+      "type": "article"
     },
     {
       "url": "https://deeplongevity.com/blog/feed",
-      "type": "article",
-      "image": "/images/sources/deep-longevity.jpg"
+      "type": "article"
     },
     {
       "url": "https://longevity.foundation/news/feed",
-      "type": "topic",
-      "image": "/images/sources/longevity-foundation.jpg"
+      "type": "topic"
     },
     {
       "url": "https://heights.com/blogs/longevity/feed",
-      "type": "article",
-      "image": "/images/sources/heights.jpg"
+      "type": "article"
     }
   ]
 }

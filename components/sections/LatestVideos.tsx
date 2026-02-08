@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { VideoThumbnail } from "@/components/ui";
+import { VideoThumbnail, Carousel } from "@/components/ui";
 import { latestVideos as mockVideos } from "@/data/mockData";
 import {
   formatRelativeDate,
@@ -36,13 +36,11 @@ function mapRSSToVideos(sources: RSSSource[]): Video[] {
     }
   }
 
-  // Sort by date and limit
-  return videos
-    .sort(
-      (a, b) =>
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    )
-    .slice(0, 5);
+  // Sort by date - return all videos for carousel
+  return videos.sort(
+    (a, b) =>
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
 }
 
 export default function LatestVideos() {
@@ -72,9 +70,6 @@ export default function LatestVideos() {
     fetchVideos();
   }, []);
 
-  const featured = videos[0];
-  const remaining = videos.slice(1);
-
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -102,39 +97,25 @@ export default function LatestVideos() {
           </a>
         </div>
 
-        <div className={styles.grid}>
-          {/* Featured Video */}
-          <div className={styles.featured}>
-            {isLoading ? (
-              <div className={styles.skeleton}>
+        {isLoading ? (
+          <div className={styles.skeletonGrid}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className={styles.skeleton}>
                 <div className={styles.skeletonImage} />
                 <div className={styles.skeletonContent}>
                   <div className={styles.skeletonTitle} />
                   <div className={styles.skeletonMeta} />
                 </div>
               </div>
-            ) : (
-              featured && <VideoThumbnail video={featured} variant="large" />
-            )}
+            ))}
           </div>
-
-          {/* Video Grid */}
-          <div className={styles.videoGrid}>
-            {isLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className={styles.skeleton}>
-                    <div className={styles.skeletonImage} />
-                    <div className={styles.skeletonContent}>
-                      <div className={styles.skeletonTitle} />
-                      <div className={styles.skeletonMeta} />
-                    </div>
-                  </div>
-                ))
-              : remaining.map((video) => (
-                  <VideoThumbnail key={video.id} video={video} />
-                ))}
-          </div>
-        </div>
+        ) : (
+          <Carousel>
+            {videos.map((video) => (
+              <VideoThumbnail key={video.id} video={video} />
+            ))}
+          </Carousel>
+        )}
       </div>
     </section>
   );

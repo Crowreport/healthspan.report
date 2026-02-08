@@ -8,3 +8,4 @@ export { default as VideoThumbnail } from "./VideoThumbnail";
 export { default as ChannelCard } from "./ChannelCard";
 export { default as PodcastCard } from "./PodcastCard";
 export { default as SubscribeForm } from "./SubscribeForm";
+export { default as Carousel } from "./Carousel";

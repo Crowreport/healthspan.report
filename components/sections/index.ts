@@ -3,3 +3,4 @@ export { default as ArticleGrid } from "./ArticleGrid";
 export { default as TrendingTopics } from "./TrendingTopics";
 export { default as LatestVideos } from "./LatestVideos";
 export { default as TopChannels } from "./TopChannels";
+export { default as TopPodcasts } from "./TopPodcasts";

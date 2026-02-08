@@ -2,6 +2,7 @@ import {
   Article,
   Video,
   Channel,
+  Podcast,
   WellnessImage,
   TrendingTopic,
   NavItem,
@@ -166,6 +167,144 @@ export const topChannels: Channel[] = [
     subscriberCount: "1.4M",
     avatarUrl: "https://yt3.googleusercontent.com/ytc/AIdro_kZBYd0K4locFcqzPPBNSYprwKiSoUEV5McMAL7DCmCRg=s176-c-k-c0x00ffffff-no-rj",
     channelUrl: "https://youtube.com/@foundmyfitness",
+  },
+];
+
+export const topPodcasts: Podcast[] = [
+  {
+    id: "1",
+    name: "The Longevity Blueprint: A Deep Dive with Dr. David Sinclair",
+    description:
+      "Harvard geneticist Dr. David Sinclair discusses his latest research on cellular reprogramming, NAD+ biology, and the future of age reversal therapies.",
+    publisher: "The Drive with Peter Attia",
+    publishedAt: "2025-01-20",
+    duration: "2:15:30",
+    imageUrl: "/images/podcast-sinclair.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/david-sinclair-longevity",
+    views: "850K views",
+  },
+  {
+    id: "2",
+    name: "Metabolic Health and Longevity: The Science of Fasting",
+    description:
+      "Exploring how intermittent fasting, time-restricted eating, and extended fasts impact cellular health, autophagy, and lifespan extension.",
+    publisher: "Huberman Lab",
+    publishedAt: "2025-01-18",
+    duration: "1:45:20",
+    imageUrl: "/images/podcast-fasting.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/metabolic-health-fasting",
+    views: "620K views",
+  },
+  {
+    id: "3",
+    name: "Exercise for Longevity: Zone 2, VO2 Max, and Strength Training",
+    description:
+      "Breaking down the optimal exercise protocol for maximizing healthspan, including the importance of zone 2 cardio, VO2 max training, and maintaining muscle mass.",
+    publisher: "The Drive with Peter Attia",
+    publishedAt: "2025-01-12",
+    duration: "2:08:15",
+    imageUrl: "/images/podcast-exercise.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/exercise-longevity",
+    views: "720K views",
+  },
+];
+
+export const podcasts: Podcast[] = [
+  {
+    id: "1",
+    name: "The Longevity Blueprint: A Deep Dive with Dr. David Sinclair",
+    description:
+      "Harvard geneticist Dr. David Sinclair discusses his latest research on cellular reprogramming, NAD+ biology, and the future of age reversal therapies.",
+    publisher: "The Drive with Peter Attia",
+    publishedAt: "2025-01-20",
+    duration: "2:15:30",
+    imageUrl: "/images/podcast-sinclair.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/david-sinclair-longevity",
+    views: "850K views",
+  },
+  {
+    id: "2",
+    name: "Metabolic Health and Longevity: The Science of Fasting",
+    description:
+      "Exploring how intermittent fasting, time-restricted eating, and extended fasts impact cellular health, autophagy, and lifespan extension.",
+    publisher: "Huberman Lab",
+    publishedAt: "2025-01-18",
+    duration: "1:45:20",
+    imageUrl: "/images/podcast-fasting.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/metabolic-health-fasting",
+    views: "620K views",
+  },
+  {
+    id: "3",
+    name: "Rapamycin, mTOR, and the Quest for Longevity",
+    description:
+      "Dr. Matt Kaeberlein discusses the latest research on rapamycin, mTOR inhibition, and how these pathways may extend healthy lifespan in humans.",
+    publisher: "FoundMyFitness",
+    publishedAt: "2025-01-15",
+    duration: "1:32:45",
+    imageUrl: "/images/podcast-rapamycin.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/rapamycin-longevity",
+    views: "480K views",
+  },
+  {
+    id: "4",
+    name: "Exercise for Longevity: Zone 2, VO2 Max, and Strength Training",
+    description:
+      "Breaking down the optimal exercise protocol for maximizing healthspan, including the importance of zone 2 cardio, VO2 max training, and maintaining muscle mass.",
+    publisher: "The Drive with Peter Attia",
+    publishedAt: "2025-01-12",
+    duration: "2:08:15",
+    imageUrl: "/images/podcast-exercise.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/exercise-longevity",
+    views: "720K views",
+  },
+  {
+    id: "5",
+    name: "Sleep, Circadian Rhythms, and Longevity",
+    description:
+      "How sleep quality, timing, and circadian alignment impact cellular repair, cognitive function, and overall healthspan.",
+    publisher: "Huberman Lab",
+    publishedAt: "2025-01-10",
+    duration: "1:55:30",
+    imageUrl: "/images/podcast-sleep.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/sleep-circadian-longevity",
+    views: "590K views",
+  },
+  {
+    id: "6",
+    name: "The Truth About NAD+ Supplements: NMN vs NR",
+    description:
+      "A comprehensive analysis of NAD+ precursors, their bioavailability, clinical trial data, and what the science actually says about their anti-aging effects.",
+    publisher: "FoundMyFitness",
+    publishedAt: "2025-01-08",
+    duration: "1:28:20",
+    imageUrl: "/images/podcast-nad.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/nad-supplements-nmn-nr",
+    views: "410K views",
+  },
+  {
+    id: "7",
+    name: "Bryan Johnson's Blueprint: One Year Results and Analysis",
+    description:
+      "An in-depth conversation about the Blueprint protocol, biological age testing, and what metrics actually improved over 12 months of intensive intervention.",
+    publisher: "The Longevity Podcast",
+    publishedAt: "2025-01-05",
+    duration: "1:42:10",
+    imageUrl: "/images/podcast-blueprint.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/bryan-johnson-blueprint",
+    views: "1.2M views",
+  },
+  {
+    id: "8",
+    name: "Cold Exposure, Heat Therapy, and Hormetic Stress",
+    description:
+      "Exploring how controlled stress through cold plunges, saunas, and heat therapy activates beneficial cellular pathways and may extend healthspan.",
+    publisher: "Huberman Lab",
+    publishedAt: "2025-01-03",
+    duration: "1:38:45",
+    imageUrl: "/images/podcast-cold-heat.jpg",
+    podcastUrl: "https://podcasts.apple.com/podcast/cold-heat-hormesis",
+    views: "540K views",
   },
 ];
 

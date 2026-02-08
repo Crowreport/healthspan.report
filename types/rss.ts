@@ -1,5 +1,5 @@
 // RSS Content Type
-export type RSSContentType = "article" | "video" | "topic";
+export type RSSContentType = "article" | "video" | "topic" | "research";
 
 // RSS Feed Configuration Types
 export interface RSSFeedConfig {
@@ -23,6 +23,7 @@ export interface RSSArticle {
   pubDate: string;
   contentSnippet?: string;
   creator?: string;
+  categories?: string[];
 }
 
 // Source with its articles
@@ -97,7 +98,7 @@ export interface NormalizedRSSItem {
   // Metadata
   author: string;
   publishedAt: string;
-  contentType: "article" | "video" | "topic";
+  contentType: RSSContentType;
   
   // Source info
   sourceName: string;
@@ -157,7 +158,7 @@ export interface IngestionOptions {
   /** Only process specific source IDs */
   sourceIds?: string[];
   /** Only process specific content types */
-  contentTypes?: ("article" | "video" | "topic")[];
+  contentTypes?: RSSContentType[];
   /** Force re-fetch even if recently fetched */
   force?: boolean;
   /** Maximum items to process per source */

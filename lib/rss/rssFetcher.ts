@@ -341,6 +341,7 @@ export async function processFeed(
           item.contentSnippet || item.content || ""
         ).slice(0, 200),
         creator: item.creator,
+        categories: item.categories,
       };
     });
 

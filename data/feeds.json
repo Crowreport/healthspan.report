@@ -50,6 +50,12 @@
       "type": "article",
       "image": "/images/sources/novos-labs.jpg",
       "name": "NOVOS Labs"
+    },
+    {
+      "url": "http://feeds.nature.com/nataging/rss/current",
+      "type": "research",
+      "image": "https://www.nature.com/static/images/favicons/nature/apple-touch-icon.png",
+      "name": "Nature Aging"
     }
   ]
 }

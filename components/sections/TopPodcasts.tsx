@@ -1,4 +1,4 @@
-import { PodcastCard, AdPlaceholder } from "@/components/ui";
+import { PodcastCard, Carousel } from "@/components/ui";
 import { topPodcasts } from "@/data/mockData";
 import styles from "./TopPodcasts.module.css";
 
@@ -13,17 +13,11 @@ export default function TopPodcasts() {
           </p>
         </div>
 
-        <div className={styles.grid}>
-          <div className={styles.podcasts}>
-            {topPodcasts.map((podcast) => (
-              <PodcastCard key={podcast.id} podcast={podcast} />
-            ))}
-          </div>
-
-          <aside className={styles.sidebar}>
-            <AdPlaceholder size="rectangle" />
-          </aside>
-        </div>
+        <Carousel>
+          {topPodcasts.map((podcast) => (
+            <PodcastCard key={podcast.id} podcast={podcast} />
+          ))}
+        </Carousel>
       </div>
     </section>
   );

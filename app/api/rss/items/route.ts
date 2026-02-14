@@ -38,6 +38,7 @@ interface DBItemWithSource {
     id: string;
     name: string;
     slug: string;
+    feed_url: string;
     website_url: string | null;
     image_url: string | null;
     content_type: RSSContentType;
@@ -99,6 +100,7 @@ export async function GET(request: NextRequest) {
           id,
           name,
           slug,
+          feed_url,
           website_url,
           image_url,
           content_type,
@@ -140,6 +142,7 @@ export async function GET(request: NextRequest) {
           source: {
             title: source.name,
             link: source.website_url || "",
+            feedUrl: source.feed_url,
             image: source.image_url || undefined,
             type: source.content_type,
           },

@@ -37,7 +37,7 @@ interface EditArticleModalProps {
 
 export default function EditArticleModal({ articleId, isOpen, onClose }: EditArticleModalProps) {
   const router = useRouter();
-  const [item, setItem] = useState<Awaited<ReturnType<typeof getRSSItemById>>["data"]>(null);
+  const [item, setItem] = useState<Awaited<ReturnType<typeof getRSSItemById>>["data"] | null>(null);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ title: "", excerpt: "", thumbnail_url: "", hidden_by_admin: false });
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);

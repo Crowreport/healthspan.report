@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdPlaceholder, ArticleCard, VideoThumbnail } from "@/components/ui";
+import EditArticleModal from "@/components/articles/EditArticleModal";
 import { mapRSSToArticles, mapRSSToVideos } from "@/lib/topics/filtering";
 import type { Article, Video } from "@/types";
 import type { RSSAPIResponse } from "@/types/rss";
@@ -12,6 +13,9 @@ interface TopicPageContentProps {
   topicDescription: string;
   topicIcon: string;
   keywords: string[];
+  /** When provided, use these articles from DB and show Edit when isAdmin. */
+  initialArticles?: Article[];
+  isAdmin?: boolean;
 }
 
 export default function TopicPageContent({
@@ -19,36 +23,41 @@ export default function TopicPageContent({
   topicDescription,
   topicIcon,
   keywords,
+  initialArticles,
+  isAdmin = false,
 }: TopicPageContentProps) {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>(initialArticles ?? []);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialArticles === undefined);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchTopicContent() {
+    async function fetchContent() {
       try {
-        setIsLoading(true);
+        if (initialArticles === undefined) {
+          setIsLoading(true);
+        }
         setError(null);
 
-        // Fetch all RSS feeds
         const response = await fetch("/api/rss");
         if (!response.ok) throw new Error("Failed to fetch feeds");
 
         const data: RSSAPIResponse = await response.json();
         if (!data.sources) {
-          setArticles([]);
+          if (initialArticles === undefined) setArticles([]);
           setVideos([]);
           setIsLoading(false);
           return;
         }
 
-        // Filter articles and videos by keywords
-        const mappedArticles = mapRSSToArticles(data.sources, keywords);
         const mappedVideos = mapRSSToVideos(data.sources, keywords);
-
-        setArticles(mappedArticles);
         setVideos(mappedVideos);
+
+        if (initialArticles === undefined) {
+          const mappedArticles = mapRSSToArticles(data.sources, keywords);
+          setArticles(mappedArticles);
+        }
       } catch (err) {
         console.error("Failed to fetch topic content:", err);
         setError("Failed to load content. Please try again later.");
@@ -57,8 +66,11 @@ export default function TopicPageContent({
       }
     }
 
-    fetchTopicContent();
-  }, [keywords]);
+    if (initialArticles !== undefined) {
+      setArticles(initialArticles);
+    }
+    fetchContent();
+  }, [keywords, initialArticles]);
 
   return (
     <div className={styles.container}>
@@ -113,7 +125,11 @@ export default function TopicPageContent({
                     <h2 className={styles.sectionTitle}>Latest Articles</h2>
                     <div className={styles.grid}>
                       {articles.slice(0, 6).map((article) => (
-                        <ArticleCard key={article.id} article={article} />
+                        <ArticleCard
+                          key={article.id}
+                          article={article}
+                          onEdit={isAdmin ? () => setEditingId(article.id) : undefined}
+                        />
                       ))}
                     </div>
                   </section>
@@ -137,7 +153,11 @@ export default function TopicPageContent({
                     <h2 className={styles.sectionTitle}>More Content</h2>
                     <div className={styles.grid}>
                       {articles.slice(6).map((article) => (
-                        <ArticleCard key={article.id} article={article} />
+                        <ArticleCard
+                          key={article.id}
+                          article={article}
+                          onEdit={isAdmin ? () => setEditingId(article.id) : undefined}
+                        />
                       ))}
                       {videos.slice(6).map((video) => (
                         <VideoThumbnail key={video.id} video={video} />
@@ -154,6 +174,11 @@ export default function TopicPageContent({
           )}
         </>
       )}
+      <EditArticleModal
+        articleId={editingId}
+        isOpen={!!editingId}
+        onClose={() => setEditingId(null)}
+      />
     </div>
   );
 }

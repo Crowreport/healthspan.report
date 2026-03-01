@@ -9,6 +9,7 @@ import {
   extractYouTubeVideoId,
 } from "@/lib/rss/rssFetcher";
 import type { Video } from "@/types";
+import type { DBRSSItem } from "@/types/database";
 import type { RSSAPIResponse, RSSSource } from "@/types/rss";
 import styles from "./LatestVideos.module.css";
 
@@ -61,6 +62,12 @@ export default function LatestVideos({
   const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialVideos.length > 0) {
+      setVideos(initialVideos);
+    }
+  }, [initialVideos]);
+
+  useEffect(() => {
     if (initialVideos.length > 0 || isAdmin) {
       setIsLoading(false);
       return;
@@ -87,6 +94,35 @@ export default function LatestVideos({
 
     fetchVideos();
   }, [initialVideos.length, isAdmin]);
+
+  function resolveThumbnail(nextItem: DBRSSItem, currentVideo: Video): string {
+    if (nextItem.thumbnail_url) return nextItem.thumbnail_url;
+
+    const videoId =
+      nextItem.youtube_video_id || extractYouTubeVideoId(nextItem.external_url);
+    if (videoId) {
+      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+
+    return currentVideo.thumbnailUrl || "/images/placeholders/video.svg";
+  }
+
+  function handleVideoSaved(nextItem: DBRSSItem) {
+    setVideos((prev) =>
+      prev.map((video) => {
+        if (video.id !== nextItem.id) return video;
+        return {
+          ...video,
+          title: nextItem.title,
+          thumbnailUrl: resolveThumbnail(nextItem, video),
+        };
+      })
+    );
+  }
+
+  function handleVideoDeleted(videoId: string) {
+    setVideos((prev) => prev.filter((video) => video.id !== videoId));
+  }
 
   return (
     <section className={styles.section}>
@@ -142,6 +178,8 @@ export default function LatestVideos({
               videoId={editingId}
               isOpen={!!editingId}
               onClose={() => setEditingId(null)}
+              onSaved={handleVideoSaved}
+              onDeleted={handleVideoDeleted}
             />
           </>
         )}

@@ -11,6 +11,7 @@ import {
   deleteVideoRSSItem,
   resetVideoRSSItemFromFeed,
 } from "@/lib/actions/videoModeration";
+import type { DBRSSItem } from "@/types/database";
 
 const overlayStyle: React.CSSProperties = {
   position: "fixed",
@@ -64,12 +65,16 @@ interface EditVideoModalProps {
   videoId: string | null;
   isOpen: boolean;
   onClose: () => void;
+  onSaved?: (video: DBRSSItem) => void;
+  onDeleted?: (videoId: string) => void;
 }
 
 export default function EditVideoModal({
   videoId,
   isOpen,
   onClose,
+  onSaved,
+  onDeleted,
 }: EditVideoModalProps) {
   const router = useRouter();
   const [item, setItem] = useState<
@@ -125,6 +130,9 @@ export default function EditVideoModal({
     if (result.error) setMessage({ type: "err", text: result.error });
     else {
       setMessage({ type: "ok", text: "Saved." });
+      if (result.data) {
+        onSaved?.(result.data);
+      }
       router.refresh();
       setTimeout(() => {
         onClose();
@@ -139,6 +147,9 @@ export default function EditVideoModal({
     if (result.error) setMessage({ type: "err", text: result.error });
     else {
       setMessage({ type: "ok", text: "Reset from feed." });
+      if (result.data) {
+        onSaved?.(result.data);
+      }
       router.refresh();
       setTimeout(() => {
         onClose();
@@ -152,6 +163,7 @@ export default function EditVideoModal({
     const result = await deleteVideoRSSItem(videoId);
     if (result.error) setMessage({ type: "err", text: result.error });
     else {
+      onDeleted?.(videoId);
       router.refresh();
       onClose();
     }

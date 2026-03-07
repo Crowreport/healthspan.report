@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 import { seedRSSSources, runIngestion } from "@/lib/rss/ingestionService";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 90;
+export const maxDuration = 10;
 
 async function isAuthorized(request: NextRequest): Promise<boolean> {
   const cronSecret = process.env.CRON_SECRET;

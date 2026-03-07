@@ -25,7 +25,7 @@ import type { IngestionOptions } from "@/types/rss";
 export const dynamic = "force-dynamic";
 
 // Maximum duration for the function (Vercel Pro: 60s, Hobby: 10s)
-export const maxDuration = 60;
+export const maxDuration = 10;
 
 /**
  * Verify the request is authorized

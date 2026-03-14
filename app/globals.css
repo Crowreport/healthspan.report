@@ -7,10 +7,14 @@
 
 :root {
   /* Primary Colors - Teal: trust, health, vitality */
-  --color-primary: #0A7B83;
-  --color-primary-hover: #086A71;
+  --color-primary: #1A8CC6;
+  --color-primary-hover: #054667;
   --color-primary-light: #E8F4F5;
   --color-primary-muted: #B8DFE2;
+
+  /* Brand Colors - Blue */
+  --color-brand-blue-sky: #D5ECFF;
+  --color-brand-green: #6EBE3F;
 
   /* Accent - Bright teal for CTAs and highlights */
   --color-accent: #2DD4BF;
@@ -21,10 +25,12 @@
   --color-text-secondary: #475569;
   --color-text-muted: #64748B;
   --color-text-light: #94A3B8;
+  --color-text-white: #ffffff;
 
   /* Backgrounds */
   --color-bg: #F8FAFC;
   --color-bg-alt: #F1F5F9;
+  --color-bg-dark: #054667;
   --color-surface: #FFFFFF;
   --color-surface-elevated: #FFFFFF;
 
@@ -65,6 +71,7 @@
   --font-serif: var(--font-instrument-serif), Georgia, serif;
 
   /* Container Widths */
+  --container-xsm: 420px;
   --container-sm: 640px;
   --container-md: 768px;
   --container-lg: 1024px;

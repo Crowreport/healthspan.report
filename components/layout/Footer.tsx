@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Logo, SubscribeForm } from "@/components/ui";
+import { Button, Logo, SubscribeForm, SuggestionForm } from "@/components/ui";
 import { footerSections } from "@/data/mockData";
 import styles from "./Footer.module.css";
 
@@ -68,7 +68,7 @@ export default function Footer() {
 
           {/* Links Sections */}
           <div className={styles.links}>
-            {footerSections.map((section) => (
+            {footerSections.filter((section) => section.title !== "Legal").map((section) => (
               <div key={section.title} className={styles.linkSection}>
                 <h4 className={styles.linkTitle}>{section.title}</h4>
                 <ul className={styles.linkList}>
@@ -84,16 +84,28 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Newsletter */}
-          <div className={styles.newsletter}>
-            <h4 className={styles.newsletterTitle}>Stay Updated</h4>
-            <p className={styles.newsletterText}>
-              Get the latest longevity research and insights delivered to your
-              inbox weekly.
-            </p>
-            <SubscribeForm variant="stacked" />
+          <div className={styles.actionsContainer}>
+            <div className={styles.actionColumn}>
+              <h4 className={styles.newsletterTitle}>Stay Updated</h4>
+              <div className={styles.actionContent}>
+                <p className={styles.newsletterText}>
+                  Get the latest longevity research and insights delivered to your inbox weekly.
+                </p>
+                <SubscribeForm variant="stacked" />
+              </div>
+            </div>
+
+            <div className={styles.actionColumn}>
+              <h4 className={styles.newsletterTitle}>Send Us Your Suggestions</h4>
+              <div className={styles.actionContent}>
+                <SuggestionForm />
+              </div>
+            </div>
           </div>
+
         </div>
+
+        
 
         {/* Bottom Section */}
         <div className={styles.bottom}>
@@ -103,7 +115,7 @@ export default function Footer() {
           <div className={styles.bottomLinks}>
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms of Service</Link>
-            <Link href="/cookies">Cookie Settings</Link>
+            <Link href="/cookies">Cookies</Link>
           </div>
         </div>
       </div>

@@ -126,14 +126,16 @@ function LoginForm() {
             disabled={loading}
           />
 
-          <div className={styles.forgotLink}>
-            <Link href="/forgot-password">Forgot your password?</Link>
-          </div>
+          
 
           <Button type="submit" disabled={loading} fullWidth>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
+
+        <div className={styles.forgotLink}>
+            <Link href="/forgot-password">Forgot your password?</Link>
+          </div>
 
         <p className={styles.footerText}>
           Don&apos;t have an account?{" "}

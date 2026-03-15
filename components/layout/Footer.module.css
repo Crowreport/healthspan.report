@@ -1,4 +1,7 @@
 .footer {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   margin-top: auto;
   background: var(--color-bg-dark);
   border-top: 1px solid color-mix(in srgb, var(--color-brand-blue-sky) 26%, transparent);
@@ -7,17 +10,20 @@
 .container {
   max-width: var(--container-2xl);
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+}
+
+.top {
   display: grid;
   gap: var(--space-lg);
+  align-items: start;
 }
 
 .brandBlock {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.45rem;
-  max-width: 620px;
+  gap: 0.7rem;
 }
 
 .footerLogoLink {
@@ -27,77 +33,215 @@
 }
 
 .footerLogo {
-  width: clamp(250px, 24vw, 370px);
+  width: clamp(220px, 18vw, 280px);
   height: auto;
 }
 
-.aboutLinks {
+.tagline {
+  margin: 0;
+  max-width: 28ch;
+  color: var(--color-brand-blue-sky);
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.social {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: 0.2rem;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--color-brand-blue-sky) 30%, transparent);
+  color: var(--color-brand-blue-sky);
+  text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.socialLink:hover {
+  background: var(--color-brand-blue-sky);
+  color: var(--color-bg-dark);
+}
+
+.socialLink svg {
+  width: 15px;
+  height: 15px;
+}
+
+
+.links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-xl);
+}
+
+.linkSection {
+  min-width: 0;
+}
+
+.linkTitle {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.92rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-brand-blue-sky);
+}
+
+.linkList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding-left: 0.35rem;
+  gap: 0.3rem;
 }
 
-.aboutLinks h4 {
-  margin: 0 0 0.25rem;
-  font-family: var(--font-display);
-  font-size: 1.8rem;
+.link {
   color: var(--color-brand-blue-sky);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.aboutLinks a {
-  color: var(--color-brand-blue-sky);
-  font-size: 1.1rem;
-  line-height: 1.2;
+  font-size: 1.02rem;
   text-decoration: none;
 }
 
-.aboutLinks a:hover {
+.link:hover {
   color: #ffffff;
 }
 
 .formGrid {
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
+  align-items: stretch;
 }
 
 .formColumn {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 0.7rem;
+  min-height: 100%;
 }
 
 .columnTitle {
   margin: 0;
+  font-family: var(--font-serif);
   color: var(--color-brand-blue-sky);
-  font-size: 1.95rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.2;
+}
+
+.formBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.formBody > *:last-child {
+  margin-top: auto;
+}
+
+.columnDescription {
+  margin: 0;
+  color: var(--color-brand-blue-sky);
+  max-width: 33ch;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  opacity: 0.95;
 }
 
 .bottom {
+  width: 100%;
   border-top: 1px solid color-mix(in srgb, var(--color-brand-blue-sky) 26%, transparent);
-  padding: var(--space-md) var(--space-lg) var(--space-lg);
-  text-align: center;
 }
 
-.bottom p {
+.bottomInner {
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.bottomInner p {
   margin: 0;
   font-size: 0.9rem;
   color: var(--color-brand-blue-sky);
 }
 
-@media (min-width: 900px) {
-  .container {
-    padding-left: var(--space-xl);
-    padding-right: var(--space-xl);
-    grid-template-columns: minmax(620px, 1.4fr) minmax(0, 1.6fr);
-    align-items: start;
-  }
+.bottomLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+}
 
+.bottomLinks a {
+  color: var(--color-brand-blue-sky);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.bottomLinks a:hover {
+  color: #ffffff;
+}
+
+@media (min-width: 760px) {
   .formGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-xl);
-    margin-left: -18px;
+  }
+
+  .bottomInner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 980px) {
+  .container {
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+  }
+
+  .top {
+    grid-template-columns: minmax(240px, 0.9fr) minmax(360px, 1.05fr) minmax(520px, 1.55fr);
+    gap: var(--space-xl);
+  }
+
+  .links {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .formBody {
+    min-height: 208px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .top {
+    gap: var(--space-2xl);
+  }
+
+  .links {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .footerLogo {
+    width: clamp(210px, 62vw, 250px);
+  }
+
+  .columnTitle {
+    font-size: 1.2rem;
   }
 }

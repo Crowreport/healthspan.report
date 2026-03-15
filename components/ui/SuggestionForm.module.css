@@ -12,17 +12,17 @@
   border-radius: var(--radius-sm);
   background: var(--color-brand-blue-sky);
   color: #000000;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-family: var(--font-sans);
   padding: 0 var(--space-md);
 }
 
 .input {
-  height: 60px;
+  height: 52px;
 }
 
 .textarea {
-  min-height: 116px;
+  min-height: 98px;
   padding-top: var(--space-sm);
   padding-bottom: var(--space-sm);
   resize: vertical;
@@ -41,12 +41,12 @@
 }
 
 .form button {
-  height: 58px;
+  height: 52px;
   background: #81cd4c;
   color: #000000;
-  font-size: 1.9rem;
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-size: 1.06rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
   border-radius: 6px;
   border: 1px solid #81cd4c;
   box-shadow: none;
@@ -70,16 +70,18 @@
 @media (max-width: 640px) {
   .input {
     height: 48px;
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .textarea {
     min-height: 88px;
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .form button {
     height: 48px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 }
+
+

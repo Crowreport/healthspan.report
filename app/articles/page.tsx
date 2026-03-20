@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { ArticleCard, EditorialPageIntro } from "@/components/ui";
 import { slugify } from "@/lib/rss/rssFetcher";
@@ -84,6 +85,13 @@ export default function ArticlesPage() {
 
   const leadStory = articles[0];
   const remainingStories = useMemo(() => articles.slice(1), [articles]);
+  const sourceCount = useMemo(
+    () =>
+      new Set(
+        articles.map((article) => article.sourceName || article.category || article.author)
+      ).size,
+    [articles]
+  );
 
   return (
     <div className={styles.page}>
@@ -95,6 +103,16 @@ export default function ArticlesPage() {
             title="Articles"
             description="Daily healthspan reporting with source-first coverage and quick-read metadata."
           />
+
+          {!isLoading && !error && articles.length > 0 && (
+            <div className={styles.feedMeta}>
+              <span className={styles.metaPill}>{articles.length} stories</span>
+              <span className={styles.metaPill}>{sourceCount} sources</span>
+              <span className={styles.metaPill}>
+                Updated {formatDate(articles[0].publishedAt)}
+              </span>
+            </div>
+          )}
 
           {isLoading ? (
             <div className={styles.grid}>
@@ -114,15 +132,67 @@ export default function ArticlesPage() {
             <>
               {leadStory && (
                 <section className={styles.leadSection}>
-                  <h2 className={styles.sectionTitle}>Top Story</h2>
+                  <div className={styles.leadHeader}>
+                    <p className={styles.sectionEyebrow}>Lead Story</p>
+                  </div>
                   <div className={styles.leadGrid}>
-                    <ArticleCard article={leadStory} />
+                    <div className={styles.leadContent}>
+                      <h2 className={styles.leadTitle}>
+                        {leadStory.externalUrl ? (
+                          <a
+                            href={leadStory.externalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.leadTitleLink}
+                          >
+                            {leadStory.title}
+                          </a>
+                        ) : (
+                          <Link
+                            href={`/articles/${leadStory.slug}`}
+                            className={styles.leadTitleLink}
+                          >
+                            {leadStory.title}
+                          </Link>
+                        )}
+                      </h2>
+                      {leadStory.excerpt && (
+                        <p className={styles.leadExcerpt}>{leadStory.excerpt}</p>
+                      )}
+                      <p className={styles.leadMeta}>
+                        <span>{leadStory.sourceName || leadStory.author || leadStory.category}</span>
+                        <span className={styles.dot}>|</span>
+                        <span>{formatDate(leadStory.publishedAt)}</span>
+                        <span className={styles.dot}>|</span>
+                        <span>{leadStory.readTime}</span>
+                      </p>
+                      {leadStory.externalUrl ? (
+                        <a
+                          href={leadStory.externalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.readLink}
+                        >
+                          Read full story
+                        </a>
+                      ) : (
+                        <Link href={`/articles/${leadStory.slug}`} className={styles.readLink}>
+                          Read full story
+                        </Link>
+                      )}
+                    </div>
+                    <div className={styles.leadCardWrap}>
+                      <ArticleCard article={leadStory} />
+                    </div>
                   </div>
                 </section>
               )}
 
               <section>
-                <h2 className={styles.sectionTitle}>Latest Coverage</h2>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>Latest Coverage</h2>
+                  <p className={styles.sectionCount}>{remainingStories.length} stories</p>
+                </div>
                 <div className={styles.grid}>
                   {remainingStories.map((article) => (
                     <ArticleCard key={article.id} article={article} />
@@ -142,4 +212,16 @@ function estimateReadTime(content: string): string {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(5, Math.ceil(words / 170));
   return `~${minutes} min read`;
+}
+
+function formatDate(rawDate: string): string {
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) {
+    return rawDate;
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
 }

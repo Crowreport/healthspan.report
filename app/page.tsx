@@ -47,6 +47,7 @@ function CommentIcon() {
 export default function Home() {
   const [videoItems, setVideoItems] = useState<HomeVideo[]>(createFallbackVideos());
   const [articleItems, setArticleItems] = useState<HomeArticle[]>(createFallbackArticles());
+  const videoFilters = ["For You", "Latest", "Research", "Interviews", "Podcasts"];
 
   useEffect(() => {
     let isCancelled = false;
@@ -116,6 +117,19 @@ export default function Home() {
               <Link href="/videos" className={styles.viewAll}>
                 View all videos
               </Link>
+            </div>
+            <div className={styles.videoFilters} aria-label="Video feed filters">
+              {videoFilters.map((filter, index) => (
+                <button
+                  key={filter}
+                  type="button"
+                  className={`${styles.videoFilter} ${
+                    index === 0 ? styles.videoFilterActive : ""
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
             <div className={styles.featuredVideoLayout}>
               <div className={styles.playerColumn}>

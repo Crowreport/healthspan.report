@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const roboto = Roboto({
+  variable: "--font-roboto",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
@@ -57,9 +50,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} ${manrope.variable} antialiased`}
-      >
+      <body className={`${roboto.variable} antialiased`}>
         {children}
       </body>
     </html>

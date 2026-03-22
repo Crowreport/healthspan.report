@@ -1,31 +1,35 @@
 .wrapper {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: 1.3rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #dbe6f1;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
-  margin: 0 0 var(--space-sm);
-  padding: 0.3rem 0.75rem;
+  margin: 0 0 0.5rem;
+  padding: 0.24rem 0.58rem;
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: 0.69rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--color-primary-hover);
-  background: var(--color-brand-blue-sky);
+  color: #0f6ea1;
+  background: #e6f0fa;
+  border: 1px solid #cfe1f3;
 }
 
 .title {
-  margin: 0 0 var(--space-xs);
-  font-size: clamp(2rem, 3.5vw, 2.75rem);
-  color: var(--color-text);
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.65rem, 2.6vw, 2.2rem);
+  color: #11253a;
+  line-height: 1.15;
 }
 
 .description {
   margin: 0;
   max-width: 64ch;
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #48637d;
 }

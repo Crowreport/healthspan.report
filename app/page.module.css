@@ -6,7 +6,7 @@
 
 .main {
   flex: 1;
-  background: #f5f8fb;
+  background: #f6f7f8;
   padding: 1.25rem 0 2.5rem;
 }
 
@@ -20,10 +20,10 @@
 }
 
 .section {
-  background: #f0f4f8;
-  border: 1px solid #dbe5ef;
-  border-radius: var(--radius-sm);
-  padding: 0.85rem;
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 0.7rem;
+  padding: 1rem;
 }
 
 .sectionHeader {
@@ -33,23 +33,53 @@
   margin-bottom: 0.75rem;
 }
 
+.videoFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.videoFilter {
+  border: 1px solid #d9e3ee;
+  background: #f4f7fa;
+  color: #2e4a63;
+  border-radius: var(--radius-full);
+  padding: 0.26rem 0.62rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: default;
+}
+
+.videoFilterActive {
+  border-color: #0f6ea1;
+  background: #0f6ea1;
+  color: #ffffff;
+}
+
 .sectionTitle {
   margin: 0;
-  font-size: clamp(1.8rem, 3vw, 2.25rem);
-  color: #0f6ea1;
-  line-height: 1.1;
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  color: #10263b;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .viewAll {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: #0f6ea1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #46627e;
   text-decoration: none;
+}
+
+.viewAll:hover {
+  color: #0f6ea1;
 }
 
 .featuredVideoLayout {
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
 }
 
 .playerColumn {
@@ -131,9 +161,9 @@
 }
 
 .upNextPanel {
-  border: 1px solid #d7e0ea;
+  border: 1px solid #e3e8ef;
   border-radius: 0.45rem;
-  background: #edf3f9;
+  background: #ffffff;
   padding: 0.6rem;
   display: flex;
   flex-direction: column;
@@ -159,7 +189,7 @@
 }
 
 .upNextItem:hover {
-  background: #e2ebf5;
+  background: #f1f4f8;
 }
 
 .upNextThumb {
@@ -204,17 +234,19 @@
 
 .adBanner {
   height: 86px;
-  border: 1px solid #d9dde3;
-  background: #e2e4e8;
-  color: #20242c;
-  border-radius: 0.2rem;
+  border: 1px dashed #cfd8e3;
+  background: #f3f6fa;
+  color: #42586e;
+  border-radius: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: clamp(1.55rem, 2vw, 2.1rem);
-  font-family: var(--font-display);
-  letter-spacing: 0.01em;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .trendingColumns {
@@ -223,15 +255,15 @@
 }
 
 .topicColumn {
-  background: #e2f1de;
-  border: 1px solid #c6dbc0;
-  border-radius: 0.2rem;
-  padding: 0.35rem;
+  background: #f6faf5;
+  border: 1px solid #d8e4d2;
+  border-radius: 0.42rem;
+  padding: 0.42rem;
 }
 
 .topicColumnAlt {
-  background: #dbeaf7;
-  border-color: #c6d7e9;
+  background: #f4f8fc;
+  border-color: #d6e1ec;
 }
 
 .topicRow {
@@ -241,7 +273,7 @@
   align-items: center;
   text-decoration: none;
   padding: 0.4rem 0.2rem;
-  border-bottom: 1px solid rgba(25, 43, 62, 0.3);
+  border-bottom: 1px solid rgba(25, 43, 62, 0.15);
 }
 
 .topicRow:last-child {
@@ -292,10 +324,10 @@
 .lifestyleCard {
   display: flex;
   flex-direction: column;
-  border: 1px solid #cde2f4;
+  border: 1px solid #d9e3ee;
   border-radius: 0.4rem;
   overflow: hidden;
-  background: #d8e9f7;
+  background: #ffffff;
   text-decoration: none;
 }
 

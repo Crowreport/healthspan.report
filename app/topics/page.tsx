@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
-import { trendingTopics } from "@/data/mockData";
+import { EditorialPageIntro } from "@/components/ui";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -9,18 +9,18 @@ export const metadata = {
 };
 
 const allTopics = [
-  { name: "Cellular Health", slug: "cellular-health", icon: "🧬" },
-  { name: "Supplements", slug: "supplements", icon: "💊" },
-  { name: "Nutrition", slug: "nutrition", icon: "🥗" },
-  { name: "Fasting", slug: "fasting", icon: "⏰" },
-  { name: "Exercise", slug: "exercise", icon: "🏃" },
-  { name: "Sleep", slug: "sleep", icon: "😴" },
-  { name: "Mental Health", slug: "mental-health", icon: "🧠" },
-  { name: "Hormones", slug: "hormones", icon: "⚗️" },
-  { name: "Protocols", slug: "protocols", icon: "📋" },
-  { name: "Research", slug: "research", icon: "🔬" },
-  { name: "Biomarkers", slug: "biomarkers", icon: "📊" },
-  { name: "Genetics", slug: "genetics", icon: "🧪" },
+  { name: "Cellular Health", slug: "cellular-health", badge: "CH" },
+  { name: "Supplements", slug: "supplements", badge: "SP" },
+  { name: "Nutrition", slug: "nutrition", badge: "NU" },
+  { name: "Fasting", slug: "fasting", badge: "FA" },
+  { name: "Exercise", slug: "exercise", badge: "EX" },
+  { name: "Sleep", slug: "sleep", badge: "SL" },
+  { name: "Mental Health", slug: "mental-health", badge: "MH" },
+  { name: "Hormones", slug: "hormones", badge: "HO" },
+  { name: "Protocols", slug: "protocols", badge: "PR" },
+  { name: "Research", slug: "research", badge: "RE" },
+  { name: "Biomarkers", slug: "biomarkers", badge: "BI" },
+  { name: "Genetics", slug: "genetics", badge: "GE" },
 ];
 
 export default function TopicsPage() {
@@ -29,25 +29,27 @@ export default function TopicsPage() {
       <Header />
       <main className={styles.main}>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>Topics</h1>
-            <p className={styles.subtitle}>
-              Explore our comprehensive coverage of longevity and wellness topics.
-            </p>
-          </div>
+          <EditorialPageIntro
+            badge="Topic Index"
+            title="Topics"
+            description="Explore focused healthspan coverage areas, from cellular aging to practical protocols."
+          />
 
-          <div className={styles.grid}>
-            {allTopics.map((topic) => (
-              <Link
-                key={topic.slug}
-                href={`/topics/${topic.slug}`}
-                className={styles.topicCard}
-              >
-                <span className={styles.icon}>{topic.icon}</span>
-                <h3 className={styles.topicName}>{topic.name}</h3>
-              </Link>
-            ))}
-          </div>
+          <section className={styles.panel}>
+            <div className={styles.grid}>
+              {allTopics.map((topic) => (
+                <Link
+                  key={topic.slug}
+                  href={`/topics/${topic.slug}`}
+                  className={styles.topicCard}
+                >
+                  <span className={styles.icon}>{topic.badge}</span>
+                  <h3 className={styles.topicName}>{topic.name}</h3>
+                  <span className={styles.count}>Explore coverage</span>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
       <Footer />

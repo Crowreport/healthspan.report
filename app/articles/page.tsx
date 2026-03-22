@@ -203,7 +203,7 @@ export default function ArticlesPage() {
                 </section>
               )}
 
-              <section>
+              <section className={styles.sectionPanel}>
                 <div className={styles.sectionHeader}>
                   <h2 className={styles.sectionTitle}>Latest Coverage</h2>
                   <p className={styles.sectionCount}>{remainingStories.length} stories</p>

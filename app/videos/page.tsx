@@ -65,6 +65,10 @@ export default function VideosPage() {
 
   const featuredVideo = videos[0];
   const remainingVideos = useMemo(() => videos.slice(1), [videos]);
+  const sourceCount = useMemo(
+    () => new Set(videos.map((video) => video.channelName)).size,
+    [videos]
+  );
 
   return (
     <div className={styles.page}>
@@ -76,6 +80,14 @@ export default function VideosPage() {
             title="Videos"
             description="Latest healthspan videos from channels and experts tracked across your source list."
           />
+
+          {!isLoading && !error && videos.length > 0 && (
+            <div className={styles.feedMeta}>
+              <span className={styles.metaPill}>{videos.length} videos</span>
+              <span className={styles.metaPill}>{sourceCount} channels</span>
+              <span className={styles.metaPill}>Updated {formatDate(videos[0].publishedAt)}</span>
+            </div>
+          )}
 
           {isLoading ? (
             <div className={styles.grid}>
@@ -94,16 +106,21 @@ export default function VideosPage() {
           ) : (
             <>
               {featuredVideo && (
-                <section className={styles.featuredSection}>
-                  <h2 className={styles.sectionTitle}>Featured Video</h2>
+                <section className={styles.sectionPanel}>
+                  <div className={styles.sectionHeader}>
+                    <h2 className={styles.sectionTitle}>Featured Video</h2>
+                  </div>
                   <div className={styles.featuredWrap}>
                     <VideoThumbnail video={featuredVideo} variant="large" />
                   </div>
                 </section>
               )}
 
-              <section>
-                <h2 className={styles.sectionTitle}>More Videos</h2>
+              <section className={styles.sectionPanel}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>More Videos</h2>
+                  <p className={styles.sectionCount}>{remainingVideos.length} items</p>
+                </div>
                 <div className={styles.grid}>
                   {remainingVideos.map((video) => (
                     <VideoThumbnail key={video.id} video={video} />
@@ -117,4 +134,14 @@ export default function VideosPage() {
       <Footer />
     </div>
   );
+}
+
+function formatDate(rawDate: string): string {
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) return rawDate;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
 }

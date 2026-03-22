@@ -6,6 +6,7 @@
 
 .main {
   flex: 1;
+  background: #f6f7f8;
   padding: 2.25rem 0 3rem;
 }
 
@@ -157,6 +158,13 @@
   gap: 1rem;
 }
 
+.sectionPanel {
+  background: #ffffff;
+  border: 1px solid #dce5ef;
+  border-radius: 0.7rem;
+  padding: 0.95rem;
+}
+
 .sectionHeader {
   display: flex;
   align-items: baseline;
@@ -241,6 +249,10 @@
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.2rem;
+  }
+
+  .sectionPanel {
+    padding: 1.05rem;
   }
 }
 

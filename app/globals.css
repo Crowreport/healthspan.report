@@ -32,6 +32,7 @@
   --color-bg-alt: #F1F5F9;
   --color-bg-dark: #054667;
   --color-surface: #FFFFFF;
+  --color-surface-alt: #F4FAFF;
   --color-surface-elevated: #FFFFFF;
 
   /* Borders */
@@ -67,8 +68,9 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-roboto), "Roboto", "Segoe UI", system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --font-serif: var(--font-display);
 
   /* Container Widths */
   --container-xsm: 420px;
@@ -90,6 +92,35 @@
   --z-modal-backdrop: 400;
   --z-modal: 500;
   --z-tooltip: 600;
+}
+
+[data-theme="dark"] {
+  --color-primary: #4aaedc;
+  --color-primary-hover: #7cc9ee;
+  --color-primary-light: #1d3b56;
+  --color-primary-muted: #245274;
+
+  --color-brand-blue-sky: #b8cfe8;
+  --color-brand-green: #82cc52;
+
+  --color-accent: #37d8c6;
+  --color-accent-hover: #5ce3d5;
+
+  --color-text: #e3edf8;
+  --color-text-secondary: #c1d0df;
+  --color-text-muted: #9fb2c8;
+  --color-text-light: #8199b3;
+  --color-text-white: #ffffff;
+
+  --color-bg: #0c1421;
+  --color-bg-alt: #131f31;
+  --color-bg-dark: #081220;
+  --color-surface: #142236;
+  --color-surface-alt: #182b41;
+  --color-surface-elevated: #1b2f47;
+
+  --color-border: #28405a;
+  --color-border-light: #1a2d44;
 }
 
 /* Tailwind Theme Integration */
@@ -116,14 +147,15 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   line-height: 1.6;
+  transition: background-color var(--transition-base), color var(--transition-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Typography Base */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-weight: 700;
   line-height: 1.2;
   color: var(--color-text);
 }

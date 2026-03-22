@@ -14,30 +14,47 @@
 }
 
 .inputWrapper {
-  flex: 1;
+  width: 100%;
 }
 
 .input {
   width: 100%;
-  height: 40px;
+  height: 52px;
   padding: 0 var(--space-md);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-family: var(--font-sans);
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  color: #000000;
+  background: var(--color-brand-blue-sky);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+  border-radius: var(--radius-sm);
 }
 
 .input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(26, 140, 198, 0.18);
 }
 
 .input::placeholder {
-  color: var(--color-text-muted);
+  color: #36556e;
+}
+
+.form button {
+  height: 52px;
+  background: #81cd4c;
+  color: #000000;
+  font-size: 1.06rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #81cd4c;
+  box-shadow: none;
+}
+
+.form button:hover:not(:disabled) {
+  background: #74b845;
+  border-color: #74b845;
+  transform: none;
 }
 
 .message {
@@ -45,7 +62,7 @@
   bottom: -24px;
   left: 0;
   font-size: 0.8125rem;
-  color: var(--color-success);
+  color: #a6ee78;
   font-weight: 500;
 }
 
@@ -54,16 +71,16 @@
   margin-top: var(--space-xs);
 }
 
-@media (max-width: 480px) {
-  .inline {
-    flex-direction: column;
+@media (max-width: 640px) {
+  .input {
+    height: 48px;
+    font-size: 0.95rem;
   }
 
-  .inline .inputWrapper {
-    width: 100%;
-  }
-
-  .inline button {
-    width: 100%;
+  .form button {
+    height: 48px;
+    font-size: 1.1rem;
   }
 }
+
+

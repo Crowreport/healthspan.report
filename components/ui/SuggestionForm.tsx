@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui";
+import Button from "./Button";
 import styles from "./SuggestionForm.module.css";
 
 export default function SuggestionForm() {
@@ -14,7 +14,11 @@ export default function SuggestionForm() {
   };
 
   if (submitted) {
-    return <div className={styles.success}>Thanks! We've received your feedback.</div>;
+    return (
+      <div className={styles.success}>
+        Thanks! We have received your feedback.
+      </div>
+    );
   }
 
   return (
@@ -31,7 +35,7 @@ export default function SuggestionForm() {
         required
       />
       <Button type="submit" variant="primary" fullWidth>
-        Submit Suggestion
+        Suggestions
       </Button>
     </form>
   );

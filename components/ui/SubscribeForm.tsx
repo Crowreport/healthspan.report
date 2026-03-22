@@ -6,9 +6,13 @@ import styles from "./SubscribeForm.module.css";
 
 interface SubscribeFormProps {
   variant?: "inline" | "stacked";
+  className?: string;
 }
 
-export default function SubscribeForm({ variant = "inline" }: SubscribeFormProps) {
+export default function SubscribeForm({
+  variant = "inline",
+  className = "",
+}: SubscribeFormProps) {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -28,7 +32,10 @@ export default function SubscribeForm({ variant = "inline" }: SubscribeFormProps
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`${styles.form} ${styles[variant]}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`${styles.form} ${styles[variant]} ${className}`.trim()}
+    >
       <div className={styles.inputWrapper}>
         <input
           type="email"

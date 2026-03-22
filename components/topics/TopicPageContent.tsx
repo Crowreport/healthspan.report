@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AdPlaceholder, ArticleCard, VideoThumbnail } from "@/components/ui";
 import { mapRSSToArticles, mapRSSToVideos } from "@/lib/topics/filtering";
 import type { Article, Video } from "@/types";
@@ -31,7 +31,6 @@ export default function TopicPageContent({
         setIsLoading(true);
         setError(null);
 
-        // Fetch all RSS feeds
         const response = await fetch("/api/rss");
         if (!response.ok) throw new Error("Failed to fetch feeds");
 
@@ -43,12 +42,8 @@ export default function TopicPageContent({
           return;
         }
 
-        // Filter articles and videos by keywords
-        const mappedArticles = mapRSSToArticles(data.sources, keywords);
-        const mappedVideos = mapRSSToVideos(data.sources, keywords);
-
-        setArticles(mappedArticles);
-        setVideos(mappedVideos);
+        setArticles(mapRSSToArticles(data.sources, keywords));
+        setVideos(mapRSSToVideos(data.sources, keywords));
       } catch (err) {
         console.error("Failed to fetch topic content:", err);
         setError("Failed to load content. Please try again later.");
@@ -60,17 +55,19 @@ export default function TopicPageContent({
     fetchTopicContent();
   }, [keywords]);
 
+  const topicBadge = getTopicBadge(topicName, topicIcon);
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      <header className={styles.headerPanel}>
         <div className={styles.topicHeader}>
-          <span className={styles.icon}>{topicIcon}</span>
+          <span className={styles.icon}>{topicBadge}</span>
           <div>
             <h1 className={styles.title}>{topicName}</h1>
             <p className={styles.subtitle}>{topicDescription}</p>
           </div>
         </div>
-      </div>
+      </header>
 
       {isLoading ? (
         <div className={styles.grid}>
@@ -91,55 +88,45 @@ export default function TopicPageContent({
         </div>
       ) : (
         <>
-          <div className={styles.stats}>
-            <span className={styles.count}>
-              {articles.length} {articles.length === 1 ? "article" : "articles"} · {videos.length} {videos.length === 1 ? "video" : "videos"}
+          <div className={styles.feedMeta}>
+            <span className={styles.metaPill}>
+              {articles.length} {articles.length === 1 ? "article" : "articles"}
+            </span>
+            <span className={styles.metaPill}>
+              {videos.length} {videos.length === 1 ? "video" : "videos"}
             </span>
           </div>
 
           {articles.length === 0 && videos.length === 0 ? (
             <div className={styles.empty}>
               <p>No content found for this topic yet.</p>
-              <p className={styles.emptySubtext}>
-                Check back soon for new content!
-              </p>
+              <p className={styles.emptySubtext}>Check back soon for new content.</p>
             </div>
           ) : (
             <div className={styles.contentWrapper}>
               <div className={styles.mainContent}>
-                {/* Latest Articles Section */}
                 {articles.length > 0 && (
-                  <section className={styles.contentSection}>
-                    <h2 className={styles.sectionTitle}>Latest Articles</h2>
+                  <section className={styles.sectionPanel}>
+                    <div className={styles.sectionHeader}>
+                      <h2 className={styles.sectionTitle}>Latest Articles</h2>
+                      <p className={styles.sectionCount}>{articles.length} items</p>
+                    </div>
                     <div className={styles.grid}>
-                      {articles.slice(0, 6).map((article) => (
+                      {articles.slice(0, 8).map((article) => (
                         <ArticleCard key={article.id} article={article} />
                       ))}
                     </div>
                   </section>
                 )}
 
-                {/* Latest Videos Section */}
                 {videos.length > 0 && (
-                  <section className={styles.contentSection}>
-                    <h2 className={styles.sectionTitle}>Latest Videos</h2>
-                    <div className={styles.grid}>
-                      {videos.slice(0, 6).map((video) => (
-                        <VideoThumbnail key={video.id} video={video} />
-                      ))}
+                  <section className={styles.sectionPanel}>
+                    <div className={styles.sectionHeader}>
+                      <h2 className={styles.sectionTitle}>Latest Videos</h2>
+                      <p className={styles.sectionCount}>{videos.length} items</p>
                     </div>
-                  </section>
-                )}
-
-                {/* Remaining Content */}
-                {(articles.length > 6 || videos.length > 6) && (
-                  <section className={styles.contentSection}>
-                    <h2 className={styles.sectionTitle}>More Content</h2>
                     <div className={styles.grid}>
-                      {articles.slice(6).map((article) => (
-                        <ArticleCard key={article.id} article={article} />
-                      ))}
-                      {videos.slice(6).map((video) => (
+                      {videos.slice(0, 8).map((video) => (
                         <VideoThumbnail key={video.id} video={video} />
                       ))}
                     </div>
@@ -148,7 +135,9 @@ export default function TopicPageContent({
               </div>
 
               <aside className={styles.sidebar}>
-                <AdPlaceholder size="rectangle" />
+                <div className={styles.sidebarPanel}>
+                  <AdPlaceholder size="rectangle" />
+                </div>
               </aside>
             </div>
           )}
@@ -156,4 +145,18 @@ export default function TopicPageContent({
       )}
     </div>
   );
+}
+
+function getTopicBadge(topicName: string, topicIcon: string): string {
+  const cleanIcon = (topicIcon || "").trim();
+  if (/^[A-Za-z0-9]{1,3}$/.test(cleanIcon)) return cleanIcon.toUpperCase();
+
+  const parts = topicName
+    .split(/\s+/)
+    .map((part) => part.replace(/[^A-Za-z]/g, ""))
+    .filter(Boolean);
+
+  if (parts.length === 0) return "TP";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Logo, SearchBar, Button } from "@/components/ui";
+import { Logo, SearchBar, Button, ThemeToggle } from "@/components/ui";
 import MobileMenu from "./MobileMenu";
 import { navItems } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
@@ -49,6 +49,8 @@ export default function Header() {
 
         {/* Auth Section - Desktop */}
         <div className={styles.authButtons}>
+          <ThemeToggle compact />
+
           {isAuthenticated && profile ? (
             <div className={styles.userMenu}>
               <button
@@ -101,7 +103,7 @@ export default function Header() {
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost" size="sm">
+                <Button variant="primary" size="sm">
                   Log in
                 </Button>
               </Link>
@@ -115,24 +117,27 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className={styles.mobileMenuButton}
-          onClick={() => setIsMobileMenuOpen(true)}
-          aria-label="Open menu"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <div className={styles.mobileActions}>
+          <ThemeToggle compact />
+          <button
+            className={styles.mobileMenuButton}
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
           >
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

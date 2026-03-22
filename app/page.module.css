@@ -6,23 +6,487 @@
 
 .main {
   flex: 1;
+  background: #f6f7f8;
+  padding: 1.25rem 0 2.5rem;
 }
 
-.adSection {
-  padding: var(--space-lg) 0;
-  background: var(--color-bg);
-}
-
-.adContainer {
+.container {
   max-width: var(--container-2xl);
   margin: 0 auto;
   padding: 0 var(--space-lg);
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section {
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 0.7rem;
+  padding: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.videoFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.videoFilter {
+  border: 1px solid #d9e3ee;
+  background: #f4f7fa;
+  color: #2e4a63;
+  border-radius: var(--radius-full);
+  padding: 0.26rem 0.62rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: default;
+}
+
+.videoFilterActive {
+  border-color: #0f6ea1;
+  background: #0f6ea1;
+  color: #ffffff;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  color: #10263b;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.viewAll {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #46627e;
+  text-decoration: none;
+}
+
+.viewAll:hover {
+  color: #0f6ea1;
+}
+
+.featuredVideoLayout {
+  display: grid;
+  gap: 1rem;
+}
+
+.playerColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.featuredHero {
+  display: block;
+  width: 100%;
+  position: relative;
+  min-height: 245px;
+  border: 1px solid #d0d9e3;
+  border-radius: 0.45rem;
+  overflow: hidden;
+  text-decoration: none;
+  background: #0f1923;
+  cursor: pointer;
+}
+
+.featuredImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.playBadge {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: rgba(7, 13, 19, 0.78);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-@media (min-width: 1024px) {
-  .adContainer {
-    padding: 0 var(--space-xl);
+.playBadge svg {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+
+.playerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.playerTitle {
+  margin: 0;
+  color: #15263a;
+  font-size: clamp(1.08rem, 1.6vw, 1.3rem);
+  line-height: 1.32;
+  font-weight: 700;
+}
+
+.playerSubline {
+  margin: 0;
+  color: #47627b;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.upNextPanel {
+  border: 1px solid #e3e8ef;
+  border-radius: 0.45rem;
+  background: #ffffff;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.upNextHeading {
+  margin: 0 0 0.15rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #42617c;
+  font-weight: 700;
+}
+
+.upNextItem {
+  display: grid;
+  grid-template-columns: 126px minmax(0, 1fr);
+  gap: 0.5rem;
+  text-decoration: none;
+  border-radius: 0.35rem;
+  padding: 0.28rem;
+}
+
+.upNextItem:hover {
+  background: #f1f4f8;
+}
+
+.upNextThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  background-color: #0f1923;
+}
+
+.upNextDuration {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  background: rgba(16, 17, 18, 0.88);
+  color: #ffffff;
+  font-size: 0.64rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2rem 0.28rem;
+  border-radius: 0.12rem;
+}
+
+.upNextMeta h4 {
+  margin: 0;
+  color: #0f2034;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.upNextMeta p {
+  margin: 0.12rem 0 0;
+  color: #4b6985;
+  font-size: 0.67rem;
+  line-height: 1.35;
+}
+
+.adBanner {
+  height: 86px;
+  border: 1px dashed #cfd8e3;
+  background: #f3f6fa;
+  color: #42586e;
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trendingColumns {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.topicColumn {
+  background: #f6faf5;
+  border: 1px solid #d8e4d2;
+  border-radius: 0.42rem;
+  padding: 0.42rem;
+}
+
+.topicColumnAlt {
+  background: #f4f8fc;
+  border-color: #d6e1ec;
+}
+
+.topicRow {
+  display: grid;
+  grid-template-columns: 98px minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.4rem 0.2rem;
+  border-bottom: 1px solid rgba(25, 43, 62, 0.15);
+}
+
+.topicRow:last-child {
+  border-bottom: none;
+}
+
+.topicThumb {
+  width: 98px;
+  height: 56px;
+  border-radius: 0.14rem;
+  overflow: hidden;
+  background-color: #0c2f45;
+}
+
+.topicMeta h4 {
+  margin: 0;
+  color: #0f2034;
+  font-size: 0.84rem;
+  line-height: 1.25;
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.topicMeta p {
+  margin: 0.18rem 0 0;
+  color: #2f4a63;
+  font-size: 0.67rem;
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.commentIcon {
+  width: 20px;
+  height: 20px;
+  color: #3a566d;
+  flex-shrink: 0;
+}
+
+.lifestyleGrid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lifestyleCard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d9e3ee;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: #ffffff;
+  text-decoration: none;
+}
+
+.lifestyleImage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: #0c2f45;
+}
+
+.lifestyleContent {
+  padding: 0.7rem;
+}
+
+.lifestyleContent h3 {
+  margin: 0;
+  color: #13263a;
+  font-size: 0.96rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.lifestyleContent p {
+  margin: 0.36rem 0 0;
+  color: #2f4a63;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lifestyleMeta {
+  display: block;
+  margin-top: 0.45rem;
+  color: #3f5f78;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+@media (min-width: 760px) {
+  .featuredVideoLayout {
+    grid-template-columns: 1.48fr 1fr;
+    align-items: start;
   }
+
+  .trendingColumns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lifestyleGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--space-xl);
+    gap: 1.15rem;
+  }
+
+  .section {
+    padding: 0.95rem;
+  }
+
+  .featuredVideoLayout {
+    grid-template-columns: 1.62fr 1fr;
+    gap: 1rem;
+  }
+
+  .featuredHero {
+    min-height: 395px;
+  }
+
+  .upNextPanel {
+    max-height: 460px;
+    overflow: auto;
+  }
+
+  .trendingColumns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lifestyleGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+:global([data-theme="dark"]) .main {
+  background: #0c1421;
+}
+
+:global([data-theme="dark"]) .section {
+  background: #142236;
+  border-color: #28405a;
+}
+
+:global([data-theme="dark"]) .sectionTitle,
+:global([data-theme="dark"]) .playerTitle,
+:global([data-theme="dark"]) .topicMeta h4,
+:global([data-theme="dark"]) .lifestyleContent h3,
+:global([data-theme="dark"]) .upNextMeta h4 {
+  color: #e3edf8;
+}
+
+:global([data-theme="dark"]) .viewAll,
+:global([data-theme="dark"]) .playerSubline,
+:global([data-theme="dark"]) .upNextMeta p,
+:global([data-theme="dark"]) .topicMeta p,
+:global([data-theme="dark"]) .lifestyleContent p,
+:global([data-theme="dark"]) .lifestyleMeta,
+:global([data-theme="dark"]) .upNextHeading {
+  color: #9fb2c8;
+}
+
+:global([data-theme="dark"]) .videoFilter {
+  border-color: #2b4661;
+  background: #1a2e46;
+  color: #d0e1f2;
+}
+
+:global([data-theme="dark"]) .videoFilterActive {
+  background: #2d9fd8;
+  border-color: #2d9fd8;
+  color: #081220;
+}
+
+:global([data-theme="dark"]) .featuredHero,
+:global([data-theme="dark"]) .upNextPanel,
+:global([data-theme="dark"]) .lifestyleCard {
+  border-color: #2a445f;
+  background: #142236;
+}
+
+:global([data-theme="dark"]) .upNextItem:hover {
+  background: #1c3149;
+}
+
+:global([data-theme="dark"]) .adBanner {
+  border-color: #36526d;
+  background: #162639;
+  color: #9eb4ca;
+}
+
+:global([data-theme="dark"]) .topicColumn {
+  background: #182a3f;
+  border-color: #29425d;
+}
+
+:global([data-theme="dark"]) .topicColumnAlt {
+  background: #1a2f47;
+  border-color: #2c4865;
+}
+
+:global([data-theme="dark"]) .topicRow {
+  border-bottom-color: rgba(159, 178, 200, 0.28);
+}
+
+:global([data-theme="dark"]) .commentIcon {
+  color: #93adc4;
 }

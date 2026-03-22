@@ -1,16 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Header, Footer } from "@/components/layout";
+import { EditorialPageIntro } from "@/components/ui";
 import type { RSSAPIResponse, RSSSource, RSSArticle } from "@/types/rss";
 import styles from "./page.module.css";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 interface ResearchPaper {
-  /** Unique identifier – the article's external URL */
   id: string;
   title: string;
   authors: string;
@@ -23,10 +19,6 @@ interface ResearchPaper {
   categories?: string[];
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -35,11 +27,6 @@ function slugify(text: string): string {
     .slice(0, 80);
 }
 
-/**
- * Non-research content types to filter out.
- * These are common in academic journal feeds (Nature, Science, Cell, etc.)
- * and should not appear on the Research page.
- */
 const NON_RESEARCH_CATEGORIES = new Set([
   "comment",
   "editorial",
@@ -66,11 +53,6 @@ const NON_RESEARCH_CATEGORIES = new Set([
   "in brief",
 ]);
 
-/**
- * Returns true when the article is a research item (i.e. none of its
- * categories match the non-research blocklist).  Articles without categories
- * are assumed to be research content (common for blog-style feeds).
- */
 function isResearchContent(article: RSSArticle): boolean {
   if (!article.categories || article.categories.length === 0) return true;
   return !article.categories.some((cat) =>
@@ -78,9 +60,6 @@ function isResearchContent(article: RSSArticle): boolean {
   );
 }
 
-/**
- * Map raw RSS sources into a flat, sorted list of ResearchPaper objects.
- */
 function mapToResearchPapers(sources: RSSSource[]): ResearchPaper[] {
   const papers: ResearchPaper[] = [];
 
@@ -96,7 +75,7 @@ function mapToResearchPapers(sources: RSSSource[]): ResearchPaper[] {
         authors: article.creator || source.source.title,
         source: source.source.title,
         publishedAt: article.pubDate,
-        year: isNaN(date.getTime()) ? "" : date.getFullYear().toString(),
+        year: Number.isNaN(date.getTime()) ? "" : date.getFullYear().toString(),
         summary: article.contentSnippet || "",
         link: article.link,
         slug: slugify(article.title),
@@ -111,10 +90,6 @@ function mapToResearchPapers(sources: RSSSource[]): ResearchPaper[] {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export default function ResearchPage() {
   const [papers, setPapers] = useState<ResearchPaper[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,8 +98,6 @@ export default function ResearchPage() {
   useEffect(() => {
     async function fetchResearch() {
       try {
-        // Fetch research feeds (Nature Aging, etc.) and topic feeds
-        // (Lifespan.io, Fight Aging!) which also cover research content.
         const [researchRes, topicRes] = await Promise.all([
           fetch("/api/rss?type=research"),
           fetch("/api/rss?type=topic"),
@@ -146,8 +119,7 @@ export default function ResearchPage() {
           throw new Error("No research feeds available");
         }
 
-        const mappedPapers = mapToResearchPapers(allSources);
-        setPapers(mappedPapers);
+        setPapers(mapToResearchPapers(allSources));
       } catch (err) {
         console.error("Failed to fetch research:", err);
         setError("Failed to load research papers. Please try again later.");
@@ -159,23 +131,36 @@ export default function ResearchPage() {
     fetchResearch();
   }, []);
 
+  const sourceCount = useMemo(
+    () => new Set(papers.map((paper) => paper.source)).size,
+    [papers]
+  );
+
   return (
     <div className={styles.page}>
       <Header />
       <main className={styles.main}>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>Research</h1>
-            <p className={styles.subtitle}>
-              Deep dives into the latest longevity research, clinical trials, and
-              scientific breakthroughs.
-            </p>
-          </div>
+          <EditorialPageIntro
+            badge="Evidence Feed"
+            title="Research"
+            description="Deep dives into longevity studies, clinical findings, and peer-reviewed breakthroughs."
+          />
+
+          {!isLoading && !error && papers.length > 0 && (
+            <div className={styles.feedMeta}>
+              <span className={styles.metaPill}>{papers.length} papers</span>
+              <span className={styles.metaPill}>{sourceCount} sources</span>
+              <span className={styles.metaPill}>
+                Updated {formatDate(papers[0].publishedAt)}
+              </span>
+            </div>
+          )}
 
           {isLoading ? (
             <div className={styles.papers}>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className={styles.skeleton}>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className={styles.skeleton}>
                   <div className={styles.skeletonMeta} />
                   <div className={styles.skeletonTitle} />
                   <div className={styles.skeletonSummary} />
@@ -192,35 +177,49 @@ export default function ResearchPage() {
               <p>No research papers available at the moment.</p>
             </div>
           ) : (
-            <div className={styles.papers}>
-              {papers.map((paper) => (
-                <article key={paper.id} className={styles.paper}>
-                  <div className={styles.paperMeta}>
-                    <span className={styles.journal}>{paper.source}</span>
-                    <span className={styles.year}>{paper.year}</span>
-                  </div>
-                  <h2 className={styles.paperTitle}>{paper.title}</h2>
-                  {paper.authors && paper.authors !== paper.source && (
-                    <p className={styles.paperAuthors}>{paper.authors}</p>
-                  )}
-                  {paper.summary && (
-                    <p className={styles.paperSummary}>{paper.summary}</p>
-                  )}
-                  <a
-                    href={paper.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.readMore}
-                  >
-                    Read analysis →
-                  </a>
-                </article>
-              ))}
-            </div>
+            <section className={styles.sectionPanel}>
+              <div className={styles.papers}>
+                {papers.map((paper) => (
+                  <article key={paper.id} className={styles.paper}>
+                    <div className={styles.paperMeta}>
+                      <span className={styles.journal}>{paper.source}</span>
+                      <span className={styles.year}>{paper.year}</span>
+                    </div>
+                    <h2 className={styles.paperTitle}>{paper.title}</h2>
+                    {paper.authors && paper.authors !== paper.source && (
+                      <p className={styles.paperAuthors}>{paper.authors}</p>
+                    )}
+                    {paper.summary && (
+                      <p className={styles.paperSummary}>{paper.summary}</p>
+                    )}
+                    <a
+                      href={paper.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.readMore}
+                    >
+                      Open source
+                    </a>
+                  </article>
+                ))}
+              </div>
+            </section>
           )}
         </div>
       </main>
       <Footer />
     </div>
   );
+}
+
+function formatDate(rawDate: string): string {
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) {
+    return rawDate;
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
 }

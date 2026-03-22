@@ -2,45 +2,43 @@
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: var(--color-brand-blue-sky);
-  border-bottom: 1px solid var(--color-border);
+  background: #d5ecff;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
 }
 
 .container {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
+  gap: var(--space-lg);
   max-width: var(--container-2xl);
   margin: 0 auto;
-  padding: var(--space-md) var(--space-lg);
-  height: var(--space-4xl);
+  height: 74px;
+  padding: var(--space-sm) var(--space-lg);
 }
 
 .nav {
   display: none;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 0.1rem;
 }
 
 .navLink {
-  padding: var(--space-sm) var(--space-md);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  color: #054667;
+  font-size: 0.93rem;
+  font-weight: 600;
   text-decoration: none;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
 }
 
 .navLink:hover {
-  color: var(--color-text);
-  background: var(--color-bg-alt);
+  background: rgba(26, 140, 198, 0.16);
 }
 
 .searchWrapper {
   display: none;
   flex: 1;
-  max-width: 400px;
+  max-width: 370px;
 }
 
 .authButtons {
@@ -51,32 +49,39 @@
   padding: 90px;
 }
 
+.authButtons a button {
+  min-width: 96px;
+}
+
 .mobileMenuButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin-left: auto;
-  padding: 0;
+  width: 38px;
+  height: 38px;
   border: none;
   background: transparent;
-  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  color: #054667;
   cursor: pointer;
-  border-radius: var(--radius-md);
-  transition: background var(--transition-fast);
+}
+
+.mobileActions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
 }
 
 .mobileMenuButton:hover {
-  background: var(--color-bg-alt);
+  background: rgba(26, 140, 198, 0.16);
 }
 
 .mobileMenuButton svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
-/* User Menu */
 .userMenu {
   position: relative;
 }
@@ -85,41 +90,40 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-sm);
+  padding: 0.25rem 0.45rem;
   border: none;
+  border-radius: var(--radius-sm);
   background: transparent;
   cursor: pointer;
-  border-radius: var(--radius-md);
-  transition: background var(--transition-fast);
 }
 
 .userButton:hover {
-  background: var(--color-bg-alt);
+  background: rgba(26, 140, 198, 0.16);
 }
 
 .avatar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .userName {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text);
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: #054667;
 }
 
 .chevron {
-  width: 16px;
-  height: 16px;
-  color: var(--color-text-muted);
+  width: 14px;
+  height: 14px;
+  color: #054667;
   transition: transform var(--transition-fast);
 }
 
@@ -129,63 +133,59 @@
 
 .dropdown {
   position: absolute;
-  top: calc(100% + var(--space-xs));
+  top: calc(100% + 6px);
   right: 0;
-  min-width: 220px;
-  background: var(--color-surface);
+  width: 235px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
+  background: #ffffff;
   box-shadow: var(--shadow-lg);
-  z-index: var(--z-dropdown);
   overflow: hidden;
 }
 
 .dropdownHeader {
   padding: var(--space-md);
-  background: var(--color-bg-alt);
+  background: #f1f8ff;
 }
 
 .dropdownName {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text);
   margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text);
 }
 
 .dropdownEmail {
-  font-size: 0.8125rem;
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
-  margin: var(--space-xs) 0 0;
 }
 
 .dropdownDivider {
-  height: 1px;
-  background: var(--color-border);
+  border-top: 1px solid var(--color-border);
 }
 
 .dropdownItem {
   display: block;
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  text-align: left;
   border: none;
   background: transparent;
+  text-align: left;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+  padding: 0.6rem 0.9rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
 }
 
 .dropdownItem:hover {
-  background: var(--color-bg-alt);
-  color: var(--color-text);
+  background: #f5fbff;
+  color: var(--color-primary-hover);
 }
 
-/* Tablet and up */
 @media (min-width: 768px) {
   .container {
-    padding: var(--space-md) var(--space-xl);
+    padding: var(--space-sm) var(--space-xl);
   }
 
   .searchWrapper {
@@ -193,12 +193,7 @@
   }
 }
 
-/* Desktop */
 @media (min-width: 1024px) {
-  .container {
-    gap: var(--space-2xl);
-  }
-
   .nav {
     display: flex;
   }
@@ -207,7 +202,67 @@
     display: flex;
   }
 
-  .mobileMenuButton {
+  .mobileActions {
     display: none;
   }
+}
+
+:global([data-theme="dark"]) .header {
+  background: #101d2d;
+  border-bottom-color: #283e57;
+}
+
+:global([data-theme="dark"]) .navLink {
+  color: #c5d9ed;
+}
+
+:global([data-theme="dark"]) .navLink:hover {
+  background: rgba(91, 147, 191, 0.2);
+}
+
+:global([data-theme="dark"]) .mobileMenuButton {
+  color: #c5d9ed;
+}
+
+:global([data-theme="dark"]) .mobileMenuButton:hover {
+  background: rgba(91, 147, 191, 0.2);
+}
+
+:global([data-theme="dark"]) .userButton:hover {
+  background: rgba(91, 147, 191, 0.2);
+}
+
+:global([data-theme="dark"]) .userName,
+:global([data-theme="dark"]) .chevron {
+  color: #d5e5f5;
+}
+
+:global([data-theme="dark"]) .dropdown {
+  border-color: #29435f;
+  background: #15273b;
+}
+
+:global([data-theme="dark"]) .dropdownHeader {
+  background: #1b3047;
+}
+
+:global([data-theme="dark"]) .dropdownName {
+  color: #e3edf8;
+}
+
+:global([data-theme="dark"]) .dropdownEmail {
+  color: #a8bfd5;
+}
+
+:global([data-theme="dark"]) .dropdownDivider {
+  border-top-color: #2c4662;
+}
+
+:global([data-theme="dark"]) .dropdownItem {
+  color: #c7d9ec;
+}
+
+:global([data-theme="dark"]) .dropdownItem:hover {
+  background: #1d344c;
+  color: #88c9f4;
 }

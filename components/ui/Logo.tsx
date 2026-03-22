@@ -1,52 +1,63 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import symbolLogo from "@/Group 32.png";
+import fullLogo from "@/Healthspan Logo.png";
 import styles from "./Logo.module.css";
 
 interface LogoProps {
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl" | "xxxxl";
   showText?: boolean;
+  fillWidth?: boolean;
 }
 
-export default function Logo({ size = "md", showText = true }: LogoProps) {
+export default function Logo({
+  size = "md",
+  showText = true,
+  fillWidth = false,
+}: LogoProps) {
+  const fullLogoWidths = {
+    sm: 104,
+    md: 138,
+    lg: 205,
+    xl: 270,
+    xxl: 340,
+    xxxl: 460,
+    xxxxl: 442,
+  } as const;
+
+  const symbolWidths = {
+    sm: 34,
+    md: 44,
+    lg: 58,
+    xl: 76,
+    xxl: 94,
+    xxxl: 118,
+    xxxxl: 114,
+  } as const;
+
+  const selectedImage = showText ? fullLogo : symbolLogo;
+  const targetWidth = showText ? fullLogoWidths[size] : symbolWidths[size];
+  const targetHeight = Math.round(
+    (targetWidth * selectedImage.height) / selectedImage.width
+  );
+
   return (
-    <Link href="/" className={styles.logo}>
-      <div className={`${styles.mark} ${styles[size]}`}>
-        <svg
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className={styles.icon}
-        >
-          {/* DNA Helix-inspired infinity/longevity symbol */}
-          <circle
-            cx="20"
-            cy="20"
-            r="18"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-          />
-          <path
-            d="M12 20C12 16 15 13 20 13C25 13 28 16 28 20C28 24 25 27 20 27C15 27 12 24 12 20Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-          />
-          <path
-            d="M14 16L26 24M14 24L26 16"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <circle cx="20" cy="20" r="3" fill="currentColor" />
-        </svg>
-      </div>
-      {showText && (
-        <span className={styles.text}>
-          Health<span className={styles.accent}>span</span>
-        </span>
-      )}
+    <Link
+      href="/"
+      className={`${styles.logo} ${fillWidth ? styles.logoFill : ""}`.trim()}
+    >
+      <Image
+        src={selectedImage}
+        alt={showText ? "Healthspan" : "Healthspan symbol"}
+        className={`${styles.image} ${styles[`image${size.toUpperCase()}`]} ${
+          fillWidth ? styles.fillWidth : ""
+        }`}
+        width={targetWidth}
+        height={targetHeight}
+        priority={size !== "sm"}
+      />
     </Link>
   );
 }

@@ -2,58 +2,86 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  position: relative;
-}
-
-.inputWrapper {
   width: 100%;
 }
 
 .input,
 .textarea {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  font-size: 0.9375rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-blue-sky);
+  color: #000000;
+  font-size: 1rem;
   font-family: var(--font-sans);
-
-  color: var(--color-bg-dark); 
-  background: #FFFFFF; 
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  padding: 0 var(--space-md);
 }
 
 .input {
-  height: 40px;
+  height: 52px;
 }
 
 .textarea {
-  height: 64px;
-  resize: none; 
-  line-height: 1.4;
+  min-height: 98px;
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  resize: vertical;
 }
 
 .input:focus,
 .textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(26, 140, 198, 0.18);
 }
 
 .input::placeholder,
 .textarea::placeholder {
-  color: var(--color-text-muted);
-}
-
-.message {
-  font-size: 0.8125rem;
-  color: var(--color-success);
-  font-weight: 500;
-  margin-top: var(--space-xs);
-  text-align: center;
+  color: #36556e;
 }
 
 .form button {
-  height: 40px;
+  height: 52px;
+  background: #81cd4c;
+  color: #000000;
+  font-size: 1.06rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #81cd4c;
+  box-shadow: none;
+}
+
+.form button:hover:not(:disabled) {
+  background: #74b845;
+  border-color: #74b845;
+  transform: none;
+}
+
+.success {
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+  background: rgba(129, 205, 76, 0.2);
+  color: #daf5c6;
+  font-size: 0.95rem;
   font-weight: 600;
 }
+
+@media (max-width: 640px) {
+  .input {
+    height: 48px;
+    font-size: 0.95rem;
+  }
+
+  .textarea {
+    min-height: 88px;
+    font-size: 0.95rem;
+  }
+
+  .form button {
+    height: 48px;
+    font-size: 1.1rem;
+  }
+}
+
+

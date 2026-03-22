@@ -70,6 +70,23 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.themeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.themeLabel {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
 .nav {
   flex: 1;
   padding: var(--space-md);

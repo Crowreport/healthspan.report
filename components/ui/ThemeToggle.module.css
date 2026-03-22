@@ -1,0 +1,127 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 34px;
+  padding: 0.35rem 0.62rem;
+  border: 1px solid #9ec6e5;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #eff8ff 0%, #deeffd 100%);
+  color: #2b5e85;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.trigger:hover {
+  border-color: #7eafd6;
+}
+
+.triggerLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-fast);
+}
+
+.chevronUp {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 122px;
+  padding: 0.3rem;
+  border: 1px solid #bfd7eb;
+  border-radius: var(--radius-md);
+  background: #f7fbff;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+}
+
+.option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.5rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #224765;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: #e8f2fb;
+}
+
+.optionActive {
+  background: #dbeeff;
+  color: #0f6ea1;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: #0f6ea1;
+}
+
+.compact .trigger {
+  min-width: 78px;
+  padding: 0.32rem 0.56rem;
+}
+
+.compact .triggerLabel {
+  font-size: 0.66rem;
+}
+
+:global([data-theme="dark"]) .trigger {
+  border-color: #325174;
+  background: linear-gradient(135deg, #122033 0%, #0f1c2d 100%);
+  color: #c0d7ec;
+}
+
+:global([data-theme="dark"]) .trigger:hover {
+  border-color: #476a8f;
+}
+
+:global([data-theme="dark"]) .menu {
+  border-color: #2d4868;
+  background: #162739;
+}
+
+:global([data-theme="dark"]) .option {
+  color: #c4d8ec;
+}
+
+:global([data-theme="dark"]) .option:hover {
+  background: #21394f;
+}
+
+:global([data-theme="dark"]) .optionActive {
+  background: #294765;
+  color: #8fd0f3;
+}
+
+:global([data-theme="dark"]) .dot {
+  background: #8fd0f3;
+}
+

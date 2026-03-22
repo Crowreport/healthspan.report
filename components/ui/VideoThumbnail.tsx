@@ -20,50 +20,35 @@ export default function VideoThumbnail({
       rel="noopener noreferrer"
       className={`${styles.thumbnail} ${styles[variant]}`}
     >
-      <div className={styles.imageWrapper}>
+      <div className={styles.imageWrap}>
         {hasImage ? (
           <div
             className={styles.image}
             style={{
               backgroundImage: `url(${video.thumbnailUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
             }}
-          >
-            <span className={styles.playIcon}>
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
-          </div>
+          />
         ) : (
-          <div
-            className={styles.image}
-            style={{
-              background: `linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)`,
-            }}
-          >
-            <span className={styles.playIcon}>
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
-          </div>
-        )}
-        {video.duration && (
-          <span className={styles.duration}>{video.duration}</span>
+          <div className={styles.image} />
         )}
       </div>
-
       <div className={styles.content}>
         <h4 className={styles.title}>{video.title}</h4>
-        <div className={styles.meta}>
-          <span className={styles.channel}>{video.channelName}</span>
-          <span className={styles.stats}>
-            {video.views && `${video.views} · `}{video.publishedAt}
-          </span>
-        </div>
+        <p className={styles.meta}>{formatDate(video.publishedAt)}</p>
       </div>
     </a>
   );
+}
+
+function formatDate(rawDate: string): string {
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) {
+    return rawDate;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
 }

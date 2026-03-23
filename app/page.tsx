@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
-import { articles, latestVideos } from "@/data/mockData";
+import { articles, latestVideos, podcasts } from "@/data/mockData";
 import type { RSSAPIResponse, RSSSource } from "@/types/rss";
 import styles from "./page.module.css";
 
@@ -25,6 +25,15 @@ type HomeArticle = {
   readTime: string;
   imageUrl: string;
   externalUrl: string;
+};
+
+type HomePodcast = {
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  publisher: string;
+  publishedAt: string;
+  url: string;
 };
 
 function CommentIcon() {
@@ -118,18 +127,94 @@ function TopicSection({
   );
 }
 
+interface MediaItem {
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  publishedAt: string;
+  groupName: string;
+  url: string;
+}
+
+function GroupedMediaSection({
+  title,
+  items,
+  viewAllHref,
+  maxRows,
+}: {
+  title: string;
+  items: MediaItem[];
+  viewAllHref: string;
+  maxRows?: number;
+}) {
+  const groups = useMemo(() => {
+    const g: Record<string, MediaItem[]> = {};
+    items.forEach((item) => {
+      if (!g[item.groupName]) g[item.groupName] = [];
+      g[item.groupName].push(item);
+    });
+    return g;
+  }, [items]);
+
+  const displayedGroups = maxRows ? Object.entries(groups).slice(0, maxRows) : Object.entries(groups);
+
+  return (
+    <section className={styles.videoSection}>
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>{title}</h2> 
+      </div>
+      <div className={styles.videoRows}>
+        {displayedGroups.map(([groupName, groupItems], i) => (
+          <div key={i} className={styles.channelGroup}>
+            <h3 className={styles.channelTitle}>{groupName}</h3>
+            <div className={styles.videoRow}>
+              {groupItems.map((item, j) => {
+                const href = normalizeHref(item.url, viewAllHref);
+              const isExternal = isExternalHref(href);
+              return (
+                <a
+                    key={`${item.id}-${i}-${j}`}
+                  href={href}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  className={styles.videoCard}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                      src={item.thumbnailUrl}
+                      alt={item.title}
+                    className={styles.videoCardImage}
+                    loading="lazy"
+                  />
+                    <div className={styles.videoCardContent}>
+                      <h3 className={styles.videoCardTitle}>{item.title}</h3>
+                      <p className={styles.videoCardDate}>{item.publishedAt}</p>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const [videoItems, setVideoItems] = useState<HomeVideo[]>(createFallbackVideos());
   const [articleItems, setArticleItems] = useState<HomeArticle[]>(createFallbackArticles());
+  const [podcastItems, setPodcastItems] = useState<HomePodcast[]>(createFallbackPodcasts());
 
   useEffect(() => {
     let isCancelled = false;
 
     async function hydrateHomepageLinks() {
       try {
-        const [videoResponse, articleResponse] = await Promise.all([
+        const [videoResponse, articleResponse, podcastResponse] = await Promise.all([
           fetch("/api/rss?type=video"),
           fetch("/api/rss?type=article"),
+          fetch("/api/rss?type=video"),
         ]);
 
         if (!isCancelled && videoResponse.ok) {
@@ -147,6 +232,15 @@ export default function Home() {
             setArticleItems(mappedArticles);
           }
         }
+
+        if (!isCancelled && podcastResponse.ok) {
+          const podcastPayload = (await podcastResponse.json()) as RSSAPIResponse;
+          console.log("[Homepage] Raw Podcast Response:", podcastPayload);
+          const mappedPodcasts = mapPodcastSources(podcastPayload.sources || []);
+          if (mappedPodcasts.length > 0) {
+            setPodcastItems(mappedPodcasts);
+          }
+        }
       } catch (error) {
         console.error("Homepage feed hydration failed:", error);
       }
@@ -159,13 +253,39 @@ export default function Home() {
     };
   }, []);
 
-  const featuredVideo = videoItems[0] || createFallbackVideos()[0];
+  const featuredVideo = videoItems[0];
   const sideVideos = useMemo(() => {
     const base = videoItems.length > 1 ? videoItems.slice(1) : videoItems;
     return loopItems(base, 6);
   }, [videoItems]);
 
-  const featuredVideoHref = normalizeHref(featuredVideo.videoUrl, "/videos");
+  const mediaVideos = useMemo<MediaItem[]>(
+    () =>
+      videoItems.map((v) => ({
+        id: v.id,
+        title: v.title,
+        thumbnailUrl: v.thumbnailUrl,
+        publishedAt: v.publishedAt,
+        groupName: v.channelName,
+        url: v.videoUrl,
+      })),
+    [videoItems]
+  );
+
+  const mediaPodcasts = useMemo<MediaItem[]>(
+    () =>
+      podcastItems.map((p) => ({
+        id: p.id,
+        title: p.title,
+        thumbnailUrl: p.thumbnailUrl,
+        publishedAt: p.publishedAt,
+        groupName: p.publisher,
+        url: p.url,
+      })),
+    [podcastItems]
+  );
+
+  const featuredVideoHref = featuredVideo ? normalizeHref(featuredVideo.videoUrl, "/videos") : "#";
   const featuredVideoExternal = isExternalHref(featuredVideoHref);
 
   return (
@@ -174,12 +294,10 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className={styles.container}>
+          {featuredVideo && (
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Featured Video</h2>
-              <Link href="/videos" className={styles.viewAll}>
-                View all videos
-              </Link>
             </div>
             <div className={styles.featuredVideoLayout}>
               <div className={styles.playerColumn}>
@@ -252,6 +370,7 @@ export default function Home() {
               </aside>
             </div>
           </section>
+          )}
 
           <div className={styles.adBanner}>Advertisement</div>
 
@@ -265,6 +384,37 @@ export default function Home() {
 
           <TopicSection
             title="Lifestyle News"
+            viewAllHref="/articles"
+            articles={articleItems}
+          />
+
+          <div className={styles.adBanner}>Advertisement</div>
+
+          <GroupedMediaSection
+            title="Top Youtube Channels"
+            items={mediaVideos}
+            viewAllHref="/videos"
+          />
+
+          <TopicSection
+            title="Lifestyle News"
+            viewAllHref="/articles"
+            articles={articleItems}
+          />
+
+          <div className={styles.adBanner}>Advertisement</div>
+
+          <GroupedMediaSection
+            title="Top Podcasts"
+            items={mediaPodcasts}
+            viewAllHref="/podcasts"
+            maxRows={3}
+          />
+
+          <div className={styles.adBanner}>Advertisement</div>
+
+          <TopicSection
+            title="Supplement News"
             viewAllHref="/articles"
             articles={articleItems}
           />
@@ -342,6 +492,28 @@ function mapArticleSources(sources: RSSSource[]): HomeArticle[] {
   );
 }
 
+function mapPodcastSources(sources: RSSSource[]): HomePodcast[] {
+  const podcasts: HomePodcast[] = [];
+
+  for (const source of sources) {
+    for (const item of source.articles) {
+      podcasts.push({
+        id: item.link || `${source.source.feedUrl}-${item.title}`,
+        title: item.title || "Untitled podcast",
+        thumbnailUrl:
+          item.thumbnail || source.source.image || "/images/placeholders/video.svg",
+        publisher: source.source.title,
+        publishedAt: formatDate(item.pubDate),
+        url: item.link || "/podcasts",
+      });
+    }
+  }
+
+  return podcasts.sort(
+    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
+}
+
 function createFallbackVideos(): HomeVideo[] {
   return latestVideos.map((video, index) => ({
     id: `fallback-video-${index}`,
@@ -363,6 +535,17 @@ function createFallbackArticles(): HomeArticle[] {
     readTime: article.readTime,
     imageUrl: article.imageUrl,
     externalUrl: "/articles",
+  }));
+}
+
+function createFallbackPodcasts(): HomePodcast[] {
+  return podcasts.map((podcast, index) => ({
+    id: `fallback-podcast-${index}`,
+    title: podcast.name,
+    thumbnailUrl: podcast.imageUrl,
+    publisher: podcast.publisher,
+    publishedAt: formatDate(podcast.publishedAt),
+    url: podcast.podcastUrl || "/podcasts",
   }));
 }
 

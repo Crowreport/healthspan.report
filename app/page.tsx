@@ -15,7 +15,7 @@ import { getCurrentUser } from "@/lib/auth";
 import styles from "./page.module.css";
 
 export default async function Home() {
-  const [user, { articles }, { videos }] = await Promise.all([
+  const [user, { articles }, { videos }, { topics }] = await Promise.all([
     getCurrentUser(),
     getArticlesFromDB(6),
     getVideosFromDB(15),

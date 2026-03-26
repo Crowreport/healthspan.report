@@ -9,17 +9,17 @@ import {
   TopPodcasts,
 } from "@/components/sections";
 import { getArticlesFromDB } from "@/lib/content/articles";
+import { getVideosFromDB } from "@/lib/content/videos";
 import { getTopicItemsForTrending } from "@/lib/content/topics";
-import { getVideosFromDB  } from "@/lib/content/videos";
 import { getCurrentUser } from "@/lib/auth";
 import styles from "./page.module.css";
 
 export default async function Home() {
-  const [user, { articles }, {topics}, { videos }] = await Promise.all([
+  const [user, { articles }, { videos }, { topics }] = await Promise.all([
     getCurrentUser(),
     getArticlesFromDB(6),
-    getTopicItemsForTrending(6),
     getVideosFromDB(15),
+    getTopicItemsForTrending(6)
   ]);
   const isAdmin = user?.role === "admin";
 

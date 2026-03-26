@@ -9,13 +9,15 @@ import {
   TopPodcasts,
 } from "@/components/sections";
 import { getArticlesFromDB } from "@/lib/content/articles";
+import { getTopicItemsForTrending } from "@/lib/content/topics";
 import { getCurrentUser } from "@/lib/auth";
 import styles from "./page.module.css";
 
 export default async function Home() {
-  const [user, { articles }] = await Promise.all([
+  const [user, { articles }, { topics }] = await Promise.all([
     getCurrentUser(),
     getArticlesFromDB(6),
+    getTopicItemsForTrending(6),
   ]);
   const isAdmin = user?.role === "admin";
 
@@ -45,7 +47,7 @@ export default async function Home() {
         </section>
 
         {/* Trending Topics */}
-        <TrendingTopics />
+        <TrendingTopics initialTopics={topics} isAdmin={!!isAdmin} />
 
         {/* Another Ad */}
         <section className={styles.adSection}>

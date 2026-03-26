@@ -6,8 +6,8 @@
 
 .main {
   flex: 1;
-  background: #f6f7f8;
-  padding: 2.25rem 0 3rem;
+  background: vqr(--color-bg);
+  padding: var(--space-xl) 0 var(--space-2xl);
 }
 
 .container {
@@ -17,26 +17,26 @@
 }
 
 .panel {
-  background: #ffffff;
-  border: 1px solid #dce5ef;
-  border-radius: 0.7rem;
-  padding: 0.95rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
 }
 
 .grid {
   display: grid;
-  gap: 0.85rem;
+  gap: var(--space-md);
 }
 
 .topicCard {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.35rem;
-  padding: 0.95rem;
-  background: #ffffff;
-  border: 1px solid #d9e3ee;
-  border-radius: 0.55rem;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--space-sm);
   text-decoration: none;
   text-align: left;
   transition: all var(--transition-base);
@@ -44,7 +44,7 @@
 
 .topicCard:hover {
   box-shadow: var(--shadow-md);
-  border-color: #bfd1e4;
+  border-color: var(--color-border-blue);
 }
 
 .icon {
@@ -54,9 +54,9 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  border: 1px solid #d2e2f2;
-  background: #ecf4fc;
-  color: #0f6ea1;
+  border: 1px solid var(--color-border-blue);
+  background: var(--color-bg-lightblue);
+  color: var(--color-primary);
   font-size: 0.86rem;
   font-weight: 700;
 }
@@ -64,13 +64,13 @@
 .topicName {
   font-size: 0.98rem;
   font-weight: 600;
-  color: #10263b;
+  color: var(--color-text);
   margin: 0;
 }
 
 .count {
   font-size: 0.76rem;
-  color: #516d88;
+  color: var(--color-text-muted);
 }
 
 @media (min-width: 480px) {
@@ -91,11 +91,11 @@
   }
 
   .main {
-    padding-top: 2.75rem;
+    padding-top: var(--space-2xl);
   }
 
   .panel {
-    padding: 1.05rem;
+    padding: var(--space-md);
   }
 
   .grid {
@@ -104,25 +104,25 @@
 }
 
 :global([data-theme="dark"]) .main {
-  background: #0c1421;
+  background: var(--color-bg);
 }
 
 :global([data-theme="dark"]) .panel,
 :global([data-theme="dark"]) .topicCard {
-  background: #142236;
-  border-color: #28405a;
+  background: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 :global([data-theme="dark"]) .icon {
-  background: #1a2e46;
-  border-color: #2d4a65;
-  color: #8fd0f3;
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+  color: var(--color-primary-hover);
 }
 
 :global([data-theme="dark"]) .topicName {
-  color: #e3edf8;
+  color: var(--color-text);
 }
 
 :global([data-theme="dark"]) .count {
-  color: #9fb2c8;
+  color: var(--color-text-muted);
 }

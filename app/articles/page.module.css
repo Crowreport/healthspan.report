@@ -6,8 +6,8 @@
 
 .main {
   flex: 1;
-  background: #f6f7f8;
-  padding: 2.25rem 0 3rem;
+  background: var(--color-bg);
+  padding: var(--space-xl) 0 var(--space-2xl);
 }
 
 .container {
@@ -19,30 +19,30 @@
 .feedMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin: -0.6rem 0 1.5rem;
+  gap: var(--space-sm);
+  margin: calc(var(--space-xs) * -1) 0 var(--space-md);
 }
 
 .metaPill {
   display: inline-flex;
   align-items: center;
-  padding: 0.32rem 0.7rem;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   border: 1px solid color-mix(in srgb, var(--color-primary) 26%, #ffffff);
-  background: var(--color-surface-alt);
-  color: var(--color-primary-hover);
-  font-size: 0.78rem;
+  background: var(--color-bg-lightblue);
+  color: var(--color-text-blue);
+  font-size: 0.74rem;
   font-weight: 600;
 }
 
 .leadSection {
-  margin-bottom: 2.4rem;
+  margin-bottom: var(--space-xl);
 }
 
 .sectionEyebrow {
-  margin: 0 0 0.2rem;
+  margin: 0 0 var(--space-xs);
   width: fit-content;
-  padding: 0.28rem 0.6rem;
+  padding: var(--space-xs) var(--space-sm);
   border: 1px solid color-mix(in srgb, var(--color-primary) 35%, #ffffff);
   border-radius: var(--radius-full);
   background: var(--color-surface-alt);
@@ -56,17 +56,17 @@
 .leadGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.15rem;
+  gap: var(--space-md);
 }
 
 .leadContent {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  padding: 1.05rem 1rem;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-md);
   border: 1px solid color-mix(in srgb, var(--color-primary) 30%, #ffffff);
   border-radius: var(--radius-lg);
-  background: linear-gradient(160deg, #f5fbff 0%, #edf8ff 100%);
+  background: linear-gradient(160deg, var(--color-bg) 0%, var(--color-bg-lightblue) 100%);
 }
 
 .leadTitle {
@@ -96,7 +96,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-sm);
   margin: 0;
   color: var(--color-text-muted);
   font-size: 0.79rem;
@@ -104,14 +104,14 @@
 }
 
 .dot {
-  color: #7a8ea3;
+  color: var(--color-text-muted);
 }
 
 .leadActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 0.2rem;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
 }
 
 .readLinkPrimary,
@@ -121,7 +121,7 @@
   justify-content: center;
   min-height: 38px;
   border-radius: var(--radius-sm);
-  padding: 0.35rem 0.8rem;
+  padding: var(--space-xs) var(--space-md);
   width: fit-content;
   font-size: 0.86rem;
   font-weight: 700;
@@ -130,18 +130,18 @@
 
 .readLinkPrimary {
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-text-white);
   border: 1px solid var(--color-primary);
 }
 
 .readLinkPrimary:hover {
   background: var(--color-primary-hover);
-  color: #ffffff;
+  color: var(--color-text-white);
 }
 
 .readLinkSecondary {
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--color-surface));
   color: var(--color-primary-hover);
 }
 
@@ -155,14 +155,14 @@
 
 .grid {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .sectionPanel {
-  background: #ffffff;
-  border: 1px solid #dce5ef;
-  border-radius: 0.7rem;
-  padding: 0.95rem;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
 }
 
 .sectionHeader {
@@ -170,7 +170,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-md);
-  margin-bottom: 0.9rem;
+  margin-bottom: var(--space-md);
 }
 
 .sectionTitle {
@@ -181,7 +181,7 @@
 .sectionCount {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
 }
 
@@ -217,13 +217,13 @@
 @media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.1rem;
+    gap: var(--space-md);
   }
 }
 
 @media (min-width: 1024px) {
   .main {
-    padding-top: 2.75rem;
+    padding-top: var(--space-2xl);
   }
 
   .container {
@@ -232,7 +232,7 @@
 
   .leadGrid {
     grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.9fr);
-    gap: 1.5rem;
+    gap: var(--space-lg);
     align-items: start;
   }
 
@@ -248,11 +248,11 @@
 
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.2rem;
+    gap: var(--space-lg);
   }
 
   .sectionPanel {
-    padding: 1.05rem;
+    padding: var(--space-md);
   }
 }
 
@@ -263,54 +263,54 @@
 }
 
 :global([data-theme="dark"]) .main {
-  background: #0c1421;
+  background: var(--color-bg);
 }
 
 :global([data-theme="dark"]) .metaPill,
 :global([data-theme="dark"]) .sectionEyebrow {
-  border-color: #2d4a65;
-  background: #1a2e46;
-  color: #8fd0f3;
+  border-color: var(--color-border);
+  background: var(--color-surface-elevated);
+  color: var(--color-primary-hover);
 }
 
 :global([data-theme="dark"]) .leadContent,
 :global([data-theme="dark"]) .sectionPanel {
-  border-color: #28405a;
-  background: #142236;
+  border-color: var(--color-border);
+  background: var(--color-surface);
 }
 
 :global([data-theme="dark"]) .leadTitleLink,
 :global([data-theme="dark"]) .sectionTitle {
-  color: #e3edf8;
+  color: var(--color-text);
 }
 
 :global([data-theme="dark"]) .leadExcerpt,
 :global([data-theme="dark"]) .leadMeta,
 :global([data-theme="dark"]) .sectionCount {
-  color: #9fb2c8;
+  color: var(--color-text-muted);
 }
 
 :global([data-theme="dark"]) .dot {
-  color: #7f96ac;
+  color: var(--color-text-muted);
 }
 
 :global([data-theme="dark"]) .readLinkPrimary {
-  color: #081220;
-  background: #51b4e1;
+  color: var(--color-bg-dark);
+  background: var(--color-primary);
   border-color: #51b4e1;
 }
 
 :global([data-theme="dark"]) .readLinkPrimary:hover {
-  background: #76c7ec;
-  border-color: #76c7ec;
-  color: #081220;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-bg-dark);
 }
 
 :global([data-theme="dark"]) .readLinkSecondary {
-  border-color: #355573;
+  border-color: var(--color-border);
   color: #9ed2f0;
 }
 
 :global([data-theme="dark"]) .readLinkSecondary:hover {
-  background: #1a2e46;
+  background: var(--color-surface-elevated);
 }

@@ -6,8 +6,8 @@
 
 .main {
   flex: 1;
-  background: #f6f7f8;
-  padding: 2.25rem 0 3rem;
+  background: var(--color-bg);
+  padding: var(--space-xl) 0 var(--space-2xl);
 }
 
 .container {
@@ -19,112 +19,112 @@
 .feedMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin: -0.25rem 0 1.2rem;
+  gap: var(--space-sm);
+  margin: calc(var(--space-xs) * -1) 0 var(--space-md);
 }
 
 .metaPill {
   display: inline-flex;
   align-items: center;
-  padding: 0.28rem 0.66rem;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
-  border: 1px solid #d2e1f0;
-  background: #ecf4fc;
-  color: #0f6ea1;
+  border: 1px solid var(--color-border-blue);
+  background: var(--color-bg-lightblue);
+  color: var(--color-text-blue);
   font-size: 0.74rem;
   font-weight: 600;
 }
 
 .sectionPanel {
-  background: #ffffff;
-  border: 1px solid #dce5ef;
-  border-radius: 0.7rem;
-  padding: 0.95rem;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
 }
 
 .papers {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: var(--space-md);
 }
 
 .paper {
-  background: #ffffff;
-  border: 1px solid #d9e3ee;
-  border-radius: 0.55rem;
-  padding: 0.95rem;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .paper:hover {
-  border-color: #bfd1e4;
+  border-color: var(--color-border-blue);
   box-shadow: var(--shadow-md);
 }
 
 .paperMeta {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.35rem;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
 }
 
 .journal {
   font-size: 0.74rem;
   font-weight: 700;
-  color: #0f6ea1;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .year {
   font-size: 0.72rem;
-  color: #62809c;
+  color: var(--color-text-muted);
 }
 
 .paperTitle {
-  margin: 0 0 0.25rem;
+  margin: 0 0 var(--space-xs);
   font-size: 1.02rem;
   line-height: 1.32;
-  color: #10263b;
+  color: var(--color-text);
 }
 
 .paperAuthors {
-  margin: 0 0 0.4rem;
+  margin: 0 0 var(--space-sm);
   font-size: 0.78rem;
-  color: #516d88;
+  color: var(--color-text-muted);
 }
 
 .paperSummary {
-  margin: 0 0 0.55rem;
+  margin: 0 0 var(--space-sm);
   font-size: 0.83rem;
   line-height: 1.5;
-  color: #48637d;
+  color: var(--color-text-muted);
 }
 
 .readMore {
   display: inline-flex;
   align-items: center;
   min-height: 32px;
-  padding: 0.22rem 0.68rem;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
-  border: 1px solid #d2e1f0;
-  background: #f3f8fd;
-  color: #0f6ea1;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-elevated);
+  color: var(--color-primary);
   font-size: 0.78rem;
   font-weight: 700;
   text-decoration: none;
 }
 
 .readMore:hover {
-  background: #e7f2fc;
-  color: #0b5f8b;
+  background: var(--color-surface-alt);
+  color: var(--color-primary-hover);
 }
 
 .skeleton {
-  background: #ffffff;
-  border: 1px solid #d9e3ee;
-  border-radius: 0.55rem;
-  padding: 0.95rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
 }
 
 .skeletonMeta,
@@ -140,19 +140,19 @@
 .skeletonMeta {
   width: 38%;
   height: 12px;
-  margin-bottom: 0.35rem;
+  margin-bottom: var(--space-xs);
 }
 
 .skeletonTitle {
   width: 86%;
   height: 20px;
-  margin-bottom: 0.35rem;
+  margin-bottom: var(--space-xs);
 }
 
 .skeletonSummary {
   width: 100%;
   height: 44px;
-  margin-bottom: 0.55rem;
+  margin-bottom: var(--space-sm);
 }
 
 .skeletonLink {
@@ -179,7 +179,7 @@
 
 @media (min-width: 1024px) {
   .main {
-    padding-top: 2.75rem;
+    padding-top: var(--space-2xl);
   }
 
   .container {
@@ -187,15 +187,15 @@
   }
 
   .sectionPanel {
-    padding: 1.05rem;
+    padding: var(--space-md);
   }
 
   .papers {
-    gap: 0.95rem;
+    gap: var(--space-md);
   }
 
   .paper {
-    padding: 1.05rem;
+    padding: var(--space-md);
   }
 
   .paperTitle {
@@ -204,43 +204,43 @@
 }
 
 :global([data-theme="dark"]) .main {
-  background: #0c1421;
+  background: var(--color-bg);
 }
 
 :global([data-theme="dark"]) .metaPill {
-  border-color: #2d4a65;
-  background: #1a2e46;
-  color: #8fd0f3;
+  border-color: var(--color-border);
+  background: var(--color-surface-elevated);
+  color: var(--color-primary-hover);
 }
 
 :global([data-theme="dark"]) .sectionPanel,
 :global([data-theme="dark"]) .paper,
 :global([data-theme="dark"]) .skeleton {
-  background: #142236;
-  border-color: #28405a;
+  background: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 :global([data-theme="dark"]) .journal {
-  color: #8fd0f3;
+  color: var(--color-primary-hover);
 }
 
 :global([data-theme="dark"]) .year,
 :global([data-theme="dark"]) .paperAuthors,
 :global([data-theme="dark"]) .paperSummary {
-  color: #9fb2c8;
+  color: var(--color-text-muted);
 }
 
 :global([data-theme="dark"]) .paperTitle {
-  color: #e3edf8;
+  color: var(--color-text);
 }
 
 :global([data-theme="dark"]) .readMore {
-  border-color: #2d4a65;
-  background: #1a2e46;
-  color: #8fd0f3;
+  border-color: var(--color-border);
+  background: var(--color-primary-light);
+  color: var(--color-primary-hover);
 }
 
 :global([data-theme="dark"]) .readMore:hover {
-  background: #223853;
-  color: #a9dcf8;
+  background: var(--color-surface-elevated);
+  color: var(--color-primary-hover);
 }

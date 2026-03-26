@@ -81,7 +81,7 @@
 }
 
 .ctaPanel {
-  margin-top: var(--space-md);
+  margin-top: var(--space-xl);
   text-align: center;
   background: var(--color-surface-elevated);
   border: 1px solid var(--color-border);
@@ -122,30 +122,30 @@
 }
 
 :global([data-theme="dark"]) .main {
-  background: #0c1421;
+  background: var(--color-bg);
 }
 
 :global([data-theme="dark"]) .panel,
 :global([data-theme="dark"]) .topicCard,
 :global([data-theme="dark"]) .ctaPanel {
-  background: #142236;
-  border-color: #28405a;
+  background: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 :global([data-theme="dark"]) .sectionTitle,
 :global([data-theme="dark"]) .topicTitle,
 :global([data-theme="dark"]) .ctaTitle {
-  color: #e3edf8;
+  color: var(--color-text);
 }
 
 :global([data-theme="dark"]) .sectionText,
 :global([data-theme="dark"]) .topicText,
 :global([data-theme="dark"]) .ctaText {
-  color: #9fb2c8;
+  color: var(--color-text-muted);
 }
 
 :global([data-theme="dark"]) .topicIcon {
-  background: #1a2e46;
-  border-color: #2d4a65;
-  color: #8fd0f3;
+  background: var(--color-border-light);
+  border-color: var(--color-border);
+  color: var(--color-primary-hover);
 }

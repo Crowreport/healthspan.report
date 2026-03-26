@@ -26,6 +26,7 @@
   --color-text-muted: #64748B;
   --color-text-light: #94A3B8;
   --color-text-white: #ffffff;
+  --color-text-blue: #0f6ea1;
 
   /* Backgrounds */
   --color-bg: #F8FAFC;
@@ -40,6 +41,7 @@
   /* Borders */
   --color-border: #E2E8F0;
   --color-border-light: #F1F5F9;
+  --color-border-blue: #d2e1f0;
 
   /* Semantic Colors */
   --color-success: #10B981;

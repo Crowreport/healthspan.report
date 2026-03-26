@@ -6,8 +6,8 @@
 
 .main {
   flex: 1;
-  background: #f6f7f8;
-  padding: 2.25rem 0 3rem;
+  background: var(--color-bg);
+  padding: var(--space-xl) 0 var(--space-2xl);
 }
 
 .container {
@@ -19,53 +19,57 @@
 .feedMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin: -0.25rem 0 1.2rem;
+  gap: var(--space-sm);
+  margin: calc(var(--space-xs) * -1) 0 var(--space-md);
 }
 
 .metaPill {
   display: inline-flex;
   align-items: center;
-  padding: 0.28rem 0.66rem;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
-  border: 1px solid #d2e1f0;
-  background: #ecf4fc;
-  color: #0f6ea1;
+  border: 1px solid var(--color-border-blue);
+  background: var(--color-bg-lightblue);
+  color: var(--color-text-blue);
   font-size: 0.74rem;
   font-weight: 600;
 }
 
 .sectionPanel {
-  background: #ffffff;
-  border: 1px solid #dce5ef;
-  border-radius: 0.7rem;
-  padding: 0.95rem;
-  margin-bottom: 1rem;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.sectionPanel ~.sectionPanel {
+  margin-bottom: 0;
 }
 
 .sectionHeader {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-md);
   gap: var(--space-md);
 }
 
 .sectionTitle {
   margin: 0;
   font-size: clamp(1.15rem, 1.8vw, 1.35rem);
-  color: #10263b;
+  color: var(--color-text);
 }
 
 .sectionCount {
   margin: 0;
-  color: #506d88;
+  color: var(--color-text-muted);
   font-size: 0.78rem;
   font-weight: 600;
 }
 
 .featuredSection {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
 }
 
 .featuredWrap {
@@ -74,7 +78,7 @@
 
 .grid {
   display: grid;
-  gap: 0.9rem;
+  gap: var(--space-md);
 }
 
 .error,
@@ -109,7 +113,7 @@
 @media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    gap: var(--space-md);
   }
 }
 
@@ -119,16 +123,16 @@
   }
 
   .main {
-    padding-top: 2.75rem;
+    padding-top: var(--space-2xl);
   }
 
   .sectionPanel {
-    padding: 1.05rem;
+    padding: var(--space-md);
   }
 
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.1rem;
+    gap: var(--space-lg);
   }
 }
 
@@ -139,24 +143,24 @@
 }
 
 :global([data-theme="dark"]) .main {
-  background: #0c1421;
+  background: var(--color-bg);
 }
 
 :global([data-theme="dark"]) .metaPill {
-  border-color: #2d4a65;
-  background: #1a2e46;
-  color: #8fd0f3;
+  border-color: var(--color-border);
+  background: var(--color-surface-elevated);
+  color: var(--color-primary-hover);
 }
 
 :global([data-theme="dark"]) .sectionPanel {
-  background: #142236;
-  border-color: #28405a;
+  background: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 :global([data-theme="dark"]) .sectionTitle {
-  color: #e3edf8;
+  color: var(--color-text);
 }
 
 :global([data-theme="dark"]) .sectionCount {
-  color: #9fb2c8;
+  color: var(--color-text-muted);
 }

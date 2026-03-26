@@ -6,10 +6,10 @@
 
 .main {
   flex: 1;
-  background: #f6f7f8;
-  padding: 2.25rem 0 3rem;
+  background: var(--color-bg);
+  padding: var(--space-xl) 0 var(--space-2xl);
 }
 
 :global([data-theme="dark"]) .main {
-  background: #0c1421;
+  background: var(--color-bg);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import styles from "./Carousel.module.css";
 
 interface CarouselProps {
@@ -10,12 +10,8 @@ interface CarouselProps {
 export default function Carousel({ children }: CarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
 
   const childrenArray = Array.isArray(children) ? children : [children];
-  
-  if (childrenArray.length === 0) return null;
 
   // Duplicate items to create seamless infinite loop
   // We need at least 18 items total, so duplicate until we have enough
@@ -43,22 +39,12 @@ export default function Carousel({ children }: CarouselProps) {
     return gap || 16;
   };
 
-  const updateScrollButtons = () => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-  };
-
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     // Set initial scroll position to start of first set
     container.scrollLeft = 0;
-    updateScrollButtons();
 
     const handleScroll = () => {
       const itemWidth = getItemWidth();
@@ -72,16 +58,12 @@ export default function Carousel({ children }: CarouselProps) {
       } else if (container.scrollLeft < 0) {
         container.scrollLeft = singleSetWidth + container.scrollLeft;
       }
-
-      updateScrollButtons();
     };
 
     container.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", updateScrollButtons);
 
     return () => {
       container.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", updateScrollButtons);
     };
   }, [childrenArray.length]);
 
@@ -98,6 +80,8 @@ export default function Carousel({ children }: CarouselProps) {
       behavior: "smooth",
     });
   };
+
+  if (childrenArray.length === 0) return null;
 
   return (
     <div className={styles.carousel}>

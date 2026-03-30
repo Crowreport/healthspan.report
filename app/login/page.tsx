@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 
 import { createClient } from "@/utils/supabase/client";
@@ -15,23 +15,37 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const supabase = createClient();
   const setProfile = useUserStore((s) => s.setProfile);
+  const queryMessage = searchParams.get("message");
+  const initialFeedback = (() => {
+    if (queryMessage === "email-verified") {
+      return {
+        message: "Email verified successfully! You can now sign in.",
+        error: "",
+      };
+    }
+
+    if (queryMessage === "verification-error") {
+      return {
+        message: "",
+        error: "Email verification failed. Please try again.",
+      };
+    }
+
+    if (queryMessage === "password-updated") {
+      return {
+        message: "Password updated successfully! Please sign in with your new password.",
+        error: "",
+      };
+    }
+
+    return { message: "", error: "" };
+  })();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState(initialFeedback.error);
+  const [message, setMessage] = useState(initialFeedback.message);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const msg = searchParams.get("message");
-    if (msg === "email-verified") {
-      setMessage("Email verified successfully! You can now sign in.");
-    } else if (msg === "verification-error") {
-      setError("Email verification failed. Please try again.");
-    } else if (msg === "password-updated") {
-      setMessage("Password updated successfully! Please sign in with your new password.");
-    }
-  }, [searchParams]);
 
   async function handleLogin() {
     setError("");

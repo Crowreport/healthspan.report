@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SearchBar } from "@/components/ui";
 import styles from "./HeroBanner.module.css";
 
@@ -20,10 +21,10 @@ export default function HeroBanner() {
           </div>
           <div className={styles.tags}>
             <span className={styles.tagLabel}>Popular:</span>
-            <a href="/topics/nad" className={styles.tag}>NAD+</a>
-            <a href="/topics/fasting" className={styles.tag}>Fasting</a>
-            <a href="/topics/rapamycin" className={styles.tag}>Rapamycin</a>
-            <a href="/topics/sleep" className={styles.tag}>Sleep</a>
+            <Link href="/topics/nad" className={styles.tag}>NAD+</Link>
+            <Link href="/topics/fasting" className={styles.tag}>Fasting</Link>
+            <Link href="/topics/rapamycin" className={styles.tag}>Rapamycin</Link>
+            <Link href="/topics/sleep" className={styles.tag}>Sleep</Link>
           </div>
         </div>
         <div className={styles.visual}>

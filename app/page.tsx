@@ -1,4 +1,10 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
+import { ArticleGrid, TopChannels } from "@/components/sections";
+import { AdPlaceholder } from "@/components/ui";
 import { articles, latestVideos, podcasts } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
 import type { RSSAPIResponse, RSSSource } from "@/types/rss";
@@ -343,6 +349,7 @@ export default function Home() {
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
   const [editForm, setEditForm] = useState<EditorFormState | null>(null);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const isAdmin = useUserStore((state) => state.profile?.role === "admin");
 
   useEffect(() => {
     try {

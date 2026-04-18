@@ -219,17 +219,38 @@
   font-size: 0.7rem;
 }
 
-.adSection {
-  width: 100%;
-  padding: var(--space-md) 0;
+.editableCardWrap {
+  position: relative;
 }
 
-.adContainer {
-  max-width: var(--container-2xl);
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
-  display: flex;
+.editButton {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  border: 1px solid var(--color-border-blue);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--color-text-blue);
+  border-radius: var(--radius-full);
+  width: 1.8rem;
+  height: 1.8rem;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  z-index: 5;
+  transition: all var(--transition-fast);
+}
+
+.editButton svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.editButton:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-white);
 }
 
 .adBanner {
@@ -272,11 +293,15 @@
   align-items: center;
   text-decoration: none;
   padding: var(--space-sm) var(--space-xs);
-  border-bottom: 1px solid var(--color-border);
   min-height: var(--space-4xl);
 }
 
-.topicRow:last-child {
+.topicRowWrap {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topicRowWrap:last-child {
   border-bottom: none;
 }
 
@@ -465,6 +490,98 @@
   font-weight: 600;
 }
 
+.editorBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 18, 32, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  padding: var(--space-md);
+}
+
+.editorModal {
+  width: min(680px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-xl);
+}
+
+.editorTitle {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.editorSubtitle {
+  margin: 0.45rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.84rem;
+}
+
+.editorFields {
+  margin-top: var(--space-md);
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.editorLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.editorInput,
+.editorTextarea {
+  width: 100%;
+  border: 1px solid var(--color-border-blue);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  padding: 0.5rem 0.6rem;
+}
+
+.editorTextarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.editorActions {
+  margin-top: var(--space-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.editorPrimaryAction,
+.editorSecondaryAction {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-blue);
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.editorPrimaryAction {
+  background: var(--color-primary);
+  color: var(--color-text-white);
+  border-color: var(--color-primary);
+}
+
+.editorSecondaryAction {
+  background: var(--color-surface);
+  color: var(--color-text-blue);
+}
+
 @media (min-width: 760px) {
   .upNextGrid {
     display: grid;
@@ -547,7 +664,7 @@
   border-color: var(--color-border);
 }
 
-:global([data-theme="dark"]) .topicRow {
+:global([data-theme="dark"]) .topicRowWrap {
   border-bottom-color: var(--color-border-light);
 }
 
@@ -567,4 +684,25 @@
 
 :global([data-theme="dark"]) .channelTitle {
   color: var(--color-bg-lightblue);
+}
+
+:global([data-theme="dark"]) .editButton {
+  background: rgba(20, 34, 54, 0.94);
+  color: #8fd4ff;
+  border-color: #356186;
+}
+
+:global([data-theme="dark"]) .editorModal {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+:global([data-theme="dark"]) .editorInput,
+:global([data-theme="dark"]) .editorTextarea {
+  background: var(--color-surface-alt);
+  border-color: #355677;
+}
+
+:global([data-theme="dark"]) .editorSecondaryAction {
+  background: var(--color-surface-alt);
 }

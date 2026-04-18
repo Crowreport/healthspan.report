@@ -1,3 +1,9 @@
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
 .searchBar {
   display: flex;
   align-items: center;
@@ -8,7 +14,6 @@
   padding: var(--space-sm) var(--space-md);
   transition: all var(--transition-fast);
   width: 100%;
-  max-width: 400px;
 }
 
 .searchBar:focus-within {
@@ -63,7 +68,67 @@
   height: 12px;
 }
 
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 0;
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: calc(var(--z-dropdown) + 20);
+}
+
+.dropdownStatus {
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+}
+
+.suggestion {
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  text-align: left;
+  cursor: pointer;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.suggestion:last-child {
+  border-bottom: none;
+}
+
+.suggestion:hover,
+.suggestionActive {
+  background: var(--color-primary-light);
+}
+
+.suggestionTitle {
+  color: var(--color-text);
+  font-size: 0.83rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.suggestionMeta {
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+}
+
 @media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+  }
+
   .searchBar {
     max-width: 100%;
   }

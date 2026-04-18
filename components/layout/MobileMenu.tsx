@@ -2,8 +2,10 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Logo, Button, SearchBar, ThemeToggle } from "@/components/ui";
+import { Logo, Button, SearchBar } from "@/components/ui";
 import { navItems } from "@/data/mockData";
+import { useUserStore } from "@/store/useUserStore";
+import { createClient } from "@/utils/supabase/client";
 import styles from "./MobileMenu.module.css";
 
 interface MobileMenuProps {
@@ -12,6 +14,17 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const profile = useUserStore((s) => s.profile);
+  const isAuthenticated = useUserStore((s) => s.isAuthenticated);
+  const clearProfile = useUserStore((s) => s.clearProfile);
+  const supabase = createClient();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    clearProfile();
+    onClose();
+  }
+
   // Prevent body scroll when menu is open
   useEffect(() => {
     if (isOpen) {
@@ -40,11 +53,10 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         className={`${styles.backdrop} ${isOpen ? styles.open : ""}`}
         onClick={onClose}
         aria-hidden="true"
-        style={{ zIndex: 40 }}
       />
 
       {/* Menu Panel */}
-      <div className={`${styles.menu} ${isOpen ? styles.open : ""}`} style={{ zIndex: 50 }}>
+      <div className={`${styles.menu} ${isOpen ? styles.open : ""}`}>
         <div className={styles.header}>
           <Logo />
           <button
@@ -69,10 +81,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <SearchBar />
         </div>
 
-        <div className={styles.themeRow}>
-          <p className={styles.themeLabel}>Appearance</p>
-          <ThemeToggle compact />
-        </div>
+        
 
         <nav className={styles.nav}>
           {navItems.map((item) => (
@@ -88,16 +97,29 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         </nav>
 
         <div className={styles.authSection}>
-          <Link href="/login" onClick={onClose}>
-            <Button variant="outline" fullWidth>
-              Log in
-            </Button>
-          </Link>
-          <Link href="/signup" onClick={onClose}>
-            <Button variant="primary" fullWidth>
-              Sign up
-            </Button>
-          </Link>
+          {isAuthenticated && profile ? (
+            <div className={styles.authenticatedSection}>
+              <Link href="/settings" onClick={onClose} className={styles.navLink}>
+                Settings
+              </Link>
+              <Button variant="outline" fullWidth onClick={handleLogout}>
+                Sign out
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Link href="/login" onClick={onClose}>
+                <Button variant="primary" fullWidth>
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/signup" onClick={onClose}>
+                <Button variant="primary" fullWidth>
+                  Sign up
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>

@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { VideoThumbnail, Carousel } from "@/components/ui";
 import { latestVideos as mockVideos } from "@/data/mockData";
+import EditVideoModal from "@/components/videos/EditVideoModal";
 import {
   formatRelativeDate,
   extractYouTubeVideoId,
+  slugify,
 } from "@/lib/rss/rssFetcher";
 import type { Video } from "@/types";
+import type { DBRSSItem } from "@/types/database";
 import type { RSSAPIResponse, RSSSource } from "@/types/rss";
 import styles from "./LatestVideos.module.css";
 
@@ -27,6 +30,7 @@ function mapRSSToVideos(sources: RSSSource[]): Video[] {
       videos.push({
         id: item.link,
         title: item.title,
+        slug: slugify(item.title),
         thumbnailUrl: thumbnail,
         channelName: source.source.title,
         views: "", // Not available from RSS
@@ -44,11 +48,33 @@ function mapRSSToVideos(sources: RSSSource[]): Video[] {
   );
 }
 
-export default function LatestVideos() {
-  const [videos, setVideos] = useState<Video[]>(mockVideos);
-  const [isLoading, setIsLoading] = useState(true);
+interface LatestVideosProps {
+  initialVideos?: Video[];
+  isAdmin?: boolean;
+}
+
+export default function LatestVideos({
+  initialVideos = [],
+  isAdmin = false,
+}: LatestVideosProps) {
+  const [videos, setVideos] = useState<Video[]>(
+    initialVideos.length > 0 ? initialVideos : mockVideos
+  );
+  const [isLoading, setIsLoading] = useState(initialVideos.length === 0);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialVideos.length > 0) {
+      setVideos(initialVideos);
+    }
+  }, [initialVideos]);
+
+  useEffect(() => {
+    if (initialVideos.length > 0 || isAdmin) {
+      setIsLoading(false);
+      return;
+    }
+
     async function fetchVideos() {
       try {
         const response = await fetch("/api/rss?type=video");
@@ -69,7 +95,36 @@ export default function LatestVideos() {
     }
 
     fetchVideos();
-  }, []);
+  }, [initialVideos.length, isAdmin]);
+
+  function resolveThumbnail(nextItem: DBRSSItem, currentVideo: Video): string {
+    if (nextItem.thumbnail_url) return nextItem.thumbnail_url;
+
+    const videoId =
+      nextItem.youtube_video_id || extractYouTubeVideoId(nextItem.external_url);
+    if (videoId) {
+      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+
+    return currentVideo.thumbnailUrl || "/images/placeholders/video.svg";
+  }
+
+  function handleVideoSaved(nextItem: DBRSSItem) {
+    setVideos((prev) =>
+      prev.map((video) => {
+        if (video.id !== nextItem.id) return video;
+        return {
+          ...video,
+          title: nextItem.title,
+          thumbnailUrl: resolveThumbnail(nextItem, video),
+        };
+      })
+    );
+  }
+
+  function handleVideoDeleted(videoId: string) {
+    setVideos((prev) => prev.filter((video) => video.id !== videoId));
+  }
 
   return (
     <section className={styles.section}>
@@ -111,11 +166,24 @@ export default function LatestVideos() {
             ))}
           </div>
         ) : (
-          <Carousel>
-            {videos.map((video) => (
-              <VideoThumbnail key={video.id} video={video} />
-            ))}
-          </Carousel>
+          <>
+            <Carousel>
+              {videos.map((video) => (
+                <VideoThumbnail
+                  key={video.id}
+                  video={video}
+                  onEdit={isAdmin ? () => setEditingId(video.id) : undefined}
+                />
+              ))}
+            </Carousel>
+            <EditVideoModal
+              videoId={editingId}
+              isOpen={!!editingId}
+              onClose={() => setEditingId(null)}
+              onSaved={handleVideoSaved}
+              onDeleted={handleVideoDeleted}
+            />
+          </>
         )}
       </div>
     </section>

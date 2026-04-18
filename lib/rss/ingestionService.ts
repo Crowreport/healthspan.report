@@ -5,6 +5,8 @@
  * Supports both regular RSS feeds and YouTube's RSS format.
  */
 
+import Parser from "rss-parser";
+import https from "node:https";
 import { createClient } from "@/utils/supabase/server";
 import type {
   DBRSSSource,
@@ -19,10 +21,80 @@ import type {
 } from "@/types/rss";
 import { processFeed, slugify, decodeHtmlEntities } from "./rssFetcher";
 import {
-  parseYouTubeFeed,
   isYouTubeFeed,
   getChannelIdFromFeedUrl,
 } from "./youtubeParser";
+
+type YouTubeAtomFeed = {
+  title?: string;
+  link?: string;
+};
+
+type YouTubeAtomEntry = {
+  id?: string;
+  title?: string;
+  link?: string;
+  pubDate?: string;
+  isoDate?: string;
+  mediaGroup?: {
+    "media:thumbnail"?:
+      | { $: { url: string; width?: string; height?: string } }[]
+      | { $: { url: string; width?: string; height?: string } };
+  };
+  mediaThumbnail?:
+    | { $: { url: string; width?: string; height?: string } }[]
+    | { $: { url: string; width?: string; height?: string } };
+};
+
+const youtubeAtomParser: Parser<YouTubeAtomFeed, YouTubeAtomEntry> = new Parser({
+  customFields: {
+    item: [
+      ["media:group", "mediaGroup"],
+      ["media:thumbnail", "mediaThumbnail", { keepArray: true }],
+    ],
+  },
+  timeout: 15000,
+});
+
+async function fetchYouTubeFeedXml(
+  url: string,
+  timeoutMs: number
+): Promise<string> {
+  return await new Promise((resolve, reject) => {
+    const req = https.get(
+      url,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          Accept: "application/atom+xml,application/xml,text/xml,*/*",
+        },
+      },
+      (res) => {
+        const statusCode = res.statusCode ?? 0;
+        if (statusCode < 200 || statusCode >= 300) {
+          res.resume();
+          reject(new Error(`Status code ${statusCode}`));
+          return;
+        }
+
+        let body = "";
+        res.setEncoding("utf8");
+        res.on("data", (chunk) => {
+          body += chunk;
+        });
+        res.on("end", () => {
+          resolve(body);
+        });
+      }
+    );
+
+    req.setTimeout(timeoutMs, () => {
+      req.destroy(new Error("Request timeout"));
+    });
+    req.on("error", reject);
+  });
+}
 
 // ============================================================================
 // NORMALIZATION
@@ -78,6 +150,36 @@ function normalizeRSSArticle(
     author: item.creator || source.name,
     publishedAt: item.pubDate,
     contentType: source.content_type,
+    sourceName: source.name,
+    sourceUrl: source.website_url || source.feed_url,
+    sourceImage: source.image_url || undefined,
+  };
+}
+
+/**
+ * Normalize a regular RSS video item to our standard format
+ */
+function normalizeRSSVideo(
+  item: {
+    title: string;
+    link: string;
+    thumbnail?: string;
+    pubDate: string;
+    contentSnippet?: string;
+    creator?: string;
+  },
+  source: DBRSSSource
+): NormalizedRSSItem {
+  return {
+    guid: item.link,
+    title: item.title,
+    slug: slugify(item.title),
+    excerpt: item.contentSnippet || "",
+    externalUrl: item.link,
+    thumbnailUrl: item.thumbnail,
+    author: item.creator || source.name,
+    publishedAt: item.pubDate,
+    contentType: "video",
     sourceName: source.name,
     sourceUrl: source.website_url || source.feed_url,
     sourceImage: source.image_url || undefined,
@@ -287,42 +389,76 @@ async function processYouTubeFeed(
   };
 
   try {
-    const parsed = await parseYouTubeFeed(
-      source.feed_url,
-      options?.timeoutMs || 15000
-    );
-
-    if (!parsed) {
-      result.error = "Failed to parse YouTube feed";
-      return result;
-    }
-
-    const { items } = parsed;
-    result.itemsFound = items.length;
+    const timeoutMs = options?.timeoutMs || 15000;
+    const xml = await fetchYouTubeFeedXml(source.feed_url, timeoutMs);
+    const feed = await youtubeAtomParser.parseString(xml);
+    const entries = feed.items || [];
+    result.itemsFound = entries.length;
 
     // Limit items if specified
     const maxItems = options?.maxItemsPerSource || 15;
-    const itemsToProcess = items.slice(0, maxItems);
+    const itemsToProcess = entries.slice(0, maxItems);
+
+    const extractThumbnail = (entry: YouTubeAtomEntry): string | undefined => {
+      const groupThumb = entry.mediaGroup?.["media:thumbnail"];
+      if (Array.isArray(groupThumb) && groupThumb.length > 0) {
+        return groupThumb[0]?.$?.url;
+      }
+      if (groupThumb && !Array.isArray(groupThumb)) {
+        return groupThumb.$?.url;
+      }
+
+      const directThumb = entry.mediaThumbnail;
+      if (Array.isArray(directThumb) && directThumb.length > 0) {
+        return directThumb[0]?.$?.url;
+      }
+      if (directThumb && !Array.isArray(directThumb)) {
+        return directThumb.$?.url;
+      }
+
+      return undefined;
+    };
 
     // Normalize and prepare for insertion
-    const normalizedItems: CreateRSSItemInput[] = itemsToProcess.map(
-      (item) => {
-        const normalized = normalizeYouTubeItem(item, source);
-        return {
-          source_id: source.id,
-          guid: normalized.guid,
-          title: normalized.title,
-          slug: normalized.slug,
-          excerpt: normalized.excerpt,
-          external_url: normalized.externalUrl,
-          thumbnail_url: normalized.thumbnailUrl,
-          author: normalized.author,
-          published_at: normalized.publishedAt,
-          youtube_video_id: normalized.videoId,
-          youtube_channel_name: normalized.channelName,
-        };
+    const normalizedItems: CreateRSSItemInput[] = itemsToProcess.flatMap(
+      (entry) => {
+        const guid = entry.id || "";
+        const title = decodeHtmlEntities(entry.title || "");
+        const externalUrl = entry.link || "";
+        const publishedAt = entry.pubDate || entry.isoDate || "";
+        const thumbnailUrl = extractThumbnail(entry);
+
+        if (!guid || !title || !externalUrl || !publishedAt) {
+          return [];
+        }
+
+        return [
+          {
+            source_id: source.id,
+            guid,
+            title,
+            slug: slugify(title),
+            excerpt: "",
+            external_url: externalUrl,
+            thumbnail_url: thumbnailUrl,
+            author: source.name,
+            published_at: publishedAt,
+            youtube_video_id: (() => {
+              const match =
+                guid.match(/yt:video:([^:]+)$/) ||
+                externalUrl.match(/[?&]v=([^&]+)/);
+              return match ? match[1] : undefined;
+            })(),
+            youtube_channel_name: source.name,
+          } satisfies CreateRSSItemInput,
+        ];
       }
     );
+
+    if (normalizedItems.length === 0) {
+      result.error = "Failed to parse YouTube feed";
+      return result;
+    }
 
     // Insert with deduplication
     const { inserted, skipped } = await insertItems(normalizedItems);
@@ -374,7 +510,10 @@ async function processRegularFeed(
     // Normalize and prepare for insertion
     const normalizedItems: CreateRSSItemInput[] = itemsToProcess.map(
       (item) => {
-        const normalized = normalizeRSSArticle(item, source);
+        const normalized =
+          source.content_type === "video"
+            ? normalizeRSSVideo(item, source)
+            : normalizeRSSArticle(item, source);
         return {
           source_id: source.id,
           guid: normalized.guid,
@@ -440,8 +579,8 @@ export async function runIngestion(
 
       let result: FeedProcessingResult;
 
-      // Use YouTube parser for YouTube feeds, regular parser for others
-      if (source.is_youtube_feed || isYouTubeFeed(source.feed_url)) {
+      // YouTube uses Atom feeds
+      if (source.feed_url.includes("youtube.com/feeds/videos.xml")) {
         result = await processYouTubeFeed(source, options);
       } else {
         result = await processRegularFeed(source, options);

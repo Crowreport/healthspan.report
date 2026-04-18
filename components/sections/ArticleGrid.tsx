@@ -1,111 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ArticleCard, AdPlaceholder } from "@/components/ui";
-import { articles as mockArticles } from "@/data/mockData";
-import { slugify, formatRelativeDate } from "@/lib/rss/rssFetcher";
+import EditArticleModal from "@/components/articles/EditArticleModal";
 import type { Article } from "@/types";
-import type { RSSAPIResponse, RSSSource } from "@/types/rss";
 import styles from "./ArticleGrid.module.css";
 
-// Get source-specific placeholder based on feed URL or source name
-function getSourcePlaceholder(sourceUrl: string, sourceName: string): string {
-  const url = sourceUrl.toLowerCase();
-  const name = sourceName.toLowerCase();
-  
-  if (url.includes("peterattiamd.com") || name.includes("peter attia")) {
-    return "/images/placeholders/attia.png";
-  }
-  if (url.includes("longevity.technology") || name.includes("longevity.technology")) {
-    return "/images/placeholders/longevity.png";
-  }
-  // Default fallback for other sources (NOVOS Labs, etc.)
-  return "/images/placeholders/NOVOSLabs.png";
+interface ArticleGridProps {
+  /** Articles from DB (server-fetched). When provided, no client fetch. */
+  initialArticles?: Article[];
+  /** When true, each article card shows an Edit button that opens the edit modal. */
+  isAdmin?: boolean;
 }
 
-function mapRSSToArticles(sources: RSSSource[]): Article[] {
-  const articles: Article[] = [];
-
-  for (const source of sources) {
-    const sourcePlaceholder = getSourcePlaceholder(source.source.link || "", source.source.title || "");
-    
-    for (const item of source.articles) {
-      // Use item thumbnail, then source-specific placeholder (skip external source images that may fail)
-      const imageUrl = resolveArticleImage(item.thumbnail, sourcePlaceholder);
-
-      articles.push({
-        id: item.link,
-        title: item.title,
-        excerpt: item.contentSnippet || "",
-        category: source.source.title,
-        author: item.creator || source.source.title,
-        publishedAt: item.pubDate,
-        readTime: "5 min read",
-        imageUrl,
-        slug: slugify(item.title),
-        externalUrl: item.link, // Link to original article
-      });
-    }
-  }
-
-  // Sort by date and limit to 6 articles
-  return articles
-    .sort(
-      (a, b) =>
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    )
-    .slice(0, 6);
-}
-
-function resolveArticleImage(
-  primary: string | undefined,
-  fallback: string
-): string {
-  return normalizeExternalImageUrl(primary) || fallback;
-}
-
-function normalizeExternalImageUrl(raw: string | undefined): string | null {
-  if (!raw) return null;
-
-  const value = raw.trim();
-  if (!value) return null;
-  if (value.startsWith("/")) return value;
-  if (value.startsWith("//")) return `https:${value}`;
-  if (/^https?:\/\//i.test(value)) return value.replace(/^http:\/\//i, "https://");
-  if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(value)) return `https://${value}`;
-
-  return null;
-}
-
-export default function ArticleGrid() {
-  const [articles, setArticles] = useState<Article[]>(mockArticles);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchArticles() {
-      try {
-        const response = await fetch("/api/rss?type=article");
-        if (!response.ok) throw new Error("Failed to fetch articles");
-
-        const data: RSSAPIResponse = await response.json();
-        const mappedArticles = mapRSSToArticles(data.sources);
-
-        if (mappedArticles.length > 0) {
-          setArticles(mappedArticles);
-        }
-        // If no articles, keep using mock data
-      } catch (err) {
-        console.error("Failed to fetch RSS articles:", err);
-        setError("Using cached articles");
-        // Keep mock data on error
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchArticles();
-  }, []);
+export default function ArticleGrid({ initialArticles = [], isAdmin = false }: ArticleGridProps) {
+  const articles = initialArticles;
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
     <section className={styles.section}>
@@ -129,8 +39,7 @@ export default function ArticleGrid() {
 
         <div className={styles.grid}>
           <div className={styles.articles}>
-            {isLoading ? (
-              // Loading skeleton
+            {articles.length === 0 ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className={styles.skeleton}>
                   <div className={styles.skeletonImage} />
@@ -143,10 +52,19 @@ export default function ArticleGrid() {
               ))
             ) : (
               articles.map((article) => (
-                <ArticleCard key={article.id} article={article} />
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  onEdit={isAdmin ? () => setEditingId(article.id) : undefined}
+                />
               ))
             )}
           </div>
+          <EditArticleModal
+            articleId={editingId}
+            isOpen={!!editingId}
+            onClose={() => setEditingId(null)}
+          />
 
           <aside className={styles.sidebar}>
             <AdPlaceholder size="rectangle" />

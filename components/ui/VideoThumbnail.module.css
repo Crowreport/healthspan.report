@@ -1,50 +1,82 @@
 .thumbnail {
+  position: relative;
+}
+
+.link {
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  background: #ffffff;
-  border: 1px solid #d9e3ee;
+  color: inherit;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--transition-base);
+}
+
+.thumbnail:hover .link {
+  transform: scale(1.02);
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 16 / 9;
   border-radius: var(--radius-md);
   overflow: hidden;
-  color: inherit;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.thumbnail:hover {
-  border-color: #bfd1e4;
-  box-shadow: var(--shadow-md);
-}
-
-.imageWrap {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #082f45;
 }
 
 .image {
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-image: linear-gradient(135deg, #0d3a52 0%, #0e5172 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  transition: transform var(--transition-base), background var(--transition-base);
+}
+
+.thumbnail:hover .playIcon {
+  transform: scale(1.1);
+  background: white;
+}
+
+.playIcon svg {
+  width: 24px;
+  height: 24px;
+  margin-left: 3px;
+}
+
+.duration {
+  position: absolute;
+  bottom: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.24rem;
-  text-align: left;
-  padding: 0.62rem 0.65rem 0.7rem;
+  padding: var(--space-md) 0;
 }
 
 .title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #10263b;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text);
+  margin: 0 0 var(--space-xs);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -52,32 +84,87 @@
 }
 
 .meta {
-  margin: 0;
-  font-size: 0.68rem;
-  color: #4b6985;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.channel {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.stats {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* Large variant */
+.large .imageWrapper {
+  aspect-ratio: 16 / 9;
+}
+
+.large .playIcon {
+  width: 64px;
+  height: 64px;
+}
+
+.large .playIcon svg {
+  width: 32px;
+  height: 32px;
+  margin-left: 4px;
 }
 
 .large .title {
-  font-size: 1.05rem;
+  font-size: 1.125rem;
 }
 
-.large .meta {
-  font-size: 0.72rem;
+.editButton {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 1;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
 }
 
-:global([data-theme="dark"]) .thumbnail {
-  background: #142236;
-  border-color: #28405a;
+.editButton:hover {
+  background: var(--color-primary);
+  color: var(--color-surface);
 }
 
-:global([data-theme="dark"]) .thumbnail:hover {
-  border-color: #3f6282;
+.commentLink {
+  position: absolute;
+  right: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
 }
 
-:global([data-theme="dark"]) .title {
-  color: #e3edf8;
+.commentLink:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
-:global([data-theme="dark"]) .meta {
-  color: #9fb2c8;
+.commentLink svg {
+  width: 18px;
+  height: 18px;
 }

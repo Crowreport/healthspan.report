@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/layout";
 import TopicPageContent from "@/components/topics/TopicPageContent";
 import { getTopicConfig } from "@/lib/topics/topicConfig";
+import { getTopicContentFromDB } from "@/lib/content/topics";
+import { getCurrentUser } from "@/lib/auth";
 import styles from "../shared.module.css";
 
 type Props = {
@@ -11,7 +13,7 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const config = getTopicConfig(slug);
-  
+
   if (!config) {
     return {
       title: "Topic Not Found | Healthspan",
@@ -32,6 +34,12 @@ export default async function TopicPage({ params }: Props) {
     notFound();
   }
 
+  const [user, { articles, videos }] = await Promise.all([
+    getCurrentUser(),
+    getTopicContentFromDB(config.keywords),
+  ]);
+  const isAdmin = user?.role === "admin";
+
   return (
     <div className={styles.page}>
       <Header />
@@ -41,6 +49,9 @@ export default async function TopicPage({ params }: Props) {
           topicDescription={config.description}
           topicIcon={config.icon}
           keywords={config.keywords}
+          initialArticles={articles}
+          initialVideos={videos}
+          isAdmin={!!isAdmin}
         />
       </main>
       <Footer />

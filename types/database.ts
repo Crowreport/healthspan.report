@@ -236,8 +236,17 @@ export interface DBRSSItem {
   youtube_channel_name: string | null;
   view_count: string | null;
   is_featured: boolean;
+  hidden_by_admin: boolean;
   ingested_at: string;
   updated_at: string;
+}
+
+/** Admin-editable fields for RSS items (title, excerpt, thumbnail, visibility) */
+export interface UpdateRSSItemInput {
+  title?: string;
+  excerpt?: string | null;
+  thumbnail_url?: string | null;
+  hidden_by_admin?: boolean;
 }
 
 // RSS Item with joined source

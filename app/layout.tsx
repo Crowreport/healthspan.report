@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -8,7 +8,7 @@ const THEME_INIT_SCRIPT = `(() => {
     const key = "healthspan-theme";
     const stored = localStorage.getItem(key);
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const theme = stored === "dark" || stored === "light" ? stored : (prefersDark ? "dark" : "light");
+    const theme = stored === "dark" || stored === "light" ? stored : "dark";
     document.documentElement.setAttribute("data-theme", theme);
     document.documentElement.style.colorScheme = theme;
   } catch (_) {}
@@ -53,6 +53,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

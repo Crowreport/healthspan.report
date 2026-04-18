@@ -8,9 +8,12 @@ import type {
   DBRSSIngestionLog,
   CreateRSSSourceInput,
   UpdateRSSSourceInput,
+  UpdateRSSItemInput,
   ActionResult,
   RSSContentType,
 } from "@/types/database";
+import { processFeed } from "@/lib/rss/rssFetcher";
+import { revalidatePath } from "next/cache";
 
 // ============================================================================
 // RSS SOURCE OPERATIONS
@@ -321,6 +324,53 @@ export async function getRSSItemById(
 }
 
 /**
+ * Get a single RSS item by slug, constrained to a content type (via rss_sources).
+ * Used for detail/discussion pages where URL is slug-based.
+ */
+export async function getRSSItemBySlugAndType(
+  contentType: RSSContentType,
+  slug: string
+): Promise<ActionResult<DBRSSItemWithSource>> {
+  try {
+    const supabase = await createClient();
+
+    const { data: sources, error: sourcesError } = await supabase
+      .from("rss_sources")
+      .select("id")
+      .eq("content_type", contentType)
+      .eq("is_active", true);
+
+    if (sourcesError) return { error: sourcesError.message };
+    if (!sources || sources.length === 0) return { error: "No sources found" };
+
+    const sourceIds = sources.map((s) => s.id);
+
+    const { data, error } = await supabase
+      .from("rss_items")
+      .select(
+        `
+        *,
+        source:rss_sources(*)
+      `
+      )
+      .in("source_id", sourceIds)
+      .eq("slug", slug)
+      .order("published_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) return { error: error.message };
+    if (!data) return { error: "Item not found" };
+
+    return { data: data as DBRSSItemWithSource };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Failed to fetch RSS item",
+    };
+  }
+}
+
+/**
  * Get YouTube videos from RSS items
  */
 export async function getYouTubeVideos(
@@ -382,6 +432,129 @@ export async function toggleRSSItemFeatured(
         err instanceof Error
           ? err.message
           : "Failed to update RSS item featured status",
+    };
+  }
+}
+
+/**
+ * Update an RSS item (admin only – enforced by RLS).
+ * Used for editing title, excerpt, thumbnail, or hiding.
+ */
+export async function updateRSSItem(
+  id: string,
+  input: UpdateRSSItemInput
+): Promise<ActionResult<DBRSSItem>> {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("rss_items")
+      .update(input)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    revalidatePath("/articles");
+    revalidatePath("/");
+
+    return { data: data as DBRSSItem };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Failed to update RSS item",
+    };
+  }
+}
+
+/**
+ * Delete an RSS item (admin only – enforced by RLS).
+ */
+export async function deleteRSSItem(id: string): Promise<ActionResult<void>> {
+  try {
+    const supabase = await createClient();
+
+    const { error } = await supabase.from("rss_items").delete().eq("id", id);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    revalidatePath("/articles");
+    revalidatePath("/");
+
+    return { data: undefined };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Failed to delete RSS item",
+    };
+  }
+}
+
+/**
+ * Reset a single RSS item from its feed (admin only).
+ * Refetches the item from RSS and overwrites title, excerpt, thumbnail, and clears hidden_by_admin.
+ */
+export async function resetRSSItemFromFeed(
+  id: string
+): Promise<ActionResult<DBRSSItem>> {
+  try {
+    const itemResult = await getRSSItemById(id);
+    if (itemResult.error || !itemResult.data) {
+      return { error: itemResult.error ?? "Item not found" };
+    }
+
+    const item = itemResult.data;
+    const source = item.source;
+    if (!source) {
+      return { error: "Source not found" };
+    }
+
+    const parsed = await processFeed(
+      {
+        url: source.feed_url,
+        type: source.content_type,
+        image: source.image_url ?? undefined,
+      },
+      15000
+    );
+
+    if (!parsed || !parsed.articles.length) {
+      return { error: "Could not fetch feed or no items in feed" };
+    }
+
+    const fromFeed = parsed.articles.find((a) => a.link === item.guid);
+    if (!fromFeed) {
+      return { error: "Item no longer in feed" };
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("rss_items")
+      .update({
+        title: fromFeed.title,
+        excerpt: fromFeed.contentSnippet ?? null,
+        thumbnail_url: fromFeed.thumbnail ?? null,
+        hidden_by_admin: false,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    revalidatePath("/articles");
+    revalidatePath("/");
+
+    return { data: data as DBRSSItem };
+  } catch (err) {
+    return {
+      error:
+        err instanceof Error ? err.message : "Failed to reset RSS item from feed",
     };
   }
 }

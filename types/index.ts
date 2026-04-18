@@ -16,6 +16,7 @@ export interface Article {
 export interface Video {
   id: string;
   title: string;
+  slug?: string;
   thumbnailUrl: string;
   channelName: string;
   views: string;

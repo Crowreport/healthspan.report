@@ -47,7 +47,6 @@
   align-items: center;
   gap: var(--space-sm);
   margin-left: auto;
-  padding: 90px;
 }
 
 .authButtons a button {
@@ -167,7 +166,9 @@
 }
 
 .dropdownItem {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   width: 100%;
   border: none;
   background: transparent;
@@ -182,6 +183,11 @@
 .dropdownItem:hover {
   background: #f5fbff;
   color: var(--color-primary-hover);
+}
+
+.dropdownIcon {
+  width: 16px;
+  height: 16px;
 }
 
 @media (min-width: 768px) {
@@ -206,6 +212,28 @@
   .mobileActions {
     display: none;
   }
+}
+
+.settingsLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-xl);
+  height: var(--space-xl);
+  border: 1px solid var(--color-border-blue);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-alt);
+  color: var(--color-bg-dark);
+  transition: all var(--transition-fast);
+}
+
+.settingsLink:hover {
+  border-color: var(--color-primary);
+}
+
+.settingsLink svg {
+  width: 18px;
+  height: 18px;
 }
 
 :global([data-theme="dark"]) .header {
@@ -266,4 +294,14 @@
 :global([data-theme="dark"]) .dropdownItem:hover {
   background: #1d344c;
   color: #88c9f4;
+}
+
+:global([data-theme="dark"]) .settingsLink {
+  border-color: var(--color-border);
+  background: var(--color-bg-alt);
+  color: #c5d9ed;
+}
+
+:global([data-theme="dark"]) .settingsLink:hover {
+  border-color: #476a8f;
 }

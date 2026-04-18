@@ -18,12 +18,12 @@ const optionLabels: Record<ThemePreference, string> = {
 };
 
 function getStoredPreference(): ThemePreference {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "dark";
   const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
   if (stored === "light" || stored === "dark" || stored === "system") {
     return stored;
   }
-  return "system";
+  return "dark";
 }
 
 function resolveTheme(preference: ThemePreference): "light" | "dark" {
@@ -79,7 +79,7 @@ export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
   }
 
   const activePreference =
-    typeof window === "undefined" ? "system" : getStoredPreference();
+    typeof window === "undefined" ? "dark" : getStoredPreference();
 
   return (
     <div

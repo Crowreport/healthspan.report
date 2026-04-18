@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { articles, latestVideos, podcasts } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
@@ -624,7 +620,8 @@ export default function Home() {
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
 
-          <div className={styles.adBanner}>Advertisement</div>
+        {/* Latest Articles (from DB) */}
+        <ArticleGrid initialArticles={articles} isAdmin={!!isAdmin} />
 
           <GroupedMediaSection
             title="Top Youtube Channels"
@@ -647,7 +644,12 @@ export default function Home() {
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
 
-          <div className={styles.adBanner}>Advertisement</div>
+        {/* Another Ad */}
+        <section className={styles.adSection}>
+          <div className={styles.adContainer}>
+            <AdPlaceholder size="leaderboard" />
+          </div>
+        </section>
 
           <GroupedMediaSection
             title="Top Podcasts"
@@ -663,7 +665,8 @@ export default function Home() {
             }}
           />
 
-          <div className={styles.adBanner}>Advertisement</div>
+        {/* Top YouTube Channels */}
+        <TopChannels />
 
           <TopicSection
             title="Supplement News"

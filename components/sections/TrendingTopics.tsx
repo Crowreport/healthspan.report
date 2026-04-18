@@ -1,58 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { trendingTopics as mockTopics } from "@/data/mockData";
-import { slugify } from "@/lib/rss/rssFetcher";
+import EditArticleModal from "@/components/articles/EditArticleModal";
 import type { TrendingTopic } from "@/types";
-import type { RSSAPIResponse, RSSSource } from "@/types/rss";
 import styles from "./TrendingTopics.module.css";
 
-function mapRSSToTopics(sources: RSSSource[]): TrendingTopic[] {
-  const topics: TrendingTopic[] = [];
-  let isFirst = true;
-
-  for (const source of sources) {
-    for (const item of source.articles) {
-      // Use item thumbnail, fall back to source image, then placeholder
-      const imageUrl =
-        item.thumbnail ||
-        source.source.image ||
-        "/images/placeholders/topic.svg";
-
-      topics.push({
-        id: item.link,
-        title: item.title,
-        excerpt: item.contentSnippet || "",
-        category: source.source.title,
-        imageUrl,
-        slug: slugify(item.title),
-        isFeatured: isFirst,
-        externalUrl: item.link, // Link to original article
-      });
-      isFirst = false;
-    }
-  }
-
-  // Sort by date and limit
-  return topics
-    .sort(
-      (a, b) =>
-        new Date(b.id).getTime() - new Date(a.id).getTime()
-    )
-    .slice(0, 4);
-}
+export type TrendingTopicWithItemId = TrendingTopic & { itemId: string };
 
 // Helper component for topic links (external or internal)
 function TopicLink({
   topic,
   className,
   children,
+  onEdit,
 }: {
   topic: TrendingTopic;
   className: string;
   children: React.ReactNode;
+  onEdit?: (e: React.MouseEvent) => void;
 }) {
+  const content = (
+    <>
+      {children}
+      {onEdit && (
+        <button
+          type="button"
+          className={styles.editButton}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(e); }}
+          aria-label="Edit"
+        >
+          Edit
+        </button>
+      )}
+    </>
+  );
   if (topic.externalUrl) {
     return (
       <a
@@ -61,13 +43,13 @@ function TopicLink({
         rel="noopener noreferrer"
         className={className}
       >
-        {children}
+        {content}
       </a>
     );
   }
   return (
     <Link href={`/topics/${topic.slug}`} className={className}>
-      {children}
+      {content}
     </Link>
   );
 }
@@ -120,39 +102,20 @@ function TopicImage({
   );
 }
 
-export default function TrendingTopics() {
-  const [topics, setTopics] = useState<TrendingTopic[]>(mockTopics);
-  const [isLoading, setIsLoading] = useState(true);
+interface TrendingTopicsProps {
+  /** Topics from DB (server-fetched). When provided, no client fetch. */
+  initialTopics?: TrendingTopicWithItemId[];
+  isAdmin?: boolean;
+}
 
-  useEffect(() => {
-    async function fetchTopics() {
-      try {
-        const response = await fetch("/api/rss?type=topic");
-        if (!response.ok) throw new Error("Failed to fetch topics");
-
-        const data: RSSAPIResponse = await response.json();
-        const mappedTopics = mapRSSToTopics(data.sources);
-
-        if (mappedTopics.length > 0) {
-          // Mark first as featured
-          mappedTopics[0].isFeatured = true;
-          setTopics(mappedTopics);
-        }
-      } catch (err) {
-        console.error("Failed to fetch RSS topics:", err);
-        // Keep mock data on error
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchTopics();
-  }, []);
+export default function TrendingTopics({ initialTopics = [], isAdmin = false }: TrendingTopicsProps) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const topics = initialTopics;
 
   const featured = topics.find((t) => t.isFeatured);
   const regular = topics.filter((t) => !t.isFeatured);
 
-  if (isLoading) {
+  if (topics.length === 0) {
     return (
       <section className={styles.section}>
         <div className={styles.container}>
@@ -195,7 +158,11 @@ export default function TrendingTopics() {
         <div className={styles.grid}>
           {/* Featured Topic */}
           {featured && (
-            <TopicLink topic={featured} className={styles.featured}>
+            <TopicLink
+              topic={featured}
+              className={styles.featured}
+              onEdit={isAdmin ? () => setEditingId(featured.itemId) : undefined}
+            >
               <TopicImage imageUrl={featured.imageUrl} title={featured.title} size="large" />
               <div className={styles.featuredContent}>
                 <span className={styles.category}>{featured.category}</span>
@@ -212,6 +179,7 @@ export default function TrendingTopics() {
                 key={topic.id}
                 topic={topic}
                 className={styles.topicCard}
+                onEdit={isAdmin ? () => setEditingId(topic.itemId) : undefined}
               >
                 <TopicImage imageUrl={topic.imageUrl} title={topic.title} />
                 <div className={styles.topicContent}>
@@ -224,6 +192,11 @@ export default function TrendingTopics() {
           </div>
         </div>
       </div>
+      <EditArticleModal
+        articleId={editingId}
+        isOpen={!!editingId}
+        onClose={() => setEditingId(null)}
+      />
     </section>
   );
 }

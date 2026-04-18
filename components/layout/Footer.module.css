@@ -8,7 +8,7 @@
 .container {
   max-width: var(--container-2xl);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+  padding: var(--space-2xl) var(--space-lg) calc(var(--space-xl) + env(safe-area-inset-bottom));
 }
 
 .top {

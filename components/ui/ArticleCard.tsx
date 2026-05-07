@@ -10,6 +10,7 @@ interface ArticleCardProps {
   variant?: "default" | "compact";
   /** When set, shows an Edit button (for admins). */
   onEdit?: () => void;
+  onSave?: () => void;
 }
 
 // Placeholder component for failed/missing images
@@ -37,16 +38,20 @@ function ImagePlaceholder() {
   );
 }
 
+
+
 export default function ArticleCard({
   article,
   variant = "default",
   onEdit,
+  onSave
 }: ArticleCardProps) {
   const fallbackImageUrl = getArticleFallbackImage(article);
   const primaryImageUrl = normalizeImageUrl(article.imageUrl);
   const [usingFallback, setUsingFallback] = useState(!primaryImageUrl);
   const [imageError, setImageError] = useState(false);
   const imageSrc = usingFallback ? fallbackImageUrl : primaryImageUrl || fallbackImageUrl;
+  const [menuOpen, setMenuOpen] = useState(false);  // ← add this
 
   // Use external URL if available, otherwise internal route
   const href = article.externalUrl || `/articles/${article.slug}`;
@@ -72,6 +77,29 @@ export default function ArticleCard({
 
   return (
     <article className={`${styles.card} ${styles[variant]}`}>
+       {/* Three-dot menu — visible to all logged-in users */}
+      {onSave && (
+        <div className={styles.dotMenu}>
+          <button
+            type="button"
+            className={styles.dotMenuButton}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setMenuOpen((o) => !o); }}
+            aria-label="Article options"
+          >
+            ···
+          </button>
+          {menuOpen && (
+            <div className={styles.dotMenuDropdown}>
+              <button
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSave(); setMenuOpen(false); }}
+              >
+                Save article
+              </button>
+            </div>
+          )}
+        </div>
+      )}
       {onEdit && (
         <button
           type="button"

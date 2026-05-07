@@ -20,6 +20,7 @@ export default function Header() {
   const profile = useUserStore((s) => s.profile);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
   const clearProfile = useUserStore((s) => s.clearProfile);
+  const setProfile = useUserStore((s) => s.setProfile);
 
   
   useEffect(() => {
@@ -37,6 +38,34 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
+
+useEffect(() => {
+  async function syncSession() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { data: userData } = await supabase
+      .from("users")
+      .select("id, username, first_name, last_name, role")
+      .eq("id", user.id)
+      .single()
+
+
+
+    if (userData) {
+      setProfile({
+        id: user.id,
+        username: userData.username,
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        role: userData.role,
+        email: user.email || "",
+      })
+    }
+  }
+
+  void syncSession()
+}, [])
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -135,6 +164,25 @@ export default function Header() {
                     </svg>
                     Settings
                   </Link>
+                <Link
+                    href="/my-articles"
+                    className={styles.dropdownItem}
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={styles.dropdownIcon}
+                    >
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                    </svg>
+                    My Articles
+                  </Link>
+
                   <button
                     className={styles.dropdownItem}
                     onClick={handleLogout}

@@ -38,6 +38,7 @@ export default function MyArticlesPage() {
   const [addingFolder, setAddingFolder] = useState(false);
   const [tagInputId, setTagInputId] = useState<string | null>(null);
   const [tagInputValue, setTagInputValue] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const supabase = createClient();
   const router = useRouter();
 
@@ -176,10 +177,17 @@ export default function MyArticlesPage() {
 
   // ── Filtered view ─────────────────────────────────────────
 
-  const visibleArticles = activeFolderId
-    ? articles.filter((a) => a.folder_id === activeFolderId)
-    : articles;
-
+const visibleArticles = articles
+  .filter((a) => activeFolderId ? a.folder_id === activeFolderId : true)
+  .filter((a) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      a.title?.toLowerCase().includes(q) ||
+      a.source?.toLowerCase().includes(q) ||
+      a.summary?.toLowerCase().includes(q)
+    );
+  });
   // ── Render ────────────────────────────────────────────────
 
   return (
@@ -254,6 +262,13 @@ export default function MyArticlesPage() {
             <h1 className={styles.heading}>
               {activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : "My Saved Articles"}
             </h1>
+            <input
+            className={styles.searchInput}
+            type="search"
+            placeholder="Search your articles…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            />
 
             {loading && <p>Loading…</p>}
 

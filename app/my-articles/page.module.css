@@ -108,3 +108,17 @@
   .layout { grid-template-columns: 1fr; }
   .sidebar { position: static; }
 }
+.searchInput {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #111);
+}
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-primary, #2563eb);
+}

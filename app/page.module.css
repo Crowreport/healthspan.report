@@ -334,6 +334,30 @@
   align-items: center;
 }
 
+.pinnedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-right: var(--space-xs);
+  padding: 1px 7px 1px 5px;
+  border-radius: 999px;
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--color-primary-muted);
+  color: var(--color-primary);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.pinnedIcon {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+}
+
 .commentIcon {
   width: var(--space-lg);
   height: var(--space-lg);

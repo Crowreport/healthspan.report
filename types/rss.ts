@@ -24,6 +24,7 @@ export interface RSSArticle {
   contentSnippet?: string;
   creator?: string;
   categories?: string[];
+  isFeatured?: boolean;
 }
 
 // Source with its articles

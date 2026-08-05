@@ -80,6 +80,7 @@ async function getPersistedData(
         thumbnail_url,
         author,
         published_at,
+        is_featured,
         source:rss_sources(
           id,
           name,
@@ -138,6 +139,7 @@ async function getPersistedData(
         pubDate: item.published_at,
         contentSnippet: item.excerpt || undefined,
         creator: item.author || undefined,
+        isFeatured: item.is_featured || undefined,
       };
 
       sourceMap.get(sourceKey)!.articles.push(rssArticle);

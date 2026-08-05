@@ -27,8 +27,7 @@ export default async function ResearchDiscussionPage({
 }) {
   const { slug } = await params;
 
-  // Research uses "topic" sources in this codebase.
-  const result = await getRSSItemBySlugAndType("topic", slug);
+  const result = await getRSSItemBySlugAndType("research", slug);
 
   if (result.error || !result.data) {
     return (

@@ -7,7 +7,7 @@
  * 3. Fresh fetch from RSS feeds
  * 
  * Query Parameters:
- * - type: Filter by content type (article, video, topic)
+ * - type: Filter by content type (article, video, podcast, topic, research)
  * - refresh: Force refresh from RSS feeds (bypasses cache)
  * - source: Use 'live' to bypass database and fetch directly from RSS
  */

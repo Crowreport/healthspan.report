@@ -1,5 +1,10 @@
 // RSS Content Type
-export type RSSContentType = "article" | "video" | "topic" | "research";
+export type RSSContentType =
+  | "article"
+  | "video"
+  | "podcast"
+  | "topic"
+  | "research";
 
 // RSS Feed Configuration Types
 export interface RSSFeedConfig {

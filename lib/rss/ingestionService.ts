@@ -202,6 +202,9 @@ async function getActiveSources(
     .from("rss_sources")
     .select("*")
     .eq("is_active", true)
+    // Curated pseudo-sources (internal:// feed_url) hold admin-created items
+    // and have nothing to fetch
+    .not("feed_url", "like", "internal://%")
     .order("last_fetched_at", { ascending: true, nullsFirst: true });
 
   if (options?.sourceIds && options.sourceIds.length > 0) {

@@ -370,7 +370,7 @@ export default function Home() {
         const [videoResponse, articleResponse, podcastResponse] = await Promise.all([
           fetch("/api/rss?type=video"),
           fetch("/api/rss?type=article"),
-          fetch("/api/rss?type=video"),
+          fetch("/api/rss?type=podcast"),
         ]);
 
         if (!isCancelled && videoResponse.ok) {

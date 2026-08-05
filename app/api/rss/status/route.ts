@@ -26,7 +26,9 @@ export async function GET() {
       total: sources?.length || 0,
       articles: sources?.filter((s) => s.content_type === "article").length || 0,
       videos: sources?.filter((s) => s.content_type === "video").length || 0,
+      podcasts: sources?.filter((s) => s.content_type === "podcast").length || 0,
       topics: sources?.filter((s) => s.content_type === "topic").length || 0,
+      research: sources?.filter((s) => s.content_type === "research").length || 0,
       youtube: sources?.filter((s) => s.is_youtube_feed).length || 0,
     };
 

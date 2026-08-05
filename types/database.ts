@@ -196,7 +196,15 @@ export interface UpdateTopicInput {
 // RSS INGESTION TYPES
 // ============================================================================
 
-export type RSSContentType = "article" | "video" | "topic";
+export type RSSContentType =
+  | "article"
+  | "video"
+  | "podcast"
+  | "topic"
+  | "research";
+
+/** Where an rss_items row came from: auto-ingested feed vs manually curated by an admin */
+export type RSSItemSourceType = "curated" | "feed";
 
 export interface DBRSSSource {
   id: string;
@@ -237,6 +245,8 @@ export interface DBRSSItem {
   view_count: string | null;
   is_featured: boolean;
   hidden_by_admin: boolean;
+  source_type: RSSItemSourceType;
+  tag: string | null;
   ingested_at: string;
   updated_at: string;
 }
@@ -318,6 +328,8 @@ export interface CreateRSSItemInput {
   youtube_channel_name?: string;
   view_count?: string;
   is_featured?: boolean;
+  source_type?: RSSItemSourceType;
+  tag?: string;
 }
 
 // Action result types

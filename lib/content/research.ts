@@ -41,12 +41,12 @@ function mapItemToResearchPaper(item: DBRSSItemWithSource): ResearchPaper {
   };
 }
 
-/** Get research/topic items from DB for Research page. Uses topic sources (Lifespan.io, Fight Aging!, etc.). */
+/** Get research items from DB for Research page. Uses research sources (Nature Aging, curated research). */
 export async function getResearchPapersFromDB(limit: number = 80): Promise<{
   papers: ResearchPaper[];
   error?: string;
 }> {
-  const result = await getRSSItemsByType("topic", limit);
+  const result = await getRSSItemsByType("research", limit);
   if (result.error) return { papers: [], error: result.error };
   const items = result.data ?? [];
   const papers = items

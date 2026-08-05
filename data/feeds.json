@@ -2,7 +2,7 @@
   "feeds": [
     {
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC2D2CMWXMOVWx7giW1n3LIg",
-      "type": "video",
+      "type": "podcast",
       "isTopChannel": true,
       "image": "https://yt3.googleusercontent.com/5ONImZvpa9_wXBnVIA2LKd1xbM4sZ9f0PO3XjVk1dMKmkd4L-zHfPU-KSxRSfvvPmxDDLKsn=s176-c-k-c0x00ffffff-no-rj",
       "name": "Huberman Lab"

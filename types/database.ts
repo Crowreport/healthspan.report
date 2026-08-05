@@ -198,6 +198,8 @@ export interface UpdateTopicInput {
 
 export type RSSContentType = "article" | "video" | "topic";
 
+export type RSSAudience = "men" | "women" | "general";
+
 export interface DBRSSSource {
   id: string;
   name: string;
@@ -211,6 +213,7 @@ export interface DBRSSSource {
   is_youtube_feed: boolean;
   is_active: boolean;
   is_featured: boolean;
+  audience: RSSAudience | null;
   last_fetched_at: string | null;
   last_fetch_error: string | null;
   fetch_count: number;
@@ -237,6 +240,7 @@ export interface DBRSSItem {
   view_count: string | null;
   is_featured: boolean;
   hidden_by_admin: boolean;
+  audience: RSSAudience | null;
   ingested_at: string;
   updated_at: string;
 }
@@ -282,6 +286,7 @@ export interface CreateRSSSourceInput {
   is_youtube_feed?: boolean;
   is_active?: boolean;
   is_featured?: boolean;
+  audience?: RSSAudience | null;
 }
 
 export interface UpdateRSSSourceInput {
@@ -296,6 +301,7 @@ export interface UpdateRSSSourceInput {
   is_youtube_feed?: boolean;
   is_active?: boolean;
   is_featured?: boolean;
+  audience?: RSSAudience | null;
   last_fetched_at?: string | null;
   last_fetch_error?: string | null;
   fetch_count?: number;
@@ -318,6 +324,7 @@ export interface CreateRSSItemInput {
   youtube_channel_name?: string;
   view_count?: string;
   is_featured?: boolean;
+  audience?: RSSAudience | null;
 }
 
 // Action result types

@@ -450,6 +450,7 @@ async function processYouTubeFeed(
               return match ? match[1] : undefined;
             })(),
             youtube_channel_name: source.name,
+            audience: source.audience,
           } satisfies CreateRSSItemInput,
         ];
       }
@@ -524,6 +525,7 @@ async function processRegularFeed(
           thumbnail_url: normalized.thumbnailUrl,
           author: normalized.author,
           published_at: normalized.publishedAt,
+          audience: source.audience,
         };
       }
     );

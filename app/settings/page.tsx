@@ -24,6 +24,10 @@ export default function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
+  //interests
+  const [interests, setInterests] = useState<string[]>([]);
+const [interestsSaved, setInterestsSaved] = useState(false);
+
   // Load preferences from localStorage on mount
   useEffect(() => {
     const savedMotion = localStorage.getItem("healthspan-reduce-motion") === "true";
@@ -47,6 +51,16 @@ export default function SettingsPage() {
       setFirstName(profile.firstName || "");
       setLastName(profile.lastName || "");
       setUsername(profile.username || "");
+
+      async function loadInterests() {
+      const { data } = await supabase
+        .from("users")
+        .select("interests")
+        .eq("id", profile!.id)
+        .single();
+      if (data?.interests) setInterests(data.interests);
+    }
+    void loadInterests();
     }
   }, [profile]);
 
@@ -92,6 +106,17 @@ export default function SettingsPage() {
     setIsSaving(false);
   };
 
+  async function handleSaveInterests() {
+  if (!profile?.id) return;
+  const { error } = await supabase
+    .from("users")
+    .update({ interests })
+    .eq("id", profile.id);
+  if (!error) {
+    setInterestsSaved(true);
+    setTimeout(() => setInterestsSaved(false), 3000);
+  }
+}
   return (
     <div className={styles.page}>
       <Header />
@@ -270,6 +295,52 @@ export default function SettingsPage() {
               </div>
             )}
           </section>
+          <section className={styles.section}>
+  <h2 className={styles.sectionTitle}>Health Interests</h2>
+  <p className={styles.sectionDescription}>
+    Select the topics you care about. These will personalise your recommendations.
+  </p>
+
+  {!profile ? (
+    <div className={styles.placeholderText}>Please log in to set your interests.</div>
+  ) : (
+    <>
+      <div className={styles.interestsGrid}>
+        {[
+          "Sleep", "Longevity", "NAD+", "VO2 Max", "Glucose",
+          "Muscle", "Gut Health", "Mental Health", "Supplements",
+          "Fasting", "Cardiovascular", "Hormones", "Inflammation",
+          "Cold Therapy", "Meditation",
+        ].map((topic) => {
+          const active = interests.includes(topic);
+          return (
+            <button
+              key={topic}
+              type="button"
+              className={`${styles.interestChip} ${active ? styles.interestChipActive : ""}`}
+              onClick={() =>
+                setInterests((prev) =>
+                  active ? prev.filter((i) => i !== topic) : [...prev, topic]
+                )
+              }
+            >
+              {topic}
+            </button>
+          );
+        })}
+      </div>
+      <div className={styles.formActions}>
+        <Button
+          variant={interestsSaved ? "secondary" : "primary"}
+          onClick={handleSaveInterests}
+          disabled={interestsSaved}
+        >
+          {interestsSaved ? "Saved ✓" : "Save Interests"}
+        </Button>
+      </div>
+    </>
+  )}
+</section>
         </div>
       </main>
 

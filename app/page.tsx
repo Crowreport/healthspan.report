@@ -538,7 +538,7 @@ export default function Home() {
                         </svg>
                       </div>
                     </a>
-                    {isAuthenticated && (
+                    {isAdmin && (
                       <EditActionButton
                         label="Edit featured video"
                         onClick={() => openEditor({ type: "video", item: featuredVideo })}
@@ -592,7 +592,7 @@ export default function Home() {
                               <p className={styles.upNextChannel}>{video.channelName}</p>
                             </div>
                           </a>
-                          {isAuthenticated && (
+                          {isAdmin && (
                             <EditActionButton
                               label="Edit up next video"
                               onClick={() => openEditor({ type: "video", item: video })}
@@ -613,7 +613,7 @@ export default function Home() {
             title="Trending Topics"
             viewAllHref="/topics"
             articles={editableArticles}
-            canEdit={isAuthenticated}
+            canEdit={isAdmin}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
 
@@ -623,7 +623,7 @@ export default function Home() {
             title="Lifestyle News"
             viewAllHref="/articles"
             articles={editableArticles}
-            canEdit={isAuthenticated}
+            canEdit={isAdmin}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
 
@@ -634,7 +634,7 @@ export default function Home() {
             title="Top Youtube Channels"
             items={mediaVideos}
             viewAllHref="/videos"
-            canEdit={isAuthenticated}
+            canEdit={isAdmin}
             onEditItem={(item) => {
               const matched = editableVideos.find((video) => video.id === item.id);
               if (matched) {
@@ -647,7 +647,7 @@ export default function Home() {
             title="Lifestyle News"
             viewAllHref="/articles"
             articles={editableArticles}
-            canEdit={isAuthenticated}
+            canEdit={isAdmin}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
 
@@ -663,7 +663,7 @@ export default function Home() {
             items={mediaPodcasts}
             viewAllHref="/podcasts"
             maxRows={3}
-            canEdit={isAuthenticated}
+            canEdit={isAdmin}
             onEditItem={(item) => {
               const matched = editablePodcasts.find((podcast) => podcast.id === item.id);
               if (matched) {
@@ -679,7 +679,7 @@ export default function Home() {
             title="Supplement News"
             viewAllHref="/articles"
             articles={editableArticles}
-            canEdit={isAuthenticated}
+            canEdit={isAdmin}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
         </div>
@@ -687,7 +687,7 @@ export default function Home() {
 
       <Footer />
 
-      {isAuthenticated && editTarget && editForm && (
+      {isAdmin && editTarget && editForm && (
         <div
           className={styles.editorBackdrop}
           role="dialog"

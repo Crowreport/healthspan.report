@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
-import { ArticleGrid, TopChannels } from "@/components/sections";
+import { ArticleGrid, TopChannels, TopNews } from "@/components/sections";
+import type { TopNewsItem } from "@/components/sections/TopNews";
 import { AdPlaceholder } from "@/components/ui";
 import { articles, latestVideos, podcasts } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
@@ -28,6 +29,7 @@ type HomeArticle = {
   readTime: string;
   imageUrl: string;
   externalUrl: string;
+  sourceName?: string;
 };
 
 type HomePodcast = {
@@ -154,13 +156,12 @@ function TopicSection({
   canEdit?: boolean;
   onEditArticle?: (article: HomeArticle) => void;
 }) {
-  const columns = useMemo(
-    () =>
-      Array.from({ length: 3 }, (_, columnIndex) =>
-        loopItems(articles, 6, columnIndex)
-      ),
-    [articles]
-  );
+  const columns = useMemo(() => {
+    const perColumn = 6;
+    return Array.from({ length: 3 }, (_, columnIndex) =>
+      articles.slice(columnIndex * perColumn, columnIndex * perColumn + perColumn)
+    );
+  }, [articles]);
 
   return (
     <section className={styles.section}>
@@ -212,6 +213,12 @@ function TopicSection({
                         {formatDate(article.publishedAt)}
                         <span>|</span>
                         {article.readTime}
+                        {article.sourceName && (
+                          <>
+                            <span>|</span>
+                            {article.sourceName}
+                          </>
+                        )}
                       </p>
                     </div>
                     <CommentIcon />
@@ -421,10 +428,31 @@ export default function Home() {
     [podcastItems, overrides]
   );
 
+  // Each named section gets its own non-overlapping slice of articles so
+  // "Trending Topics" / "Lifestyle News" / "Supplement News" don't all show
+  // the exact same cards.
+  const trendingArticles = useMemo(() => editableArticles.slice(0, 18), [editableArticles]);
+  const lifestyleArticles = useMemo(() => editableArticles.slice(18, 36), [editableArticles]);
+  const supplementArticles = useMemo(() => editableArticles.slice(36, 54), [editableArticles]);
+  const topNewsArticles = useMemo(() => editableArticles.slice(0, 7), [editableArticles]);
+  const topNewsItems = useMemo<TopNewsItem[]>(
+    () =>
+      topNewsArticles.map((article) => ({
+        id: article.id,
+        title: article.title,
+        excerpt: article.excerpt,
+        imageUrl: article.imageUrl,
+        externalUrl: article.externalUrl,
+        publishedAt: formatDate(article.publishedAt),
+        sourceName: article.sourceName,
+      })),
+    [topNewsArticles]
+  );
+
   const featuredVideo = editableVideos[0];
   const sideVideos = useMemo(() => {
     const base = editableVideos.length > 1 ? editableVideos.slice(1) : editableVideos;
-    return loopItems(base, 6);
+    return base.slice(0, 6);
   }, [editableVideos]);
 
   const mediaVideos = useMemo<MediaItem[]>(
@@ -508,6 +536,8 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className={styles.container}>
+          <TopNews items={topNewsItems} viewAllHref="/articles" />
+
           {featuredVideo && (
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
@@ -612,7 +642,7 @@ export default function Home() {
           <TopicSection
             title="Trending Topics"
             viewAllHref="/topics"
-            articles={editableArticles}
+            articles={trendingArticles}
             canEdit={isAuthenticated}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
@@ -622,7 +652,7 @@ export default function Home() {
           <TopicSection
             title="Lifestyle News"
             viewAllHref="/articles"
-            articles={editableArticles}
+            articles={lifestyleArticles}
             canEdit={isAuthenticated}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
@@ -641,14 +671,6 @@ export default function Home() {
                 openEditor({ type: "video", item: matched });
               }
             }}
-          />
-
-          <TopicSection
-            title="Lifestyle News"
-            viewAllHref="/articles"
-            articles={editableArticles}
-            canEdit={isAuthenticated}
-            onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
 
         {/* Another Ad */}
@@ -678,7 +700,7 @@ export default function Home() {
           <TopicSection
             title="Supplement News"
             viewAllHref="/articles"
-            articles={editableArticles}
+            articles={supplementArticles}
             canEdit={isAuthenticated}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
           />
@@ -831,9 +853,13 @@ export default function Home() {
   );
 }
 
-function loopItems<T>(items: T[], count: number, start = 0): T[] {
-  if (!items.length) return [];
-  return Array.from({ length: count }, (_, index) => items[(start + index) % items.length]);
+function dedupeById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  });
 }
 
 function normalizeHref(rawHref: string, fallback: string): string {
@@ -871,7 +897,7 @@ function mapVideoSources(sources: RSSSource[]): HomeVideo[] {
     }
   }
 
-  return videos.sort(
+  return dedupeById(videos).sort(
     (left, right) =>
       new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime()
   );
@@ -895,11 +921,12 @@ function mapArticleSources(sources: RSSSource[]): HomeArticle[] {
           "/images/placeholders/article.svg"
         ),
         externalUrl: item.link || "/articles",
+        sourceName: item.creator || source.source.title,
       });
     }
   }
 
-  return stories.sort(
+  return dedupeById(stories).sort(
     (left, right) =>
       new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime()
   );
@@ -925,7 +952,7 @@ function mapPodcastSources(sources: RSSSource[]): HomePodcast[] {
     }
   }
 
-  return parsedPodcasts.sort(
+  return dedupeById(parsedPodcasts).sort(
     (left, right) =>
       new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime()
   );

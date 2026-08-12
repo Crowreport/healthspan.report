@@ -41,6 +41,25 @@ type HomePodcast = {
   url: string;
 };
 
+/** Shape returned by GET /api/top-news (see lib/content/topNews.ts). */
+type TopNewsAPIItem = {
+  id: string;
+  headline: string;
+  teaser: string;
+  imageUrl: string;
+  externalUrl: string;
+  publishedAt: string;
+  sourceName: string;
+  tags: string[];
+  rank: number;
+};
+
+type TopNewsAPIResponse = {
+  hero: TopNewsAPIItem | null;
+  items: TopNewsAPIItem[];
+  total: number;
+};
+
 type EditableContentType = "video" | "article" | "podcast";
 
 interface HomepageOverride {
@@ -353,6 +372,9 @@ export default function Home() {
       return {};
     }
   });
+  // Featured-driven Top News from /api/top-news. Null until the fetch resolves;
+  // an empty array means "resolved, but nothing is featured yet".
+  const [featuredTopNews, setFeaturedTopNews] = useState<TopNewsItem[] | null>(null);
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
   const [editForm, setEditForm] = useState<EditorFormState | null>(null);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -415,6 +437,46 @@ export default function Home() {
     };
   }, []);
 
+  // Top News is driven by the `featured` flag, not by recency. Fetched
+  // separately so a failure here leaves the rest of the homepage intact.
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function hydrateTopNews() {
+      try {
+        const response = await fetch("/api/top-news?limit=6");
+        if (!response.ok) return;
+
+        const payload = (await response.json()) as TopNewsAPIResponse;
+        if (isCancelled) return;
+
+        const ordered = [payload.hero, ...(payload.items ?? [])].filter(
+          (entry): entry is TopNewsAPIItem => Boolean(entry)
+        );
+
+        setFeaturedTopNews(
+          ordered.map((entry) => ({
+            id: entry.id,
+            title: entry.headline,
+            excerpt: entry.teaser,
+            imageUrl: entry.imageUrl,
+            externalUrl: entry.externalUrl,
+            publishedAt: formatDate(entry.publishedAt),
+            sourceName: entry.sourceName,
+          }))
+        );
+      } catch (error) {
+        console.error("Top News hydration failed:", error);
+      }
+    }
+
+    void hydrateTopNews();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
   const editableVideos = useMemo(
     () => applyVideoOverrides(videoItems, overrides),
     [videoItems, overrides]
@@ -435,19 +497,23 @@ export default function Home() {
   const lifestyleArticles = useMemo(() => editableArticles.slice(18, 36), [editableArticles]);
   const supplementArticles = useMemo(() => editableArticles.slice(36, 54), [editableArticles]);
   const topNewsArticles = useMemo(() => editableArticles.slice(0, 7), [editableArticles]);
-  const topNewsItems = useMemo<TopNewsItem[]>(
-    () =>
-      topNewsArticles.map((article) => ({
-        id: article.id,
-        title: article.title,
-        excerpt: article.excerpt,
-        imageUrl: article.imageUrl,
-        externalUrl: article.externalUrl,
-        publishedAt: formatDate(article.publishedAt),
-        sourceName: article.sourceName,
-      })),
-    [topNewsArticles]
-  );
+  // Featured items win. Until any item is marked featured (or if the request
+  // fails) fall back to the most recent articles so the block is never blank.
+  const topNewsItems = useMemo<TopNewsItem[]>(() => {
+    if (featuredTopNews && featuredTopNews.length > 0) {
+      return featuredTopNews;
+    }
+
+    return topNewsArticles.map((article) => ({
+      id: article.id,
+      title: article.title,
+      excerpt: article.excerpt,
+      imageUrl: article.imageUrl,
+      externalUrl: article.externalUrl,
+      publishedAt: formatDate(article.publishedAt),
+      sourceName: article.sourceName,
+    }));
+  }, [featuredTopNews, topNewsArticles]);
 
   const featuredVideo = editableVideos[0];
   const sideVideos = useMemo(() => {

@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import { Radar } from "react-chartjs-2";
 import styles from "./page.module.css";
+import { useChatStore } from "@/store/useChatStore";
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
@@ -52,6 +53,9 @@ export default function DashboardPage() {
   type Insight = { title: string; insight: string };
 const [insights, setInsights] = useState<Insight[]>([]);
 const [loadingInsights, setLoadingInsights] = useState(false);
+const openChat = useChatStore((s) => s.open);
+const setPendingPrompt = useChatStore((s) => s.setPendingPrompt);
+
 
   useEffect(() => {
     async function load() {
@@ -99,7 +103,10 @@ const [loadingInsights, setLoadingInsights] = useState(false);
     }
     setSaving(false);
   }
-
+  function handleAskChat(question: string) {
+    setPendingPrompt({ text: question });
+   openChat();
+  }
   // Normalize each biomarker to a 0–100 scale for the chart
   const chartData = {
     labels: ["Sleep", "VO2 Max", "Glucose", "Workout Freq", "Age Score"],
@@ -158,7 +165,37 @@ const [loadingInsights, setLoadingInsights] = useState(false);
   setInsights(insights);
   setLoadingInsights(false);
 }
+  function getSuggestions(title: string, insight: string): string[] {
+  const combined = `${title}: ${insight}`.toLowerCase();
 
+  if (combined.includes("sleep")) return [
+    "What are the health risks of poor sleep?",
+    "What habits improve sleep quality?",
+    "How does sleep affect longevity?",
+  ];
+  if (combined.includes("glucose") || combined.includes("blood sugar")) return [
+    "What are the dangers of high glucose levels?",
+    "How can I lower my blood glucose naturally?",
+    "What foods spike blood sugar the most?",
+  ];
+  if (combined.includes("vo2") || combined.includes("cardio") || combined.includes("cardiovascular")) return [
+    "What is VO2 max and why does it matter?",
+    "How can I improve my VO2 max?",
+    "What cardio exercises are best for longevity?",
+  ];
+  if (combined.includes("workout") || combined.includes("exercise") || combined.includes("muscle")) return [
+    "How much exercise is optimal for longevity?",
+    "What are the benefits of strength training?",
+    "How does exercise frequency affect healthspan?",
+  ];
+
+  // Generic fallback
+  return [
+    `Tell me more about ${title.toLowerCase()}`,
+    "How does this affect my longevity?",
+    "What lifestyle changes can help?",
+  ];
+}
   return (
     <>
       <Header />
@@ -239,15 +276,27 @@ const [loadingInsights, setLoadingInsights] = useState(false);
   </button>
 
   {insights.length > 0 && (
-    <div className={styles.insightsGrid}>
-      {insights.map((item, i) => (
-        <div key={i} className={styles.insightCard}>
-          <h3 className={styles.insightTitle}>{item.title}</h3>
-          <p className={styles.insightText}>{item.insight}</p>
+  <div className={styles.insightsGrid}>
+    {insights.map((item, i) => (
+      <div key={i} className={styles.insightCard}>
+        <h3 className={styles.insightTitle}>{item.title}</h3>
+        <p className={styles.insightText}>{item.insight}</p>
+        <div className={styles.suggestions}>
+          {getSuggestions(item.title, item.insight).map((q) => (
+            <button
+              key={q}
+              type="button"
+              className={styles.suggestionButton}
+              onClick={() => handleAskChat(q)}
+            >
+              {q}
+            </button>
+          ))}
         </div>
-      ))}
-    </div>
-  )}
+      </div>
+    ))}
+  </div>
+)}
 
   {!loadingInsights && insights.length === 0 && hasData && (
     <p className={styles.insightsPlaceholder}>

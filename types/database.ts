@@ -244,6 +244,8 @@ export interface DBRSSItem {
   youtube_channel_name: string | null;
   view_count: string | null;
   is_featured: boolean;
+  /** Manual Top News rank; lower = higher placement. Null = unranked (recency order). */
+  featured_priority: number | null;
   hidden_by_admin: boolean;
   source_type: RSSItemSourceType;
   tag: string | null;
@@ -251,12 +253,14 @@ export interface DBRSSItem {
   updated_at: string;
 }
 
-/** Admin-editable fields for RSS items (title, excerpt, thumbnail, visibility) */
+/** Admin-editable fields for RSS items (title, excerpt, thumbnail, visibility, ranking) */
 export interface UpdateRSSItemInput {
   title?: string;
   excerpt?: string | null;
   thumbnail_url?: string | null;
   hidden_by_admin?: boolean;
+  is_featured?: boolean;
+  featured_priority?: number | null;
 }
 
 // RSS Item with joined source
@@ -328,8 +332,50 @@ export interface CreateRSSItemInput {
   youtube_channel_name?: string;
   view_count?: string;
   is_featured?: boolean;
+  featured_priority?: number | null;
   source_type?: RSSItemSourceType;
   tag?: string;
+}
+
+// ============================================================================
+// ITEM REACTIONS
+// ============================================================================
+
+/**
+ * Reaction types a user can apply to a content item.
+ * Mirrors the CHECK constraint on item_reactions.reaction_type (migration 016).
+ */
+export type ItemReactionType = "thumbs_up" | "insightful" | "favorite";
+
+export const ITEM_REACTION_TYPES: ItemReactionType[] = [
+  "thumbs_up",
+  "insightful",
+  "favorite",
+];
+
+/**
+ * A single reaction row. Keyed by (item_id, user_id, reaction_type): a user may
+ * hold several distinct reaction types on one item, but not the same type twice.
+ */
+export interface DBItemReaction {
+  id: string;
+  item_id: string;
+  user_id: string;
+  reaction_type: ItemReactionType;
+  created_at: string;
+}
+
+export interface CreateItemReactionInput {
+  item_id: string;
+  reaction_type: ItemReactionType;
+}
+
+/** Aggregated reaction counts for an item, plus the caller's own reactions. */
+export interface ItemReactionSummary {
+  item_id: string;
+  counts: Record<ItemReactionType, number>;
+  /** Reaction types the requesting user currently holds; empty when anonymous. */
+  userReactions: ItemReactionType[];
 }
 
 // Action result types

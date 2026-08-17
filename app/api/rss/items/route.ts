@@ -10,11 +10,13 @@
  * - limit: Maximum items to return (default: 20)
  * - offset: Pagination offset
  * - featured: Only return featured items (true/false)
+ * - audience: Filter by audience (general, women, men)
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import type { RSSContentType } from "@/types/database";
+import { ITEM_AUDIENCES } from "@/types/database";
+import type { ItemAudience, RSSContentType } from "@/types/database";
 import type { RSSSource, RSSArticle } from "@/types/rss";
 
 export const dynamic = "force-dynamic";
@@ -52,6 +54,20 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
   const featuredOnly = searchParams.get("featured") === "true";
+
+  // Audience filter. Omitted = every audience, which keeps existing callers
+  // (and the mixed homepage feed) behaving exactly as before.
+  const rawAudience = searchParams.get("audience");
+  let audience: ItemAudience | null = null;
+  if (rawAudience !== null) {
+    if (!ITEM_AUDIENCES.includes(rawAudience as ItemAudience)) {
+      return NextResponse.json(
+        { error: `audience must be one of: ${ITEM_AUDIENCES.join(", ")}` },
+        { status: 400 }
+      );
+    }
+    audience = rawAudience as ItemAudience;
+  }
 
   try {
     const supabase = await createClient();
@@ -115,6 +131,10 @@ export async function GET(request: NextRequest) {
 
     if (featuredOnly) {
       itemsQuery = itemsQuery.eq("is_featured", true);
+    }
+
+    if (audience) {
+      itemsQuery = itemsQuery.eq("audience", audience);
     }
 
     const { data: items, count, error } = await itemsQuery;

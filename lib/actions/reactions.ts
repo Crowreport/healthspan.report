@@ -114,7 +114,6 @@ export async function addItemReaction(
     };
   }
 }
-
 /**
  * Toggle a reaction for the current user: add it if absent, remove it if the
  * user already holds it. This is the action behind a reaction button — one

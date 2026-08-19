@@ -43,7 +43,10 @@ export default function TopNews({
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Top News</h2>
+          <div className={styles.headerLeft}>
+            <h2 className={styles.title}>Top News</h2>
+            <span className={styles.headerBadge}>Top 10 this week</span>
+          </div>
           <Link href={viewAllHref} className={styles.viewAll}>
             View all
           </Link>

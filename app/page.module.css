@@ -140,6 +140,10 @@
   gap: var(--space-sm);
 }
 
+.playerSubline > :last-child {
+  margin-left: auto;
+}
+
 .upNextPanel {
   display: flex;
   flex-direction: column;
@@ -214,9 +218,20 @@
 }
 
 .upNextChannel {
-  margin: auto 0 0 0;
+  margin: 0;
   color: var(--color-text-secondary);
   font-size: 0.7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upNextFooter {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
 }
 
 .editableCardWrap {
@@ -330,6 +345,8 @@
   color: var(--color-text-secondary);
   font-size: 0.67rem;
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 2px;
   gap: var(--space-xs);
   align-items: center;
 }
@@ -488,6 +505,13 @@
   color: var(--color-text-secondary);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.videoCardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
 }
 
 .editorBackdrop {

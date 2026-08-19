@@ -132,6 +132,7 @@ async function getPersistedData(
       }
 
       const rssArticle: RSSArticle = {
+        id: item.id,
         title: item.title,
         link: item.external_url,
         thumbnail: item.thumbnail_url || undefined,

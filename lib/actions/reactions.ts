@@ -114,6 +114,86 @@ export async function addItemReaction(
     };
   }
 }
+/**
+ * Toggle a reaction for the current user: add it if absent, remove it if the
+ * user already holds it. This is the action behind a reaction button — one
+ * round trip per tap, and the response says which way it went.
+ *
+ * Distinct from `addItemReaction`, which is deliberately add-only and
+ * idempotent: a caller that wants "ensure this reaction exists" must not get a
+ * removal when it happens to already be there.
+ */
+export async function toggleItemReaction(
+  itemId: string,
+  reactionType: ItemReactionType
+): Promise<ActionResult<{ reacted: boolean }>> {
+  if (!ITEM_REACTION_TYPES.includes(reactionType)) {
+    return { error: `Invalid reaction type: ${reactionType}` };
+  }
+
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { error: "Not authenticated" };
+    }
+
+    const supabase = await createClient();
+
+    // Read-then-write, not an upsert: we need to know the prior state to decide
+    // the direction. A concurrent double-tap can interleave here, but the worst
+    // case is the reaction landing in the state of whichever request finished
+    // last — no duplicate rows, since the primary key forbids them.
+    const { data: existing, error: selectError } = await supabase
+      .from("item_reactions")
+      .select("item_id")
+      .eq("item_id", itemId)
+      .eq("user_id", user.id)
+      .eq("reaction_type", reactionType)
+      .maybeSingle();
+
+    if (selectError) {
+      return { error: selectError.message };
+    }
+
+    if (existing) {
+      const { error: deleteError } = await supabase
+        .from("item_reactions")
+        .delete()
+        .eq("item_id", itemId)
+        .eq("user_id", user.id)
+        .eq("reaction_type", reactionType);
+
+      if (deleteError) {
+        return { error: deleteError.message };
+      }
+
+      return { data: { reacted: false } };
+    }
+
+    const { error: insertError } = await supabase
+      .from("item_reactions")
+      .insert({
+        item_id: itemId,
+        user_id: user.id,
+        reaction_type: reactionType,
+      });
+
+    if (insertError) {
+      // Lost a race with a concurrent insert of the same reaction — the row now
+      // exists, which is the state the caller asked for.
+      if (insertError.code === "23505") {
+        return { data: { reacted: true } };
+      }
+      return { error: insertError.message };
+    }
+
+    return { data: { reacted: true } };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Failed to toggle reaction",
+    };
+  }
+}
 
 /** Remove one of the current user's reactions from an item (the toggle-off path). */
 export async function removeItemReaction(

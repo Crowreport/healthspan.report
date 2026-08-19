@@ -6,10 +6,15 @@ export type RSSContentType =
   | "topic"
   | "research";
 
+/** Who a feed's content is aimed at. Mirrors ItemAudience in types/database.ts. */
+export type RSSAudience = "general" | "women" | "men";
+
 // RSS Feed Configuration Types
 export interface RSSFeedConfig {
   url: string;
   type: RSSContentType;
+  /** Audience stamped onto every item from this feed. Defaults to "general". */
+  audience?: RSSAudience;
   image?: string;
   name?: string;
   isTopChannel?: boolean;

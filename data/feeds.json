@@ -56,6 +56,48 @@
       "type": "research",
       "image": "https://www.nature.com/static/images/favicons/nature/apple-touch-icon.png",
       "name": "Nature Aging"
+    },
+    {
+      "url": "https://www.healthline.com/rss/health-news",
+      "type": "article",
+      "audience": "general",
+      "image": "https://www.healthline.com/favicon.ico",
+      "name": "Healthline"
+    },
+    {
+      "url": "https://www.sciencedaily.com/rss/health_medicine.xml",
+      "type": "article",
+      "audience": "general",
+      "image": "https://www.sciencedaily.com/favicon.ico",
+      "name": "ScienceDaily Health"
+    },
+    {
+      "url": "https://www.nia.nih.gov/news/rss.xml",
+      "type": "research",
+      "audience": "general",
+      "image": "https://www.nia.nih.gov/favicon.ico",
+      "name": "National Institute on Aging"
+    },
+    {
+      "url": "https://www.prevention.com/rss/all.xml/",
+      "type": "article",
+      "audience": "general",
+      "image": "https://www.prevention.com/favicon.ico",
+      "name": "Prevention"
+    },
+    {
+      "url": "https://www.menshealth.com/rss/all.xml/",
+      "type": "article",
+      "audience": "men",
+      "image": "https://www.menshealth.com/favicon.ico",
+      "name": "Men's Health"
+    },
+    {
+      "url": "https://www.womenshealthmag.com/rss/all.xml/",
+      "type": "article",
+      "audience": "women",
+      "image": "https://www.womenshealthmag.com/favicon.ico",
+      "name": "Women's Health"
     }
   ]
 }

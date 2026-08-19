@@ -12,6 +12,7 @@
  * - source_type  (optional) 'curated' | 'feed', defaults to 'curated'
  * - content_type (optional) 'article' | 'video' | 'podcast' | 'topic' | 'research',
  *                defaults to 'article' — controls which page/section lists the item
+ * - audience     (optional) 'general' | 'women' | 'men', defaults to 'general'
  *
  * The item is attached to the internal curated source for its content_type
  * (seeded by migration 015), so existing type-filtered queries pick it up.
@@ -24,9 +25,11 @@ import { getCurrentUser } from "@/lib/auth";
 import { slugify } from "@/lib/rss/rssFetcher";
 import type {
   DBRSSItem,
+  ItemAudience,
   RSSContentType,
   RSSItemSourceType,
 } from "@/types/database";
+import { DEFAULT_ITEM_AUDIENCE, ITEM_AUDIENCES } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +58,7 @@ interface CreateItemBody {
   featured?: unknown;
   source_type?: unknown;
   content_type?: unknown;
+  audience?: unknown;
 }
 
 interface ValidatedItem {
@@ -65,6 +69,7 @@ interface ValidatedItem {
   featured: boolean;
   source_type: RSSItemSourceType;
   content_type: RSSContentType;
+  audience: ItemAudience;
 }
 
 function validate(body: CreateItemBody): {
@@ -145,6 +150,18 @@ function validate(body: CreateItemBody): {
     }
   }
 
+  let audience: ItemAudience = DEFAULT_ITEM_AUDIENCE;
+  if (body.audience !== undefined) {
+    if (
+      typeof body.audience !== "string" ||
+      !ITEM_AUDIENCES.includes(body.audience as ItemAudience)
+    ) {
+      errors.push(`audience must be one of: ${ITEM_AUDIENCES.join(", ")}`);
+    } else {
+      audience = body.audience as ItemAudience;
+    }
+  }
+
   if (errors.length > 0) {
     return { errors };
   }
@@ -158,6 +175,7 @@ function validate(body: CreateItemBody): {
       featured,
       source_type: sourceType,
       content_type: contentType,
+      audience,
     },
     errors: [],
   };
@@ -220,6 +238,7 @@ export async function POST(request: NextRequest) {
         is_featured: item.featured,
         source_type: item.source_type,
         tag: item.tag,
+        audience: item.audience,
       })
       .select()
       .single();

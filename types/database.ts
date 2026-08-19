@@ -206,6 +206,18 @@ export type RSSContentType =
 /** Where an rss_items row came from: auto-ingested feed vs manually curated by an admin */
 export type RSSItemSourceType = "curated" | "feed";
 
+/**
+ * Who a content item is aimed at. Mirrors the CHECK constraint on
+ * rss_items.audience / rss_sources.audience (migration 017).
+ * 'general' is the default and covers the overwhelming majority of items.
+ */
+export type ItemAudience = "general" | "women" | "men";
+
+export const ITEM_AUDIENCES: ItemAudience[] = ["general", "women", "men"];
+
+/** Default applied to items whose source declares no specific audience. */
+export const DEFAULT_ITEM_AUDIENCE: ItemAudience = "general";
+
 export interface DBRSSSource {
   id: string;
   name: string;
@@ -215,6 +227,8 @@ export interface DBRSSSource {
   image_url: string | null;
   description: string | null;
   content_type: RSSContentType;
+  /** Audience stamped onto items ingested from this source. */
+  audience: ItemAudience;
   youtube_channel_id: string | null;
   is_youtube_feed: boolean;
   is_active: boolean;
@@ -249,6 +263,8 @@ export interface DBRSSItem {
   hidden_by_admin: boolean;
   source_type: RSSItemSourceType;
   tag: string | null;
+  /** Who the item is aimed at; inherited from the source at ingestion time. */
+  audience: ItemAudience;
   ingested_at: string;
   updated_at: string;
 }
@@ -261,6 +277,7 @@ export interface UpdateRSSItemInput {
   hidden_by_admin?: boolean;
   is_featured?: boolean;
   featured_priority?: number | null;
+  audience?: ItemAudience;
 }
 
 // RSS Item with joined source
@@ -292,6 +309,7 @@ export interface CreateRSSSourceInput {
   image_url?: string;
   description?: string;
   content_type: RSSContentType;
+  audience?: ItemAudience;
   youtube_channel_id?: string;
   is_youtube_feed?: boolean;
   is_active?: boolean;
@@ -306,6 +324,7 @@ export interface UpdateRSSSourceInput {
   image_url?: string | null;
   description?: string | null;
   content_type?: RSSContentType;
+  audience?: ItemAudience;
   youtube_channel_id?: string | null;
   is_youtube_feed?: boolean;
   is_active?: boolean;
@@ -335,6 +354,49 @@ export interface CreateRSSItemInput {
   featured_priority?: number | null;
   source_type?: RSSItemSourceType;
   tag?: string;
+  /** Defaults to the source's audience when omitted. */
+  audience?: ItemAudience;
+}
+
+// ============================================================================
+// ITEM REACTIONS
+// ============================================================================
+
+/**
+ * Reaction types a user can apply to a content item.
+ * Mirrors the CHECK constraint on item_reactions.reaction_type (migration 016).
+ */
+export type ItemReactionType = "thumbs_up" | "insightful" | "favorite";
+
+export const ITEM_REACTION_TYPES: ItemReactionType[] = [
+  "thumbs_up",
+  "insightful",
+  "favorite",
+];
+
+/**
+ * A single reaction row. Keyed by (item_id, user_id, reaction_type): a user may
+ * hold several distinct reaction types on one item, but not the same type twice.
+ */
+export interface DBItemReaction {
+  id: string;
+  item_id: string;
+  user_id: string;
+  reaction_type: ItemReactionType;
+  created_at: string;
+}
+
+export interface CreateItemReactionInput {
+  item_id: string;
+  reaction_type: ItemReactionType;
+}
+
+/** Aggregated reaction counts for an item, plus the caller's own reactions. */
+export interface ItemReactionSummary {
+  item_id: string;
+  counts: Record<ItemReactionType, number>;
+  /** Reaction types the requesting user currently holds; empty when anonymous. */
+  userReactions: ItemReactionType[];
 }
 
 // ============================================================================

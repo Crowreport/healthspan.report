@@ -25,6 +25,7 @@ Auth: caller must be logged in (Supabase session cookie) and have
 | `featured`     | boolean | no       | `false`     | `true` = surface in Top News / featured slots (`rss_items.is_featured`). |
 | `source_type`  | string  | no       | `"curated"` | `curated` = added by hand, `feed` = came from a feed. The form should default to `curated`. |
 | `content_type` | string  | no       | `"article"` | One of `article`, `video`, `podcast`, `topic`, `research`. Controls which page/section lists the item. |
+| `audience`     | string  | no       | `"general"` | One of `general`, `women`, `men`. See [docs/audience-and-reactions-api.md](./audience-and-reactions-api.md). |
 
 ## Example request
 

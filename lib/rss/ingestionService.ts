@@ -12,7 +12,9 @@ import type {
   DBRSSSource,
   DBRSSItem,
   CreateRSSItemInput,
+  ItemAudience,
 } from "@/types/database";
+import { DEFAULT_ITEM_AUDIENCE, ITEM_AUDIENCES } from "@/types/database";
 import type {
   NormalizedRSSItem,
   FeedProcessingResult,
@@ -99,6 +101,21 @@ async function fetchYouTubeFeedXml(
 // ============================================================================
 // NORMALIZATION
 // ============================================================================
+
+/**
+ * Audience to stamp onto items from a source.
+ *
+ * An outlet's audience is a property of the outlet — everything Women's Health
+ * publishes is women's-health content — so items inherit it rather than being
+ * classified individually. Falls back to 'general' for sources predating
+ * migration 017 or carrying an unrecognized value.
+ */
+function audienceForSource(source: DBRSSSource): ItemAudience {
+  const declared = source.audience;
+  return declared && ITEM_AUDIENCES.includes(declared)
+    ? declared
+    : DEFAULT_ITEM_AUDIENCE;
+}
 
 /**
  * Normalize a YouTube RSS item to our standard format
@@ -423,6 +440,8 @@ async function processYouTubeFeed(
     };
 
     // Normalize and prepare for insertion
+    const audience = audienceForSource(source);
+
     const normalizedItems: CreateRSSItemInput[] = itemsToProcess.flatMap(
       (entry) => {
         const guid = entry.id || "";
@@ -453,6 +472,7 @@ async function processYouTubeFeed(
               return match ? match[1] : undefined;
             })(),
             youtube_channel_name: source.name,
+            audience,
           } satisfies CreateRSSItemInput,
         ];
       }
@@ -511,6 +531,8 @@ async function processRegularFeed(
     const itemsToProcess = parsed.articles.slice(0, maxItems);
 
     // Normalize and prepare for insertion
+    const audience = audienceForSource(source);
+
     const normalizedItems: CreateRSSItemInput[] = itemsToProcess.map(
       (item) => {
         const normalized =
@@ -527,6 +549,7 @@ async function processRegularFeed(
           thumbnail_url: normalized.thumbnailUrl,
           author: normalized.author,
           published_at: normalized.publishedAt,
+          audience,
         };
       }
     );
@@ -702,21 +725,31 @@ export async function seedRSSSources(): Promise<{
       .map((s: string) => s.charAt(0).toUpperCase() + s.slice(1))
       .join(" ");
 
+    // feeds.json entries may omit `audience`; those outlets are general-audience.
+    const declaredAudience = (feed as { audience?: string }).audience;
+    const audience =
+      declaredAudience &&
+      ITEM_AUDIENCES.includes(declaredAudience as ItemAudience)
+        ? (declaredAudience as ItemAudience)
+        : DEFAULT_ITEM_AUDIENCE;
+
     const sourceData = {
       name,
       slug,
       feed_url: feed.url,
       image_url: feed.image || null,
       content_type: feed.type,
+      audience,
       youtube_channel_id: channelId,
       is_youtube_feed: isYouTube,
       is_active: true,
       is_featured: feed.isTopChannel || false,
     };
 
-    const { error } = await supabase
+    const { data: upserted, error } = await supabase
       .from("rss_sources")
-      .upsert(sourceData, { onConflict: "feed_url", ignoreDuplicates: true });
+      .upsert(sourceData, { onConflict: "feed_url", ignoreDuplicates: true })
+      .select("id");
 
     if (error) {
       if (error.code === "23505") {
@@ -725,8 +758,28 @@ export async function seedRSSSources(): Promise<{
       } else {
         errors.push(`${feed.url}: ${error.message}`);
       }
-    } else {
+      continue;
+    }
+
+    if (upserted && upserted.length > 0) {
       created++;
+      continue;
+    }
+
+    // ignoreDuplicates means an existing source is left untouched, so a feed
+    // whose audience changed in feeds.json would keep the old value forever.
+    // Sync just that field — name/image/type are managed by migrations, and
+    // fetch counters must not be reset.
+    skipped++;
+
+    const { error: syncError } = await supabase
+      .from("rss_sources")
+      .update({ audience, updated_at: new Date().toISOString() })
+      .eq("feed_url", feed.url)
+      .neq("audience", audience);
+
+    if (syncError) {
+      errors.push(`${feed.url}: audience sync failed: ${syncError.message}`);
     }
   }
 

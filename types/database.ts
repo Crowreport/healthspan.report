@@ -398,50 +398,9 @@ export interface ItemReactionSummary {
   /** Reaction types the requesting user currently holds; empty when anonymous. */
   userReactions: ItemReactionType[];
 }
-
-// ============================================================================
-// ITEM REACTIONS
-// ============================================================================
-
-/**
- * Reaction types a user can apply to a content item.
- * Mirrors the CHECK constraint on item_reactions.reaction_type (migration 016).
- */
-export type ItemReactionType = "thumbs_up" | "insightful" | "favorite";
-
-export const ITEM_REACTION_TYPES: ItemReactionType[] = [
-  "thumbs_up",
-  "insightful",
-  "favorite",
-];
-
-/**
- * A single reaction row. Keyed by (item_id, user_id, reaction_type): a user may
- * hold several distinct reaction types on one item, but not the same type twice.
- */
-export interface DBItemReaction {
-  id: string;
-  item_id: string;
-  user_id: string;
-  reaction_type: ItemReactionType;
-  created_at: string;
-}
-
-export interface CreateItemReactionInput {
-  item_id: string;
-  reaction_type: ItemReactionType;
-}
-
-/** Aggregated reaction counts for an item, plus the caller's own reactions. */
-export interface ItemReactionSummary {
-  item_id: string;
-  counts: Record<ItemReactionType, number>;
-  /** Reaction types the requesting user currently holds; empty when anonymous. */
-  userReactions: ItemReactionType[];
-}
-
 // Action result types
 export interface ActionResult<T> {
   data?: T;
   error?: string;
 }
+

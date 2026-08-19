@@ -281,7 +281,7 @@
 }
 
 /* Small phones: tighten padding so the card doesn't feel cramped */
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .section {
     padding: var(--space-lg);
   }
@@ -291,6 +291,7 @@
   }
 
   .listLink {
+    flex-wrap: wrap;
     padding: var(--space-sm) var(--space-md);
     gap: var(--space-sm);
   }
@@ -298,6 +299,16 @@
   .listThumb {
     width: 52px;
     height: 52px;
+  }
+
+  /* The reaction icons + comment bubble don't shrink (186px+ fixed), so on a
+     narrow phone they'd otherwise crush listTitle down to nothing. Drop them
+     to their own full-width row instead of fighting the title for space. */
+  .listEngagement {
+    flex-basis: 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+    margin-top: var(--space-xs);
   }
 }
 

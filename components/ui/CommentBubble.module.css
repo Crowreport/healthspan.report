@@ -1,0 +1,20 @@
+.bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.icon {
+  width: var(--space-lg);
+  height: var(--space-lg);
+  flex-shrink: 0;
+}
+
+.count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+}

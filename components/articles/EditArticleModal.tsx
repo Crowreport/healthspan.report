@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { getRSSItemById, updateRSSItem, deleteRSSItem, resetRSSItemFromFeed } from "@/lib/actions/rss";
+import { ITEM_AUDIENCES, type ItemAudience } from "@/types/database";
 
 const overlayStyle: React.CSSProperties = {
   position: "fixed",
@@ -39,7 +40,13 @@ export default function EditArticleModal({ articleId, isOpen, onClose }: EditArt
   const router = useRouter();
   const [item, setItem] = useState<Awaited<ReturnType<typeof getRSSItemById>>["data"] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ title: "", excerpt: "", thumbnail_url: "", hidden_by_admin: false });
+  const [form, setForm] = useState({
+    title: "",
+    excerpt: "",
+    thumbnail_url: "",
+    hidden_by_admin: false,
+    audience: "general" as ItemAudience,
+  });
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
   useEffect(() => {
@@ -61,6 +68,7 @@ export default function EditArticleModal({ articleId, isOpen, onClose }: EditArt
           excerpt: res.data.excerpt ?? "",
           thumbnail_url: res.data.thumbnail_url ?? "",
           hidden_by_admin: res.data.hidden_by_admin ?? false,
+          audience: res.data.audience ?? "general",
         });
       } else {
         setMessage({ type: "err", text: res.error ?? "Failed to load" });
@@ -77,6 +85,7 @@ export default function EditArticleModal({ articleId, isOpen, onClose }: EditArt
       excerpt: form.excerpt || null,
       thumbnail_url: form.thumbnail_url || null,
       hidden_by_admin: form.hidden_by_admin,
+      audience: form.audience,
     });
     if (result.error) setMessage({ type: "err", text: result.error });
     else {
@@ -143,6 +152,18 @@ export default function EditArticleModal({ articleId, isOpen, onClose }: EditArt
               onChange={(e) => setForm((f) => ({ ...f, thumbnail_url: e.target.value }))}
               style={{ width: "100%", padding: "0.35rem 0.5rem", marginBottom: "0.75rem", border: "1px solid #ccc", borderRadius: 4, boxSizing: "border-box" }}
             />
+            <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem" }}>Audience</label>
+            <select
+              value={form.audience}
+              onChange={(e) => setForm((f) => ({ ...f, audience: e.target.value as ItemAudience }))}
+              style={{ width: "100%", padding: "0.35rem 0.5rem", marginBottom: "0.75rem", border: "1px solid #ccc", borderRadius: 4, boxSizing: "border-box" }}
+            >
+              {ITEM_AUDIENCES.map((audience) => (
+                <option key={audience} value={audience}>
+                  {audience}
+                </option>
+              ))}
+            </select>
             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
               <input
                 type="checkbox"

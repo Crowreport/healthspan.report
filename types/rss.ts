@@ -27,6 +27,8 @@ export interface FeedsConfig {
 
 // Parsed RSS Item Types
 export interface RSSArticle {
+  /** rss_items.id — only present when served from the DB, not the live-feed fallback. */
+  id?: string;
   title: string;
   link: string;
   thumbnail?: string;

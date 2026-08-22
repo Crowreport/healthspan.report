@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CommentBubble, ReactionBar } from "@/components/ui";
 import styles from "./TopNews.module.css";
 
 export interface TopNewsItem {
@@ -17,6 +18,8 @@ interface TopNewsProps {
   /** Most-recent-first list of items. First item renders as the hero. */
   items: TopNewsItem[];
   viewAllHref?: string;
+  /** rss_items.id -> comment count. Missing key renders as 0. */
+  commentCounts?: Record<string, number>;
 }
 
 function isExternalHref(href: string): boolean {
@@ -28,7 +31,11 @@ function handleImageError(event: React.SyntheticEvent<HTMLImageElement>) {
   event.currentTarget.src = "/images/placeholders/article.svg";
 }
 
-export default function TopNews({ items, viewAllHref = "/articles" }: TopNewsProps) {
+export default function TopNews({
+  items,
+  viewAllHref = "/articles",
+  commentCounts = {},
+}: TopNewsProps) {
   const [hero, ...rest] = items;
   const rankedItems = rest.slice(0, 6);
 
@@ -36,7 +43,10 @@ export default function TopNews({ items, viewAllHref = "/articles" }: TopNewsPro
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Top News</h2>
+          <div className={styles.headerLeft}>
+            <h2 className={styles.title}>Top News</h2>
+            <span className={styles.headerBadge}>Top 10 this week</span>
+          </div>
           <Link href={viewAllHref} className={styles.viewAll}>
             View all
           </Link>
@@ -75,6 +85,10 @@ export default function TopNews({ items, viewAllHref = "/articles" }: TopNewsPro
                   {hero.sourceName && <span>{hero.sourceName}</span>}
                   {hero.sourceName && <span className={styles.dot}>&middot;</span>}
                   <span>{hero.publishedAt}</span>
+                  <span className={styles.heroEngagement}>
+                    <ReactionBar itemId={hero.id} />
+                    <CommentBubble count={commentCounts[hero.id]} />
+                  </span>
                 </p>
               </div>
             </a>
@@ -105,6 +119,10 @@ export default function TopNews({ items, viewAllHref = "/articles" }: TopNewsPro
                           {item.sourceName && <span className={styles.dot}>&middot;</span>}
                           <span>{item.publishedAt}</span>
                         </span>
+                      </span>
+                      <span className={styles.listEngagement}>
+                        <ReactionBar itemId={item.id} />
+                        <CommentBubble count={commentCounts[item.id]} />
                       </span>
                     </a>
                   </li>

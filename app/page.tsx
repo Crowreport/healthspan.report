@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { ArticleGrid, TopChannels, TopNews } from "@/components/sections";
 import type { TopNewsItem } from "@/components/sections/TopNews";
-import { AdPlaceholder } from "@/components/ui";
+import { AdPlaceholder, CommentBubble } from "@/components/ui";
 import { articles, latestVideos, podcasts } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
 import type { RSSAPIResponse, RSSSource } from "@/types/rss";
@@ -100,23 +100,6 @@ type EditorFormState = {
 
 const HOMEPAGE_OVERRIDES_STORAGE_KEY = "healthspan-homepage-content-overrides";
 
-function CommentIcon() {
-  return (
-    <svg
-      className={styles.commentIcon}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
-
 function EditActionButton({
   onClick,
   label = "Edit",
@@ -168,12 +151,14 @@ function TopicSection({
   articles,
   canEdit,
   onEditArticle,
+  commentCounts,
 }: {
   title: string;
   viewAllHref: string;
   articles: HomeArticle[];
   canEdit?: boolean;
   onEditArticle?: (article: HomeArticle) => void;
+  commentCounts: Record<string, number>;
 }) {
   const columns = useMemo(() => {
     const perColumn = 6;
@@ -240,7 +225,7 @@ function TopicSection({
                         )}
                       </p>
                     </div>
-                    <CommentIcon />
+                    <CommentBubble count={commentCounts[article.id]} />
                   </a>
                   {canEdit && onEditArticle && (
                     <EditActionButton
@@ -275,6 +260,7 @@ function GroupedMediaSection({
   maxRows,
   canEdit,
   onEditItem,
+  commentCounts,
 }: {
   title: string;
   items: MediaItem[];
@@ -282,6 +268,7 @@ function GroupedMediaSection({
   maxRows?: number;
   canEdit?: boolean;
   onEditItem?: (item: MediaItem) => void;
+  commentCounts: Record<string, number>;
 }) {
   const groups = useMemo(() => {
     const groupedItems: Record<string, MediaItem[]> = {};
@@ -333,7 +320,10 @@ function GroupedMediaSection({
                       />
                       <div className={styles.videoCardContent}>
                         <h3 className={styles.videoCardTitle}>{item.title}</h3>
-                        <p className={styles.videoCardDate}>{item.publishedAt}</p>
+                        <div className={styles.videoCardMeta}>
+                          <p className={styles.videoCardDate}>{item.publishedAt}</p>
+                          <CommentBubble count={commentCounts[item.id]} />
+                        </div>
                       </div>
                     </a>
                     {canEdit && onEditItem && (
@@ -375,6 +365,8 @@ export default function Home() {
   // Featured-driven Top News from /api/top-news. Null until the fetch resolves;
   // an empty array means "resolved, but nothing is featured yet".
   const [featuredTopNews, setFeaturedTopNews] = useState<TopNewsItem[] | null>(null);
+  // rss_items.id -> comment count. Missing key = not loaded yet / no comments.
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
   const [editForm, setEditForm] = useState<EditorFormState | null>(null);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -515,6 +507,33 @@ export default function Home() {
     }));
   }, [featuredTopNews, topNewsArticles]);
 
+  // Bulk comment counts for whatever cards are currently on screen. Ids that
+  // aren't real rss_items rows (fallback/mock data) are dropped server-side.
+  useEffect(() => {
+    const ids = new Set<string>();
+    for (const video of editableVideos) ids.add(video.id);
+    for (const article of editableArticles) ids.add(article.id);
+    for (const podcast of editablePodcasts) ids.add(podcast.id);
+    for (const item of topNewsItems) ids.add(item.id);
+
+    if (ids.size === 0) return;
+
+    let isCancelled = false;
+
+    fetch(`/api/comments/counts?ids=${Array.from(ids).join(",")}`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: { counts?: Record<string, number> } | null) => {
+        if (!isCancelled && payload?.counts) {
+          setCommentCounts((current) => ({ ...current, ...payload.counts }));
+        }
+      })
+      .catch((error) => console.error("Comment counts fetch failed:", error));
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [editableVideos, editableArticles, editablePodcasts, topNewsItems]);
+
   const featuredVideo = editableVideos[0];
   const sideVideos = useMemo(() => {
     const base = editableVideos.length > 1 ? editableVideos.slice(1) : editableVideos;
@@ -602,7 +621,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className={styles.container}>
-          <TopNews items={topNewsItems} viewAllHref="/articles" />
+          <TopNews items={topNewsItems} viewAllHref="/articles" commentCounts={commentCounts} />
 
           {featuredVideo && (
             <section className={styles.section}>
@@ -648,6 +667,7 @@ export default function Home() {
                       {featuredVideo.channelName}
                       <span>|</span>
                       {featuredVideo.publishedAt}
+                      <CommentBubble count={commentCounts[featuredVideo.id]} />
                     </p>
                   </div>
                 </div>
@@ -685,7 +705,10 @@ export default function Home() {
                                 {video.publishedAt}
                                 {video.duration && ` | ${video.duration}`}
                               </p>
-                              <p className={styles.upNextChannel}>{video.channelName}</p>
+                              <div className={styles.upNextFooter}>
+                                <p className={styles.upNextChannel}>{video.channelName}</p>
+                                <CommentBubble count={commentCounts[video.id]} />
+                              </div>
                             </div>
                           </a>
                           {isAuthenticated && (
@@ -711,6 +734,7 @@ export default function Home() {
             articles={trendingArticles}
             canEdit={isAuthenticated}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
+            commentCounts={commentCounts}
           />
 
           <div className={styles.adBanner}>Advertisement</div>
@@ -721,6 +745,7 @@ export default function Home() {
             articles={lifestyleArticles}
             canEdit={isAuthenticated}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
+            commentCounts={commentCounts}
           />
 
         {/* Latest Articles (from DB) */}
@@ -737,6 +762,7 @@ export default function Home() {
                 openEditor({ type: "video", item: matched });
               }
             }}
+            commentCounts={commentCounts}
           />
 
         {/* Another Ad */}
@@ -758,6 +784,7 @@ export default function Home() {
                 openEditor({ type: "podcast", item: matched });
               }
             }}
+            commentCounts={commentCounts}
           />
 
         {/* Top YouTube Channels */}
@@ -769,6 +796,7 @@ export default function Home() {
             articles={supplementArticles}
             canEdit={isAuthenticated}
             onEditArticle={(article) => openEditor({ type: "article", item: article })}
+            commentCounts={commentCounts}
           />
         </div>
       </main>
@@ -948,7 +976,7 @@ function mapVideoSources(sources: RSSSource[]): HomeVideo[] {
   for (const source of sources) {
     for (const item of source.articles) {
       videos.push({
-        id: item.link || `${source.source.feedUrl}-${item.title}`,
+        id: item.id || item.link || `${source.source.feedUrl}-${item.title}`,
         title: item.title || "Untitled video",
         thumbnailUrl: resolveImageUrl(
           item.thumbnail,
@@ -976,7 +1004,7 @@ function mapArticleSources(sources: RSSSource[]): HomeArticle[] {
     for (const item of source.articles) {
       const excerpt = item.contentSnippet || "Read the full coverage at the source.";
       stories.push({
-        id: item.link || `${source.source.feedUrl}-${item.title}`,
+        id: item.id || item.link || `${source.source.feedUrl}-${item.title}`,
         title: item.title || "Untitled article",
         excerpt,
         publishedAt: item.pubDate,
@@ -1004,7 +1032,7 @@ function mapPodcastSources(sources: RSSSource[]): HomePodcast[] {
   for (const source of sources) {
     for (const item of source.articles) {
       parsedPodcasts.push({
-        id: item.link || `${source.source.feedUrl}-${item.title}`,
+        id: item.id || item.link || `${source.source.feedUrl}-${item.title}`,
         title: item.title || "Untitled podcast",
         thumbnailUrl: resolveImageUrl(
           item.thumbnail,

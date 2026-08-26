@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Logo, SearchBar, Button } from "@/components/ui";
 import MobileMenu from "./MobileMenu";
 import { navItems } from "@/data/mockData";
@@ -15,6 +15,7 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
   const supabase = createClient();
 
   const profile = useUserStore((s) => s.profile);
@@ -53,11 +54,18 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className={styles.nav}>
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className={styles.navLink}>
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Search Bar - Desktop */}

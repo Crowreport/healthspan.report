@@ -36,6 +36,22 @@
   background: rgba(26, 140, 198, 0.16);
 }
 
+.navLinkActive {
+  color: var(--color-primary);
+  position: relative;
+}
+
+.navLinkActive::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: -2px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
 .searchWrapper {
   display: none;
   flex: 1;
@@ -243,6 +259,10 @@
 
 :global([data-theme="dark"]) .navLink {
   color: #c5d9ed;
+}
+
+:global([data-theme="dark"]) .navLinkActive {
+  color: var(--color-primary);
 }
 
 :global([data-theme="dark"]) .navLink:hover {

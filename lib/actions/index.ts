@@ -8,3 +8,4 @@ export * from "./videos";
 export * from "./topics";
 export * from "./rss";
 export * from "./reactions";
+export * from "./library";

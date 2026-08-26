@@ -398,6 +398,68 @@ export interface ItemReactionSummary {
   /** Reaction types the requesting user currently holds; empty when anonymous. */
   userReactions: ItemReactionType[];
 }
+
+// ============================================================================
+// LIBRARY: SAVED ITEMS + FOLDERS
+// ============================================================================
+
+/**
+ * A user-owned collection for filing saved items (public.folders, migration 018).
+ * Private to the owner — there is no public-read policy on the table.
+ */
+export interface DBFolder {
+  id: string;
+  user_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A folder plus how many of the user's saved items are filed in it. */
+export interface FolderWithCount extends DBFolder {
+  item_count: number;
+}
+
+/**
+ * A saved/bookmarked item (public.saved_items, migration 018).
+ *
+ * One row per (user_id, item_id) — saving is a boolean, not a counter.
+ * `folder_id` is nullable: NULL means saved but not filed into any folder.
+ */
+export interface DBSavedItem {
+  id: string;
+  user_id: string;
+  item_id: string;
+  folder_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A saved item joined to the content it points at, for rendering a library list. */
+export interface SavedItemWithItem extends DBSavedItem {
+  item: DBRSSItemWithSource | null;
+}
+
+export interface CreateFolderInput {
+  name: string;
+}
+
+export interface CreateSavedItemInput {
+  item_id: string;
+  folder_id?: string | null;
+}
+
+/** Filters for listing a user's saved items. */
+export interface ListSavedItemsOptions {
+  /**
+   * Restrict to one folder. Pass `null` for unfiled items only; omit for all
+   * saved items regardless of folder.
+   */
+  folderId?: string | null;
+  limit?: number;
+  offset?: number;
+}
+
 // Action result types
 export interface ActionResult<T> {
   data?: T;

@@ -1,0 +1,127 @@
+.page {
+  background: var(--color-bg);
+  min-height: 100vh;
+  font-family: var(--font-inter), var(--font-sans);
+}
+
+.main {
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.pageHeader {
+  margin-bottom: 1.5rem;
+}
+
+.pageTitle {
+  margin: 0 0 0.35rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.pageSubtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab {
+  padding: 0 0 0.65rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tabActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.articleGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.empty {
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Tablet: folders sidebar beside the main column, right column drops below */
+@media (min-width: 640px) {
+  .articleGrid,
+  .videoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 860px) {
+  .layout {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .rightColumn {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Desktop: full three-column layout */
+@media (min-width: 1180px) {
+  .layout {
+    grid-template-columns: 220px 1fr 280px;
+  }
+
+  .rightColumn {
+    grid-column: auto;
+  }
+
+  .videoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -460,6 +460,84 @@ export interface ListSavedItemsOptions {
   offset?: number;
 }
 
+// ============================================================================
+// LIBRARY: READING HISTORY
+// ============================================================================
+
+/**
+ * A reading-history entry (public.reading_history, migration 019).
+ *
+ * One row per (user_id, item_id): re-reading an item updates `viewed_at` in
+ * place rather than inserting a duplicate, so a history list needs no
+ * deduplication. Private to the owner.
+ */
+export interface DBReadingHistoryEntry {
+  id: string;
+  user_id: string;
+  item_id: string;
+  /** Most recent view. Ordering key for the history list. */
+  viewed_at: string;
+  /** Views that passed the debounce window — not a raw page-load count. */
+  view_count: number;
+  /** First time this item was opened. */
+  created_at: string;
+}
+
+/** A history entry joined to the content it points at, for rendering a list. */
+export interface DBReadingHistoryEntryWithItem extends DBReadingHistoryEntry {
+  item: DBRSSItemWithSource | null;
+}
+
+/** Filters for listing a user's reading history. */
+export interface ListReadingHistoryOptions {
+  limit?: number;
+  offset?: number;
+}
+
+/**
+ * Outcome of recording a view.
+ *
+ * `recorded: false` means the write was debounced — the item was already read
+ * within the debounce window, so `viewed_at` and `view_count` were left alone.
+ */
+export interface RecordViewResult {
+  entry: DBReadingHistoryEntry;
+  recorded: boolean;
+  created: boolean;
+}
+
+// ============================================================================
+// LIBRARY: AI SUMMARIES
+// ============================================================================
+
+/**
+ * An AI-generated summary of a content item.
+ *
+ * `disclaimer` is part of the payload rather than left to the client: the
+ * label is a requirement of shipping generated health content, so it travels
+ * with the summary and cannot be dropped by forgetting to render it.
+ */
+export interface ItemSummary {
+  item_id: string;
+  /** Short bullet points, already stripped of list markers. */
+  bullets: string[];
+  /** Model id that produced the summary. */
+  model: string;
+  /** Which text the summary was based on — full article vs. excerpt only. */
+  basis: SummaryBasis;
+  /** Mandatory "AI-generated, not medical advice" label. */
+  disclaimer: string;
+}
+
+/**
+ * What the summary was generated from.
+ *
+ * Surfaced to the client because a summary drawn from an excerpt is a weaker
+ * claim than one drawn from the full text, and the UI should be able to say so.
+ */
+export const SUMMARY_BASES = ["full_content", "excerpt", "title_only"] as const;
+export type SummaryBasis = (typeof SUMMARY_BASES)[number];
+
 // Action result types
 export interface ActionResult<T> {
   data?: T;

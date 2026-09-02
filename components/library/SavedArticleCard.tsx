@@ -1,13 +1,15 @@
 "use client";
 
 import { CommentBubble, ReactionBar } from "@/components/ui";
-import type { LibrarySavedArticle } from "@/lib/content/libraryMock";
+import type { LibraryFolder, LibrarySavedArticle } from "@/lib/content/libraryTypes";
 import styles from "./SavedArticleCard.module.css";
 
 interface SavedArticleCardProps {
   article: LibrarySavedArticle;
+  folders: LibraryFolder[];
   commentCount?: number;
   onUnsave: (id: string) => void;
+  onMoveToFolder: (id: string, folderId: string | null) => void;
 }
 
 function BookmarkIcon() {
@@ -53,7 +55,13 @@ function handleImageError(event: React.SyntheticEvent<HTMLImageElement>) {
   event.currentTarget.src = "/images/placeholders/article.svg";
 }
 
-export default function SavedArticleCard({ article, commentCount, onUnsave }: SavedArticleCardProps) {
+export default function SavedArticleCard({
+  article,
+  folders,
+  commentCount,
+  onUnsave,
+  onMoveToFolder,
+}: SavedArticleCardProps) {
   return (
     <article className={styles.card}>
       <div className={styles.thumb}>
@@ -100,15 +108,31 @@ export default function SavedArticleCard({ article, commentCount, onUnsave }: Sa
           </span>
         </div>
 
-        {article.tags.length > 0 && (
-          <div className={styles.tags}>
-            {article.tags.map((tag) => (
-              <span key={tag} className={styles.tag}>
-                {tag}
-              </span>
+        <div className={styles.tagsRow}>
+          {article.tags.length > 0 && (
+            <div className={styles.tags}>
+              {article.tags.map((tag) => (
+                <span key={tag} className={styles.tag}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <select
+            className={styles.folderSelect}
+            value={article.folderId ?? ""}
+            onChange={(event) => onMoveToFolder(article.id, event.target.value || null)}
+            aria-label="Move to folder"
+          >
+            <option value="">Unfiled</option>
+            {folders.map((folder) => (
+              <option key={folder.id} value={folder.id}>
+                {folder.name}
+              </option>
             ))}
-          </div>
-        )}
+          </select>
+        </div>
 
         <div className={styles.footer}>
           <div className={styles.engagement}>

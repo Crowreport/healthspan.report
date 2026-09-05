@@ -10,6 +10,7 @@ interface SavedArticleCardProps {
   commentCount?: number;
   onUnsave: (id: string) => void;
   onMoveToFolder: (id: string, folderId: string | null) => void;
+  onSummarize: (id: string) => void;
 }
 
 function BookmarkIcon() {
@@ -61,6 +62,7 @@ export default function SavedArticleCard({
   commentCount,
   onUnsave,
   onMoveToFolder,
+  onSummarize,
 }: SavedArticleCardProps) {
   return (
     <article className={styles.card}>
@@ -143,8 +145,7 @@ export default function SavedArticleCard({
           <button
             type="button"
             className={styles.summarizeButton}
-            disabled
-            title="AI summaries are coming in Week 5"
+            onClick={() => onSummarize(article.id)}
           >
             <SparkleIcon />
             Summarize

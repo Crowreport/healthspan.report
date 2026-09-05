@@ -7,6 +7,8 @@ import SavedArticleCard from "@/components/library/SavedArticleCard";
 import SavedVideoCard from "@/components/library/SavedVideoCard";
 import LibraryStatsCard from "@/components/library/LibraryStatsCard";
 import CommunityQuestionCard from "@/components/library/CommunityQuestionCard";
+import RecentlyViewedStrip from "@/components/library/RecentlyViewedStrip";
+import AiSummaryPanel, { type SummaryTarget } from "@/components/library/AiSummaryPanel";
 import type {
   LibraryFolder,
   LibrarySavedArticle,
@@ -76,6 +78,7 @@ export default function LibraryPage() {
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [folderError, setFolderError] = useState<string | null>(null);
   const [loadStatus, setLoadStatus] = useState<LoadStatus>("loading");
+  const [summaryTarget, setSummaryTarget] = useState<SummaryTarget | null>(null);
 
   // Pull the caller's real saved items + folders.
   useEffect(() => {
@@ -270,6 +273,33 @@ export default function LibraryPage() {
     }
   }
 
+  function handleSummarize(itemId: string) {
+    const article = savedArticles.find((a) => a.id === itemId);
+    if (article) {
+      setSummaryTarget({
+        itemId: article.id,
+        title: article.title,
+        source: article.source,
+        publishedAt: article.publishedAt,
+        imageUrl: article.imageUrl,
+        tags: article.tags,
+      });
+      return;
+    }
+
+    const video = savedVideos.find((v) => v.id === itemId);
+    if (video) {
+      setSummaryTarget({
+        itemId: video.id,
+        title: video.title,
+        source: video.channelName,
+        publishedAt: "",
+        imageUrl: video.thumbnailUrl,
+        tags: video.tags,
+      });
+    }
+  }
+
   return (
     <div className={styles.page}>
       <Header />
@@ -331,6 +361,7 @@ export default function LibraryPage() {
                       commentCount={commentCounts[article.id]}
                       onUnsave={handleUnsave}
                       onMoveToFolder={handleMoveToFolder}
+                      onSummarize={handleSummarize}
                     />
                   ))}
                 </div>
@@ -344,10 +375,21 @@ export default function LibraryPage() {
                     key={video.id}
                     video={video}
                     folders={folders}
+                    commentCount={commentCounts[video.id]}
+                    onUnsave={handleUnsave}
                     onMoveToFolder={handleMoveToFolder}
+                    onSummarize={handleSummarize}
                   />
                 ))}
               </div>
+            )}
+
+            {summaryTarget && (
+              <AiSummaryPanel
+                key={summaryTarget.itemId}
+                target={summaryTarget}
+                onClose={() => setSummaryTarget(null)}
+              />
             )}
           </div>
 
@@ -360,6 +402,8 @@ export default function LibraryPage() {
             <CommunityQuestionCard />
           </aside>
         </div>
+
+        <RecentlyViewedStrip />
       </main>
 
       <Footer />

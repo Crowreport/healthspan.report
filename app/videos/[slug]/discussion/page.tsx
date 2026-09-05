@@ -1,6 +1,7 @@
 import { Header, Footer } from "@/components/layout";
 import CommentsSection from "@/components/comments/CommentsSection";
 import BackLink from "@/components/navigation/BackLink";
+import { TrackItemView } from "@/components/library";
 import { getRSSItemBySlugAndType } from "@/lib/actions/rss";
 import styles from "./page.module.css";
 
@@ -81,6 +82,9 @@ export default async function VideoDiscussionPage({
             </a>
             <BackLink fallbackHref="/videos">Back</BackLink>
           </div>
+
+          {/* Records this open in the reader's history. Renders nothing. */}
+          <TrackItemView itemId={item.id} />
 
           <CommentsSection rssItemId={item.id} />
         </div>

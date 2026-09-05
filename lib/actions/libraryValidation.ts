@@ -14,6 +14,21 @@ export const SAVED_ITEMS_MAX_LIMIT = 100;
 
 export const FOLDER_NAME_MAX_LENGTH = 100;
 
+/** Default and maximum page size for listing reading history. */
+export const HISTORY_DEFAULT_LIMIT = 25;
+export const HISTORY_MAX_LIMIT = 100;
+
+/**
+ * How long a view of the same item is treated as the same visit.
+ *
+ * Re-opening an item inside this window does not bump viewed_at or view_count,
+ * so a refresh, a back-button, or a client remount does not inflate history.
+ * Thirty minutes is long enough to absorb an accidental double-open and a
+ * mid-read tab switch, short enough that genuinely returning to an article
+ * later in the day registers as a new read.
+ */
+export const VIEW_DEBOUNCE_MS = 30 * 60 * 1000;
+
 /** Postgres unique-violation code, raised by the per-user folder name index. */
 export const UNIQUE_VIOLATION = "23505";
 /** Postgres foreign-key violation, raised when item_id/folder_id doesn't exist. */

@@ -22,7 +22,9 @@ export interface SummaryTarget {
 }
 
 interface SummarizeResponse {
-  summary: { bullets: string[] };
+  bullets?: string[];
+  summary?: { bullets: string[] };
+  disclaimer?: string;
 }
 
 type Status = "loading" | "ready" | "unavailable";
@@ -49,6 +51,9 @@ export default function AiSummaryPanel({
 }) {
   const [status, setStatus] = useState<Status>("loading");
   const [bullets, setBullets] = useState<string[]>([]);
+  const [disclaimer, setDisclaimer] = useState<string>(
+    "Generated from your library — not medical advice."
+  );
 
   useEffect(() => {
     let isCancelled = false;
@@ -64,7 +69,11 @@ export default function AiSummaryPanel({
       })
       .then((payload) => {
         if (isCancelled) return;
-        setBullets(payload.summary.bullets);
+        const bulletList = payload.bullets ?? payload.summary?.bullets ?? [];
+        setBullets(bulletList);
+        if (payload.disclaimer) {
+          setDisclaimer(payload.disclaimer);
+        }
         setStatus("ready");
       })
       .catch(() => {
@@ -131,9 +140,7 @@ export default function AiSummaryPanel({
                 <li key={index}>{bullet}</li>
               ))}
             </ul>
-            <p className={styles.disclaimer}>
-              Generated from your library — not medical advice.
-            </p>
+            <p className={styles.disclaimer}>{disclaimer}</p>
           </>
         )}
       </div>

@@ -80,7 +80,6 @@ export default function SavedVideoCard({
               ))}
             </div>
           )}
-
           <select
             className={styles.folderSelect}
             value={video.folderId ?? ""}

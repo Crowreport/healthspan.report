@@ -21,18 +21,21 @@ export interface RecentlyViewedItem {
   externalUrl: string;
 }
 
+interface HistoryEntry {
+  item_id: string;
+  viewed_at: string;
+  item: {
+    id: string;
+    title: string;
+    external_url: string;
+    thumbnail_url: string | null;
+    source?: { name: string } | null;
+  } | null;
+}
+
 interface HistoryResponse {
-  items: {
-    item_id: string;
-    viewed_at: string;
-    item: {
-      id: string;
-      title: string;
-      external_url: string;
-      thumbnail_url: string | null;
-      source?: { name: string } | null;
-    } | null;
-  }[];
+  entries?: HistoryEntry[];
+  items?: HistoryEntry[];
 }
 
 function isExternalHref(href: string): boolean {
@@ -54,7 +57,8 @@ export default function RecentlyViewedStrip() {
       .then((response) => (response.ok ? (response.json() as Promise<HistoryResponse>) : null))
       .then((payload) => {
         if (isCancelled || !payload) return;
-        const mapped = payload.items
+        const list = payload.entries ?? payload.items ?? [];
+        const mapped = list
           .filter((entry) => entry.item !== null)
           .map((entry) => ({
             id: entry.item!.id,

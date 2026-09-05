@@ -1,8 +1,10 @@
-import type { LibrarySavedVideo } from "@/lib/content/libraryMock";
+import type { LibraryFolder, LibrarySavedVideo } from "@/lib/content/libraryTypes";
 import styles from "./SavedVideoCard.module.css";
 
 interface SavedVideoCardProps {
   video: LibrarySavedVideo;
+  folders: LibraryFolder[];
+  onMoveToFolder: (id: string, folderId: string | null) => void;
 }
 
 function SparkleIcon() {
@@ -18,7 +20,7 @@ function handleImageError(event: React.SyntheticEvent<HTMLImageElement>) {
   event.currentTarget.src = "/images/placeholders/video.svg";
 }
 
-export default function SavedVideoCard({ video }: SavedVideoCardProps) {
+export default function SavedVideoCard({ video, folders, onMoveToFolder }: SavedVideoCardProps) {
   return (
     <article className={styles.card}>
       <a href={video.videoUrl} className={styles.thumbLink}>
@@ -37,15 +39,31 @@ export default function SavedVideoCard({ video }: SavedVideoCardProps) {
         <h3 className={styles.title}>{video.title}</h3>
         <span className={styles.channel}>{video.channelName}</span>
 
-        {video.tags.length > 0 && (
-          <div className={styles.tags}>
-            {video.tags.map((tag) => (
-              <span key={tag} className={styles.tag}>
-                {tag}
-              </span>
+        <div className={styles.tagsRow}>
+          {video.tags.length > 0 && (
+            <div className={styles.tags}>
+              {video.tags.map((tag) => (
+                <span key={tag} className={styles.tag}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <select
+            className={styles.folderSelect}
+            value={video.folderId ?? ""}
+            onChange={(event) => onMoveToFolder(video.id, event.target.value || null)}
+            aria-label="Move to folder"
+          >
+            <option value="">Unfiled</option>
+            {folders.map((folder) => (
+              <option key={folder.id} value={folder.id}>
+                {folder.name}
+              </option>
             ))}
-          </div>
-        )}
+          </select>
+        </div>
 
         <button
           type="button"

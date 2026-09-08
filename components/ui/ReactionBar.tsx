@@ -63,10 +63,18 @@ export default function ReactionBar({ itemId, className }: ReactionBarProps) {
   });
   const [userReactions, setUserReactions] = useState<ItemReactionType[]>([]);
   const [pending, setPending] = useState<ItemReactionType | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!itemId) return;
     let isCancelled = false;
+
+    // Clear carried-over state before fetching. Without this, a component
+    // remounted onto a different item (a virtualized feed reusing the node)
+    // renders the previous item's counts until the new response lands.
+    setError(null);
+    setCounts({ thumbs_up: 0, insightful: 0, favorite: 0 });
+    setUserReactions([]);
 
     fetch(`/api/items/${itemId}/reactions`)
       .then((response) => (response.ok ? response.json() : null))
@@ -89,7 +97,24 @@ export default function ReactionBar({ itemId, className }: ReactionBarProps) {
 
     if (!isAuthenticated || pending) return;
 
+    // Optimistic flip so the button responds on the tap rather than after the
+    // round trip. Both previous values are captured for the rollback below.
+    const previousCounts = counts;
+    const previousUserReactions = userReactions;
+    const wasActive = userReactions.includes(type);
+
+    setError(null);
     setPending(type);
+    setCounts({
+      ...counts,
+      [type]: Math.max(0, counts[type] + (wasActive ? -1 : 1)),
+    });
+    setUserReactions(
+      wasActive
+        ? userReactions.filter((r) => r !== type)
+        : [...userReactions, type]
+    );
+
     try {
       const response = await fetch(`/api/items/${itemId}/reactions`, {
         method: "POST",
@@ -97,13 +122,28 @@ export default function ReactionBar({ itemId, className }: ReactionBarProps) {
         body: JSON.stringify({ reaction_type: type }),
       });
 
-      if (!response.ok) return;
+      // A failed write used to return silently, leaving the button looking
+      // exactly as it did before — indistinguishable from a reaction that had
+      // been saved. Roll the optimistic update back and say so instead.
+      if (!response.ok) {
+        setCounts(previousCounts);
+        setUserReactions(previousUserReactions);
+        setError(
+          response.status === 401
+            ? "Log in to react"
+            : "Could not save your reaction"
+        );
+        return;
+      }
 
       const payload = (await response.json()) as ReactionsResponse;
       setCounts(payload.counts);
       setUserReactions(payload.userReactions);
-    } catch (error) {
-      console.error("Reaction toggle failed:", error);
+    } catch (err) {
+      console.error("Reaction toggle failed:", err);
+      setCounts(previousCounts);
+      setUserReactions(previousUserReactions);
+      setError("Could not save your reaction");
     } finally {
       setPending(null);
     }
@@ -131,6 +171,11 @@ export default function ReactionBar({ itemId, className }: ReactionBarProps) {
           </button>
         );
       })}
+      {error ? (
+        <span className={styles.error} role="status">
+          {error}
+        </span>
+      ) : null}
     </span>
   );
 }

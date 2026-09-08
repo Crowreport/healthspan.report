@@ -111,12 +111,25 @@ function resolveBasis(input: SummarizeInput): {
 export function parseBullets(raw: string): string[] {
   const bullets: string[] = [];
 
-  for (const line of raw.split("\n")) {
+  // Trailing \s* rather than \s+: models routinely emit "-Sleep improves..."
+  // with no space after the marker. Requiring the space classified those lines
+  // as prose, so a complete and correct response parsed to zero bullets and the
+  // route reported a 502 to the user.
+  const MARKER = /^([-*•‣–—]|\d+[.)])\s*/;
+
+  // Split on \r\n as well as \n. A response with Windows line endings left a
+  // trailing \r on every bullet, which then counted toward the length cap and
+  // rendered as a stray character.
+  for (const line of raw.split(/\r?\n/)) {
     let text = line.trim();
     if (!text) continue;
 
-    const hadMarker = /^([-*•‣–—]|\d+[.)])\s+/.test(text);
-    text = text.replace(/^([-*•‣–—]|\d+[.)])\s+/, "");
+    // Fence markers around a bullet list are not content. Skipped rather than
+    // stripped, since the fence occupies its own line.
+    if (/^```/.test(text)) continue;
+
+    const hadMarker = MARKER.test(text);
+    text = text.replace(MARKER, "");
 
     // Drop surrounding markdown emphasis and any trailing colon from a
     // "Key points:" style lead-in the prompt asked the model not to write.

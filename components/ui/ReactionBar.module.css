@@ -45,3 +45,12 @@
   font-weight: 600;
   line-height: 1;
 }
+
+/* Inline failure notice. The bar sits inside article cards, so this stays on
+   one line and never pushes the surrounding layout around. */
+.error {
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--color-error);
+  white-space: nowrap;
+}

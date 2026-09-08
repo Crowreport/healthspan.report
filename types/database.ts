@@ -538,6 +538,75 @@ export interface ItemSummary {
 export const SUMMARY_BASES = ["full_content", "excerpt", "title_only"] as const;
 export type SummaryBasis = (typeof SUMMARY_BASES)[number];
 
+// ============================================================================
+// COMMUNITY QUESTIONS
+// ============================================================================
+
+/**
+ * An admin-authored community prompt (public.community_questions, migration 020).
+ *
+ * There is no `is_active` flag: a question is current when NOW() falls inside
+ * [start_date, end_date). `end_date` is exclusive, so consecutive questions may
+ * share a boundary timestamp without ever both being current.
+ */
+export interface DBCommunityQuestion {
+  id: string;
+  question_text: string;
+  /** Optional framing shown under the prompt. */
+  description: string | null;
+  /** Inclusive start of the active window. */
+  start_date: string;
+  /** Exclusive end of the active window. */
+  end_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * A member's answer to a community question (public.question_responses).
+ *
+ * One row per (question_id, user_id): answering again edits this row rather
+ * than adding a second answer.
+ */
+export interface DBQuestionResponse {
+  id: string;
+  question_id: string;
+  user_id: string;
+  response_text: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * The current question plus the participation numbers a client needs to render
+ * it in one request.
+ *
+ * `question` is null when nothing is scheduled for right now — a normal state
+ * between questions, not an error, so the endpoint returns 200 with a null
+ * rather than a 404.
+ */
+export interface CurrentQuestionSummary {
+  question: DBCommunityQuestion | null;
+  /** How many members have answered. 0 when there is no current question. */
+  response_count: number;
+  /** The caller's own answer, or null if they have not answered / are anonymous. */
+  user_response: DBQuestionResponse | null;
+}
+
+/**
+ * Outcome of submitting an answer.
+ *
+ * `created` distinguishes a first answer from an edit of an existing one, so a
+ * client can say "posted" vs "updated" without a follow-up read.
+ */
+export interface SubmitResponseResult {
+  response: DBQuestionResponse;
+  created: boolean;
+}
+
+/** Max characters in an answer. Mirrors the CHECK constraint in migration 020. */
+export const RESPONSE_TEXT_MAX_LENGTH = 2000;
+
 // Action result types
 export interface ActionResult<T> {
   data?: T;

@@ -21,6 +21,7 @@ import {
   type ItemReactionSummary,
   type ItemReactionType,
 } from "@/types/database";
+import { UNIQUE_VIOLATION } from "./libraryValidation";
 
 function emptyCounts(): Record<ItemReactionType, number> {
   return ITEM_REACTION_TYPES.reduce(
@@ -39,26 +40,51 @@ export async function getItemReactions(
   try {
     const supabase = await createClient();
 
-    const { data, error } = await supabase
-      .from("item_reactions")
-      .select("user_id, reaction_type")
-      .eq("item_id", itemId);
-
-    if (error) {
-      return { error: error.message };
-    }
-
     const user = await getCurrentUser();
     const counts = emptyCounts();
     const userReactions: ItemReactionType[] = [];
 
-    for (const row of data ?? []) {
-      const type = row.reaction_type as ItemReactionType;
-      if (type in counts) {
-        counts[type] += 1;
+    // One head-count per reaction type instead of fetching every row for the
+    // item. The previous version pulled one row per reaction and tallied them
+    // in JS, which grew without bound on a popular item and — because the
+    // SELECT policy is public — handed every anonymous caller the user_id of
+    // everyone who had reacted. These counts are aggregate-only.
+    const countResults = await Promise.all(
+      ITEM_REACTION_TYPES.map(async (type) => {
+        const { count, error } = await supabase
+          .from("item_reactions")
+          .select("item_id", { count: "exact", head: true })
+          .eq("item_id", itemId)
+          .eq("reaction_type", type);
+        return { type, count: count ?? 0, error };
+      })
+    );
+
+    for (const result of countResults) {
+      if (result.error) {
+        return { error: result.error.message };
       }
-      if (user && row.user_id === user.id) {
-        userReactions.push(type);
+      counts[result.type] = result.count;
+    }
+
+    // The caller's own reactions are a separate, user-scoped read — at most
+    // three rows, and the only place a user_id is used at all.
+    if (user) {
+      const { data: mine, error: mineError } = await supabase
+        .from("item_reactions")
+        .select("reaction_type")
+        .eq("item_id", itemId)
+        .eq("user_id", user.id);
+
+      if (mineError) {
+        return { error: mineError.message };
+      }
+
+      for (const row of mine ?? []) {
+        const type = row.reaction_type as ItemReactionType;
+        if (type in counts) {
+          userReactions.push(type);
+        }
       }
     }
 
@@ -90,20 +116,41 @@ export async function addItemReaction(
 
     const supabase = await createClient();
 
+    // Plain INSERT, not an upsert. public.item_reactions has no UPDATE policy
+    // by design (migration 016: reaction_type is part of the primary key, so a
+    // change is delete + insert). An upsert with ignoreDuplicates:false takes
+    // the UPDATE branch on conflict, which RLS then rejects — so re-adding a
+    // reaction the user already held failed instead of being the documented
+    // no-op, and the reaction appeared not to persist.
     const { data, error } = await supabase
       .from("item_reactions")
-      .upsert(
-        {
-          item_id: itemId,
-          user_id: user.id,
-          reaction_type: reactionType,
-        },
-        { onConflict: "item_id,user_id,reaction_type", ignoreDuplicates: false }
-      )
+      .insert({
+        item_id: itemId,
+        user_id: user.id,
+        reaction_type: reactionType,
+      })
       .select()
       .single();
 
     if (error) {
+      // Already held. This function is specified as idempotent, so the row
+      // existing is success — read it back and return it.
+      if (error.code === UNIQUE_VIOLATION) {
+        const { data: existing, error: readError } = await supabase
+          .from("item_reactions")
+          .select("*")
+          .eq("item_id", itemId)
+          .eq("user_id", user.id)
+          .eq("reaction_type", reactionType)
+          .maybeSingle();
+
+        if (readError) {
+          return { error: readError.message };
+        }
+        if (existing) {
+          return { data: existing as DBItemReaction };
+        }
+      }
       return { error: error.message };
     }
 
@@ -181,7 +228,7 @@ export async function toggleItemReaction(
     if (insertError) {
       // Lost a race with a concurrent insert of the same reaction — the row now
       // exists, which is the state the caller asked for.
-      if (insertError.code === "23505") {
+      if (insertError.code === UNIQUE_VIOLATION) {
         return { data: { reacted: true } };
       }
       return { error: insertError.message };

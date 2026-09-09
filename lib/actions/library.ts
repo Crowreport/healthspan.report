@@ -258,16 +258,58 @@ export async function saveItem(
       return { error: existingError.message };
     }
 
-    // Upsert on (user_id, item_id): re-saving is a no-op that returns the
-    // existing row, and passing a folder moves it. Omitting folder_id on a
-    // re-save deliberately leaves the item where it already is.
+    // Re-saving an item that is already saved is an UPDATE of the existing
+    // row, handled separately from the insert below.
+    //
+    // This used to be a single upsert. That was wrong for the "already saved,
+    // no folder supplied" case: a PostgREST upsert sends a whole row, so the
+    // omitted folder_id fell back to the column default (NULL) and DO UPDATE
+    // wrote that over the stored value — silently unfiling an item every time
+    // it was re-saved from a card whose button did not carry a folder.
+    if (existing) {
+      // Nothing to change: the row exists and the caller expressed no opinion
+      // about the folder. Return it untouched rather than writing a no-op that
+      // the trigger would turn into an updated_at bump.
+      if (folderId === undefined) {
+        const { data: current, error: currentError } = await supabase
+          .from("saved_items")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("item_id", itemId)
+          .single();
+
+        if (currentError) {
+          return { error: currentError.message };
+        }
+
+        return { data: current as DBSavedItem, created: false };
+      }
+
+      const { data: moved, error: moveError } = await supabase
+        .from("saved_items")
+        .update({ folder_id: folderId })
+        .eq("user_id", user.id)
+        .eq("item_id", itemId)
+        .select()
+        .single();
+
+      if (moveError) {
+        return { error: moveError.message };
+      }
+
+      return { data: moved as DBSavedItem, created: false };
+    }
+
+    // First save. Upsert rather than a plain insert so the race between two
+    // tabs saving the same item at once resolves instead of hitting the unique
+    // index — the loser takes the DO UPDATE branch and gets the same end state.
     const { data, error } = await supabase
       .from("saved_items")
       .upsert(
         {
           user_id: user.id,
           item_id: itemId,
-          ...(folderId !== undefined ? { folder_id: folderId } : {}),
+          folder_id: folderId ?? null,
         },
         { onConflict: "user_id,item_id", ignoreDuplicates: false }
       )
@@ -282,7 +324,7 @@ export async function saveItem(
       return { error: error.message };
     }
 
-    return { data: data as DBSavedItem, created: !existing };
+    return { data: data as DBSavedItem, created: true };
   } catch (err) {
     return {
       error: err instanceof Error ? err.message : "Failed to save item",
@@ -357,7 +399,11 @@ export async function getSavedItems(
         count: "exact",
       })
       .eq("user_id", user.id)
+      // Tie-break on id: created_at alone is not a total order, so items saved
+      // in the same millisecond (a bulk save, a double-click) could repeat or
+      // vanish across page boundaries.
       .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
       .range(offset, offset + limit - 1);
 
     // `folderId: null` is a meaningful filter (unfiled only) and must be

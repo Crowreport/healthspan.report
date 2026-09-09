@@ -179,16 +179,33 @@ export async function getReadingHistory(
       .from("reading_history")
       .select("*, item:rss_items(*, source:rss_sources(*))", { count: "exact" })
       .eq("user_id", user.id)
+      // Tie-break on id. viewed_at alone is not a total order — a first view
+      // and its row's created_at share a timestamp, and two items opened in the
+      // same millisecond order arbitrarily, which let a row appear on two
+      // consecutive pages or on neither as the client paged through.
       .order("viewed_at", { ascending: false })
+      .order("id", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) {
       return { error: error.message };
     }
 
+    const entries = (data ??
+      []) as unknown as DBReadingHistoryEntryWithItem[];
+
+    // Drop entries whose item no longer resolves. The FK is ON DELETE CASCADE,
+    // so a deleted item takes its history rows with it, but an item the caller
+    // can no longer read through RLS comes back as a row with item: null — and
+    // those rendered as blank cards in the history list.
+    const resolved = entries.filter((entry) => entry.item !== null);
+
     return {
       data: {
-        entries: (data ?? []) as unknown as DBReadingHistoryEntryWithItem[],
+        entries: resolved,
+        // Deliberately the unfiltered count. It is the number of rows the
+        // caller can page through, so subtracting locally-dropped entries here
+        // would make `total` disagree with the offsets that actually work.
         total: count ?? 0,
       },
     };

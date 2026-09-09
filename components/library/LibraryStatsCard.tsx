@@ -1,4 +1,4 @@
-import type { LibraryFolder } from "@/lib/content/libraryMock";
+import type { LibraryFolder } from "@/lib/content/libraryTypes";
 import styles from "./LibraryStatsCard.module.css";
 
 interface LibraryStatsCardProps {

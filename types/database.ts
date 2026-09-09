@@ -606,7 +606,6 @@ export interface SubmitResponseResult {
 
 /** Max characters in an answer. Mirrors the CHECK constraint in migration 020. */
 export const RESPONSE_TEXT_MAX_LENGTH = 2000;
-
 // Action result types
 export interface ActionResult<T> {
   data?: T;

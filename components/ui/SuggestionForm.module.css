@@ -8,21 +8,22 @@
 .input,
 .textarea {
   width: 100%;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: var(--color-brand-blue-sky);
-  color: #000000;
-  font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.9375rem;
   font-family: var(--font-sans);
   padding: 0 var(--space-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .input {
-  height: 52px;
+  height: 48px;
 }
 
 .textarea {
-  min-height: 98px;
+  min-height: 90px;
   padding-top: var(--space-sm);
   padding-bottom: var(--space-sm);
   resize: vertical;
@@ -32,55 +33,63 @@
 .textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(26, 140, 198, 0.18);
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
 }
 
 .input::placeholder,
 .textarea::placeholder {
-  color: #36556e;
+  color: var(--color-text-muted);
 }
 
 .form button {
-  height: 52px;
-  background: #81cd4c;
-  color: #000000;
-  font-size: 1.06rem;
+  height: 48px;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.9375rem;
   font-family: var(--font-sans);
   font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid #81cd4c;
-  box-shadow: none;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
 }
 
 .form button:hover:not(:disabled) {
-  background: #74b845;
-  border-color: #74b845;
-  transform: none;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .success {
   padding: var(--space-md);
   border-radius: var(--radius-sm);
-  background: rgba(129, 205, 76, 0.2);
-  color: #daf5c6;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-muted);
   font-size: 0.95rem;
   font-weight: 600;
 }
 
 @media (max-width: 640px) {
   .input {
-    height: 48px;
-    font-size: 0.95rem;
+    height: 46px;
+    font-size: 0.9rem;
   }
 
   .textarea {
-    min-height: 88px;
-    font-size: 0.95rem;
+    min-height: 84px;
+    font-size: 0.9rem;
   }
 
   .form button {
-    height: 48px;
-    font-size: 1.1rem;
+    height: 46px;
+    font-size: 0.95rem;
   }
 }
 

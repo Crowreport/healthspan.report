@@ -1,6 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
-import fullLogo from "@/Healthspan Logo.png";
 import { SubscribeForm, SuggestionForm } from "@/components/ui";
 import { footerSections } from "@/data/mockData";
 import styles from "./Footer.module.css";
@@ -36,13 +34,9 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.top}>
           <div className={styles.brandBlock}>
-            <Link href="/" className={styles.footerLogoLink} aria-label="Healthspan home">
-              <Image
-                src={fullLogo}
-                alt="Healthspan"
-                className={styles.footerLogo}
-                priority
-              />
+            <Link href="/" className={styles.wordmark} aria-label="Healthspan Report home">
+              <span className={styles.wordmarkPrimary}>HEALTHSPAN</span>
+              <span className={styles.wordmarkAccent}>REPORT</span>
             </Link>
 
             <p className={styles.tagline}>

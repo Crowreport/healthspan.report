@@ -7,11 +7,17 @@ import "./globals.css";
 const THEME_INIT_SCRIPT = `(() => {
   try {
     const key = "healthspan-theme";
-    const stored = localStorage.getItem(key);
+    const migratedKey = "healthspan-theme-v2";
+    let stored = localStorage.getItem(migratedKey);
+    if (!stored) {
+      stored = "light";
+      localStorage.setItem(migratedKey, "light");
+      localStorage.setItem(key, "light");
+    }
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const theme = stored === "dark" || stored === "light" ? stored : "dark";
-    document.documentElement.setAttribute("data-theme", theme);
-    document.documentElement.style.colorScheme = theme;
+    const resolved = stored === "system" ? (prefersDark ? "dark" : "light") : stored;
+    document.documentElement.setAttribute("data-theme", resolved);
+    document.documentElement.style.colorScheme = resolved;
   } catch (_) {}
 })();`;
 

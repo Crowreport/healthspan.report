@@ -10,6 +10,7 @@ interface ThemeToggleProps {
 type ThemePreference = "light" | "dark" | "system";
 
 const THEME_STORAGE_KEY = "healthspan-theme";
+const THEME_MIGRATION_KEY = "healthspan-theme-v2";
 
 const optionLabels: Record<ThemePreference, string> = {
   light: "Light",
@@ -18,12 +19,12 @@ const optionLabels: Record<ThemePreference, string> = {
 };
 
 function getStoredPreference(): ThemePreference {
-  if (typeof window === "undefined") return "dark";
-  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === "light" || stored === "dark" || stored === "system") {
-    return stored;
+  if (typeof window === "undefined") return "light";
+  const storedV2 = window.localStorage.getItem(THEME_MIGRATION_KEY);
+  if (storedV2 === "light" || storedV2 === "dark" || storedV2 === "system") {
+    return storedV2;
   }
-  return "dark";
+  return "light";
 }
 
 function resolveTheme(preference: ThemePreference): "light" | "dark" {
@@ -40,6 +41,7 @@ function applyTheme(preference: ThemePreference) {
   document.documentElement.setAttribute("data-theme", resolved);
   document.documentElement.style.colorScheme = resolved;
   window.localStorage.setItem(THEME_STORAGE_KEY, preference);
+  window.localStorage.setItem(THEME_MIGRATION_KEY, preference);
 }
 
 export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
@@ -79,7 +81,7 @@ export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
   }
 
   const activePreference =
-    typeof window === "undefined" ? "dark" : getStoredPreference();
+    typeof window === "undefined" ? "light" : getStoredPreference();
 
   return (
     <div

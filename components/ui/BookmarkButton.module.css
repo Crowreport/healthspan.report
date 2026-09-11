@@ -1,0 +1,107 @@
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.iconButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-surface);
+  transform: scale(1.05);
+}
+
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.savedIcon {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.savedIcon:hover {
+  color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+/* Pill variant for detail / discussion pages */
+.pillButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-metadata);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.pillButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.pillIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pillIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.savedPill {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.savedPill:hover {
+  border-color: var(--color-primary-hover);
+  color: var(--color-primary-hover);
+}
+
+:global([data-theme="dark"]) .iconButton {
+  background: #15273b;
+  border-color: #29435f;
+  color: #9fb2c8;
+}
+
+:global([data-theme="dark"]) .savedIcon {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+:global([data-theme="dark"]) .pillButton {
+  background: #15273b;
+  border-color: #29435f;
+  color: #e3edf8;
+}
+
+:global([data-theme="dark"]) .savedPill {
+  background: rgba(74, 174, 220, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}

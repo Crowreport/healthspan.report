@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Video } from "@/types";
+import BookmarkButton from "./BookmarkButton";
 import styles from "./VideoThumbnail.module.css";
 
 interface VideoThumbnailProps {
@@ -34,6 +35,7 @@ export default function VideoThumbnail({
           Edit
         </button>
       )}
+      <BookmarkButton itemId={video.id} className={styles.bookmarkButton} />
       {discussionHref && (
         <Link
           href={discussionHref}

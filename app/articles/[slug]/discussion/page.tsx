@@ -1,6 +1,7 @@
 import { Header, Footer } from "@/components/layout";
 import CommentsSection from "@/components/comments/CommentsSection";
 import BackLink from "@/components/navigation/BackLink";
+import { BookmarkButton } from "@/components/ui";
 import { TrackItemView } from "@/components/library";
 import { getRSSItemBySlugAndType } from "@/lib/actions/rss";
 import styles from "./page.module.css";
@@ -76,6 +77,7 @@ export default async function ArticleDiscussionPage({
             >
               Read original →
             </a>
+            <BookmarkButton itemId={item.id} variant="button" />
             <BackLink fallbackHref="/articles">Back</BackLink>
           </div>
 

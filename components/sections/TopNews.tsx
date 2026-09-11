@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CommentBubble, ReactionBar } from "@/components/ui";
+import { CommentBubble, ReactionBar, BookmarkButton } from "@/components/ui";
 import styles from "./TopNews.module.css";
 
 export interface TopNewsItem {
@@ -92,6 +92,7 @@ export default function TopNews({
                   <span className={styles.heroEngagement}>
                     <ReactionBar itemId={hero.id} />
                     <CommentBubble count={commentCounts[hero.id]} />
+                    <BookmarkButton itemId={hero.id} />
                   </span>
                 </p>
               </div>
@@ -127,6 +128,7 @@ export default function TopNews({
                       <span className={styles.listEngagement}>
                         <ReactionBar itemId={item.id} />
                         <CommentBubble count={commentCounts[item.id]} />
+                        <BookmarkButton itemId={item.id} />
                       </span>
                     </a>
                   </li>

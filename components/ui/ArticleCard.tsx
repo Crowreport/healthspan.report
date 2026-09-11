@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Article } from "@/types";
 import SummarizeButton from "@/components/chat/SummarizeButton";
+import BookmarkButton from "./BookmarkButton";
 import styles from "./ArticleCard.module.css";
 
 interface ArticleCardProps {
@@ -83,6 +84,7 @@ export default function ArticleCard({
           Edit
         </button>
       )}
+      <BookmarkButton itemId={article.id} className={styles.bookmarkButton} />
       <Link
         href={discussionHref}
         className={styles.commentLink}

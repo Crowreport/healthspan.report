@@ -141,6 +141,13 @@
   color: var(--color-surface);
 }
 
+.bookmarkButton {
+  position: absolute;
+  right: calc(var(--space-md) + 42px);
+  bottom: var(--space-md);
+  z-index: 1;
+}
+
 .commentLink {
   position: absolute;
   right: var(--space-md);

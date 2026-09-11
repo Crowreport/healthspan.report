@@ -14,3 +14,4 @@ export { default as EditorialPageIntro } from "./EditorialPageIntro";
 export { default as ThemeToggle } from "./ThemeToggle";
 export { default as CommentBubble } from "./CommentBubble";
 export { default as ReactionBar } from "./ReactionBar";
+export { default as BookmarkButton } from "./BookmarkButton";

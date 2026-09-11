@@ -132,6 +132,7 @@
   gap: var(--space-sm);
   margin-top: auto;
   padding-top: var(--space-md);
+  padding-right: 130px;
   font-size: 0.8125rem;
   color: var(--color-text-muted);
 }
@@ -166,18 +167,24 @@
   display: none;
 }
 
-.bookmarkButton {
-  position: absolute;
-  right: calc(var(--space-md) + 42px);
-  bottom: var(--space-md);
-  z-index: 1;
-}
-
-.commentLink {
+.actions {
   position: absolute;
   right: var(--space-md);
   bottom: var(--space-md);
-  z-index: 1;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.actionButton {
+  position: static !important;
+  right: auto !important;
+  bottom: auto !important;
+  flex-shrink: 0;
+}
+
+.commentLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -189,11 +196,14 @@
   color: var(--color-text-secondary);
   text-decoration: none;
   box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  padding: 0;
 }
 
 .commentLink:hover {
-  border-color: var(--color-primary-light);
+  border-color: var(--color-primary);
   color: var(--color-primary);
+  transform: translateY(-1px);
 }
 
 .commentLink svg {

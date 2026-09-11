@@ -84,24 +84,27 @@ export default function ArticleCard({
           Edit
         </button>
       )}
-      <BookmarkButton itemId={article.id} className={styles.bookmarkButton} />
-      <Link
-        href={discussionHref}
-        className={styles.commentLink}
-        onClick={(e) => e.stopPropagation()}
-        aria-label="Open comments"
-        title="Comments"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-        </svg>
-      </Link>
-      <SummarizeButton
-        articleId={article.id}
-        articleUrl={article.externalUrl}
-        title={article.title}
-        variant="overlay"
-      />
+      <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+        <SummarizeButton
+          articleId={article.id}
+          articleUrl={article.externalUrl}
+          title={article.title}
+          variant="overlay"
+          className={styles.actionButton}
+        />
+        <BookmarkButton itemId={article.id} className={styles.actionButton} />
+        <Link
+          href={discussionHref}
+          className={`${styles.actionButton} ${styles.commentLink}`}
+          onClick={(e) => e.stopPropagation()}
+          aria-label="Open comments"
+          title="Comments"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+          </svg>
+        </Link>
+      </div>
       <div className={styles.imageWrapper}>
         {hasImage ? (
           <div className={styles.imageContainer}>

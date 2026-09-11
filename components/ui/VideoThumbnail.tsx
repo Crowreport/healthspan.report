@@ -35,20 +35,22 @@ export default function VideoThumbnail({
           Edit
         </button>
       )}
-      <BookmarkButton itemId={video.id} className={styles.bookmarkButton} />
-      {discussionHref && (
-        <Link
-          href={discussionHref}
-          className={styles.commentLink}
-          onClick={(e) => e.stopPropagation()}
-          aria-label="Open comments"
-          title="Comments"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-          </svg>
-        </Link>
-      )}
+      <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+        <BookmarkButton itemId={video.id} className={styles.actionButton} />
+        {discussionHref && (
+          <Link
+            href={discussionHref}
+            className={`${styles.actionButton} ${styles.commentLink}`}
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Open comments"
+            title="Comments"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+            </svg>
+          </Link>
+        )}
+      </div>
       <a
         href={video.videoUrl}
         target="_blank"

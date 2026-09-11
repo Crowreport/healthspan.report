@@ -5,7 +5,6 @@
 .container {
   max-width: var(--container-2xl);
   margin: 0 auto;
-  padding: 0 var(--space-lg);
 }
 
 .header {
@@ -170,10 +169,6 @@
 
 /* Desktop */
 @media (min-width: 1024px) {
-  .container {
-    padding: 0 var(--space-xl);
-  }
-
   .grid {
     grid-template-columns: 1fr 300px;
   }

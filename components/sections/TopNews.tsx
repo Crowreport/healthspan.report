@@ -12,6 +12,7 @@ export interface TopNewsItem {
   externalUrl: string;
   publishedAt: string;
   sourceName?: string;
+  tags?: string[];
 }
 
 interface TopNewsProps {
@@ -78,7 +79,10 @@ export default function TopNews({
                 onError={handleImageError}
               />
               <div className={styles.heroContent}>
-                <span className={styles.heroRank}>#1</span>
+                <span className={styles.heroRank}>01</span>
+                {hero.tags && hero.tags.length > 0 && (
+                  <span className={styles.heroTag}>{hero.tags[0]}</span>
+                )}
                 <h3 className={styles.heroTitle}>{hero.title}</h3>
                 {hero.excerpt && <p className={styles.heroExcerpt}>{hero.excerpt}</p>}
                 <p className={styles.heroMeta}>
@@ -103,7 +107,7 @@ export default function TopNews({
                       rel={isExternalHref(item.externalUrl) ? "noopener noreferrer" : undefined}
                       className={styles.listLink}
                     >
-                      <span className={styles.rank}>{index + 2}</span>
+                      <span className={styles.rank}>{String(index + 2).padStart(2, "0")}</span>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.imageUrl}

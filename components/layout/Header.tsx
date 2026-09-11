@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Logo, SearchBar, Button } from "@/components/ui";
+import { SearchBar, Button } from "@/components/ui";
 import MobileMenu from "./MobileMenu";
 import { navItems } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
@@ -49,8 +49,11 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        {/* Logo */}
-        <Logo />
+        {/* Wordmark — style guide 3.1: "HEALTHSPAN" charcoal + "REPORT" yellow, Inter 700 20px */}
+        <Link href="/" className={styles.wordmark} aria-label="Healthspan Report home">
+          <span className={styles.wordmarkPrimary}>HEALTHSPAN</span>
+          <span className={styles.wordmarkAccent}>REPORT</span>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className={styles.nav}>

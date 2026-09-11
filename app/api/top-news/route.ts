@@ -1,7 +1,10 @@
 /**
  * Top News API Route
  *
- * GET /api/top-news — featured items for the homepage Top News block.
+ * GET /api/top-news — the most recent items for the homepage Top News block.
+ *
+ * Purely algorithmic (recency, newest first) — no manual curation. See
+ * lib/content/topNews.ts for why.
  *
  * Query parameters:
  * - limit: total items across hero + list (default 6, max 20)
@@ -12,7 +15,7 @@
  *     "hero":  { id, headline, teaser, slug, imageUrl, externalUrl,
  *                publishedAt, sourceName, tags, contentType, rank } | null,
  *     "items": [ ...same shape, rank 2..n ],
- *     "total": <number of featured items considered>
+ *     "total": <number of items considered>
  *   }
  *
  * Only presentation fields are returned — internal columns (guid, source_id,

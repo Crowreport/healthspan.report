@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import ChatWidget from "@/components/chat/ChatWidget";
 import "./globals.css";
@@ -15,10 +15,10 @@ const THEME_INIT_SCRIPT = `(() => {
   } catch (_) {}
 })();`;
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -73,7 +73,7 @@ export default function RootLayout({
           {THEME_INIT_SCRIPT}
         </Script>
       </head>
-      <body className={`${roboto.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         {children}
         <ChatWidget />
       </body>

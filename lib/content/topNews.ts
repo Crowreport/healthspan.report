@@ -1,15 +1,12 @@
 /**
  * Top News selection.
  *
- * The Top News block is driven by the `is_featured` flag on rss_items: an admin
- * marks an item featured (via the Create Item tool or by editing an existing
- * item) and it becomes eligible. Ordering is:
- *
- *   1. featured_priority ASC, with NULL treated as "unranked" and sorted last
- *   2. published_at DESC as the tie-break and the default for unranked items
- *
- * So an admin who does nothing but tick `featured` gets pure recency ordering;
- * setting featured_priority lets them pin specific stories to the top.
+ * Purely algorithmic: the most recently published items, newest first,
+ * excluding anything admin-hidden. No manual curation step — nothing here
+ * depends on `is_featured`/`featured_priority`, so a stray row someone
+ * flags featured (test data, a QA seed row, whatever) can no longer hijack
+ * the block. Those columns still exist on rss_items for other admin tooling;
+ * this query just doesn't read them.
  *
  * The result is split into one hero item and a ranked list beneath it.
  */
@@ -51,11 +48,11 @@ export interface TopNewsItem {
 }
 
 export interface TopNewsResult {
-  /** Highest-ranked featured item, or null when nothing is featured. */
+  /** Most recent eligible item, or null when there's nothing to show. */
   hero: TopNewsItem | null;
   /** Remaining ranked items below the hero (up to TOP_NEWS_LIST_COUNT). */
   items: TopNewsItem[];
-  /** Total featured items considered, before hero/list splitting. */
+  /** Total items considered, before hero/list splitting. */
   total: number;
   error?: string;
 }
@@ -68,24 +65,14 @@ export interface GetTopNewsOptions {
 }
 
 /**
- * Order two featured items: hand-ranked first (ascending), then by recency.
- * Kept separate from the query so the ordering rule has one definition and can
- * be applied to already-fetched rows.
+ * Order two items by recency, newest first. Kept separate from the query so
+ * the ordering rule has one definition and can be applied to already-fetched
+ * rows (the defensive re-sort below).
  */
 export function compareTopNews(
-  a: Pick<DBRSSItemWithSource, "featured_priority" | "published_at">,
-  b: Pick<DBRSSItemWithSource, "featured_priority" | "published_at">
+  a: Pick<DBRSSItemWithSource, "published_at">,
+  b: Pick<DBRSSItemWithSource, "published_at">
 ): number {
-  const aPriority = a.featured_priority;
-  const bPriority = b.featured_priority;
-
-  // NULL priority sorts after any explicit priority.
-  if (aPriority !== bPriority) {
-    if (aPriority === null) return 1;
-    if (bPriority === null) return -1;
-    return aPriority - bPriority;
-  }
-
   return (
     new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
   );
@@ -128,10 +115,9 @@ export function mapToTopNewsItem(
 }
 
 /**
- * Fetch featured items for the Top News block.
+ * Fetch the most recent items for the Top News block.
  *
- * Filters to is_featured = true and excludes admin-hidden items, then applies
- * the priority/recency ordering and splits hero from list.
+ * Excludes admin-hidden items, orders by recency, and splits hero from list.
  */
 export async function getTopNewsItems(
   options: GetTopNewsOptions = {}
@@ -168,10 +154,7 @@ export async function getTopNewsItems(
     let query = supabase
       .from("rss_items")
       .select("*, source:rss_sources(*)")
-      .eq("is_featured", true)
       .eq("hidden_by_admin", false)
-      // Hand-ranked items first; unranked fall to the bottom, then by recency.
-      .order("featured_priority", { ascending: true, nullsFirst: false })
       .order("published_at", { ascending: false })
       .limit(limit);
 

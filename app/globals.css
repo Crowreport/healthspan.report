@@ -2,45 +2,53 @@
 
 /* ============================================
    HEALTHSPAN - Design System Tokens
-   Aesthetic: Clean & Clinical
+   Style Guide: cream / charcoal / red / yellow
+   (dark theme below keeps its own prior palette —
+   the style guide only specifies light-mode values)
    ============================================ */
 
 :root {
-  /* Primary Colors - Teal: trust, health, vitality */
-  --color-primary: #1A8CC6;
-  --color-primary-hover: #054667;
-  --color-primary-light: #E8F4F5;
-  --color-primary-muted: #B8DFE2;
+  /* Primary Colors - Red: CTAs, active elements */
+  --color-primary: #C62828;
+  --color-primary-hover: #8E1B1B;
+  --color-primary-light: #FBE7E7;
+  --color-primary-muted: #EFC2C2;
 
   /* Brand Colors */
   --color-brand-blue-sky: #D5ECFF;
   --color-brand-green: #6EBE3F;
 
-  /* Accent - Bright teal for CTAs and highlights */
-  --color-accent: #2DD4BF;
-  --color-accent-hover: #14B8A6;
+  /* Accent - Yellow, for the REPORT wordmark and badges */
+  --color-accent: #F4B400;
+  --color-accent-hover: #D69E00;
 
   /* Neutral Palette */
-  --color-text: #1E293B;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748B;
-  --color-text-light: #94A3B8;
+  --color-text: #212121;
+  --color-text-secondary: #4A4A4A;
+  --color-text-muted: #757575;
+  --color-text-light: #9A9A9A;
   --color-text-white: #ffffff;
   --color-text-blue: #0f6ea1;
 
   /* Backgrounds */
-  --color-bg: #F8FAFC;
-  --color-bg-alt: #F1F5F9;
-  --color-bg-dark: #054667;
+  --color-bg: #F8F3EA;
+  --color-bg-alt: #F3E7D5;
+  --color-bg-dark: #212121;
   --color-surface: #FFFFFF;
-  --color-surface-alt: #F4FAFF;
+  --color-surface-alt: #FFFDF7;
   --color-surface-elevated: #FFFFFF;
   --color-bg-lightblue: #E4F3FF;
   --color-bg-lightgreen: #F0FFE5;
+  /* Pale badge/tag-pill background (e.g. Top News tags, "Sponsored" labels) */
+  --color-badge-bg: #FFF3CD;
+  /* Folder-row hover background */
+  --color-hover-alt: #F0E4D0;
+  /* Modal / overlay backdrop */
+  --color-overlay: rgba(0, 0, 0, 0.25);
 
   /* Borders */
-  --color-border: #E2E8F0;
-  --color-border-light: #F1F5F9;
+  --color-border: #E0D6C4;
+  --color-border-light: #EDE6D8;
   --color-border-blue: #d2e1f0;
 
   /* Semantic Colors */
@@ -49,10 +57,20 @@
   --color-error: #EF4444;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+
+  /* Type scale (style guide) */
+  --text-display: 32px;
+  --text-h2: 24px;
+  --text-h3: 20px;
+  --text-body: 16px;
+  --text-metadata: 13px;
+  --text-tiny: 12px;
+  --text-nav: 15px;
+  --text-button: 15px;
 
   /* Spacing Scale */
   --space-xs: 0.25rem;
@@ -73,7 +91,7 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-sans: var(--font-roboto), "Roboto", "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: var(--font-sans);
   --font-serif: var(--font-display);
 
@@ -166,17 +184,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: var(--text-display);
   letter-spacing: -0.02em;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: var(--text-h2);
   letter-spacing: -0.01em;
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: var(--text-h3);
 }
 
 h4 {

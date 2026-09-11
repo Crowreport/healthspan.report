@@ -9,7 +9,7 @@ import { ITEM_AUDIENCES, type ItemAudience } from "@/types/database";
 const overlayStyle: React.CSSProperties = {
   position: "fixed",
   inset: 0,
-  background: "rgba(0,0,0,0.5)",
+  background: "var(--color-overlay)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

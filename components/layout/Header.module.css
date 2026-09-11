@@ -3,8 +3,8 @@
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: var(--color-brand-blue-sky);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .container {
@@ -17,6 +17,26 @@
   padding: var(--space-sm) var(--space-lg);
 }
 
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3em;
+  flex-shrink: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.wordmarkPrimary {
+  color: var(--color-text);
+}
+
+.wordmarkAccent {
+  color: var(--color-accent);
+}
+
 .nav {
   display: none;
   align-items: center;
@@ -26,14 +46,15 @@
 .navLink {
   padding: 0.4rem 0.6rem;
   border-radius: var(--radius-sm);
-  color: #054667;
-  font-size: 0.93rem;
-  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: var(--text-nav);
+  font-weight: 500;
   text-decoration: none;
 }
 
 .navLink:hover {
-  background: rgba(26, 140, 198, 0.16);
+  color: var(--color-primary-hover);
+  background: var(--color-bg-alt);
 }
 
 .navLinkActive {
@@ -78,7 +99,7 @@
   border: none;
   background: transparent;
   border-radius: var(--radius-sm);
-  color: #054667;
+  color: var(--color-text-secondary);
   cursor: pointer;
 }
 
@@ -90,7 +111,7 @@
 }
 
 .mobileMenuButton:hover {
-  background: rgba(26, 140, 198, 0.16);
+  background: var(--color-bg-alt);
 }
 
 .mobileMenuButton svg {
@@ -114,7 +135,7 @@
 }
 
 .userButton:hover {
-  background: rgba(26, 140, 198, 0.16);
+  background: var(--color-bg-alt);
 }
 
 .avatar {
@@ -133,13 +154,13 @@
 .userName {
   font-size: 0.87rem;
   font-weight: 600;
-  color: #054667;
+  color: var(--color-text-secondary);
 }
 
 .chevron {
   width: 14px;
   height: 14px;
-  color: #054667;
+  color: var(--color-text-secondary);
   transition: transform var(--transition-fast);
 }
 

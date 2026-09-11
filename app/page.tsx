@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
-import { ArticleGrid, TopChannels, TopNews } from "@/components/sections";
+import { TopNews } from "@/components/sections";
+import LatestResearchSection from "@/components/sections/LatestResearchSection";
 import type { TopNewsItem } from "@/components/sections/TopNews";
-import { AdPlaceholder, CommentBubble } from "@/components/ui";
+import { CommentBubble } from "@/components/ui";
+import SponsoredSection from "@/components/sections/SponsoredSection";
+import TrendingNewsSection from "@/components/sections/TrendingNewsSection";
+import LifestyleNewsSection from "@/components/sections/LifestyleNewsSection";
+import YourLibrarySection from "@/components/sections/YourLibrarySection";
+import TopChannelsSection from "@/components/sections/TopChannelsSection";
+import TopPodcastsSection from "@/components/sections/TopPodcastsSection";
 import { articles, latestVideos, podcasts } from "@/data/mockData";
 import { useUserStore } from "@/store/useUserStore";
 import type { RSSAPIResponse, RSSSource } from "@/types/rss";
@@ -30,6 +36,7 @@ type HomeArticle = {
   imageUrl: string;
   externalUrl: string;
   sourceName?: string;
+  tag?: string;
 };
 
 type HomePodcast = {
@@ -39,6 +46,32 @@ type HomePodcast = {
   publisher: string;
   publishedAt: string;
   url: string;
+};
+
+export type TopChannel = {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  videoCount: number;
+  /**
+   * PLACEHOLDER — fabricated for visual/demo purposes only. There is no real
+   * subscriber-count data anywhere in this app (RSS doesn't provide it, no
+   * column exists for it). Deterministic per channel name so it doesn't
+   * shuffle on every render, but it is not real. Do not ship this to real
+   * users without either wiring a real YouTube Data API lookup or removing
+   * this field — see chat history for why this exists.
+   */
+  fakeSubscriberCount: string;
+  href: string;
+};
+
+export type TopPodcastShow = {
+  id: string;
+  name: string;
+  artworkUrl?: string;
+  creator?: string;
+  episodeCount: number;
+  href: string;
 };
 
 /** Shape returned by GET /api/top-news (see lib/content/topNews.ts). */
@@ -145,208 +178,20 @@ function attachImageFallback(
   image.src = fallbackSrc;
 }
 
-function TopicSection({
-  title,
-  viewAllHref,
-  articles,
-  canEdit,
-  onEditArticle,
-  commentCounts,
-}: {
-  title: string;
-  viewAllHref: string;
-  articles: HomeArticle[];
-  canEdit?: boolean;
-  onEditArticle?: (article: HomeArticle) => void;
-  commentCounts: Record<string, number>;
-}) {
-  const columns = useMemo(() => {
-    const perColumn = 6;
-    return Array.from({ length: 3 }, (_, columnIndex) =>
-      articles.slice(columnIndex * perColumn, columnIndex * perColumn + perColumn)
-    );
-  }, [articles]);
-
-  return (
-    <section className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
-        <Link href={viewAllHref} className={styles.viewAll}>
-          View all
-        </Link>
-      </div>
-
-      <div className={styles.trendingColumns}>
-        {columns.map((column, columnIndex) => (
-          <div
-            key={`column-${columnIndex}`}
-            className={`${styles.topicColumn} ${
-              columnIndex === 1 ? styles.topicColumnAlt : ""
-            }`}
-          >
-            {column.map((article, rowIndex) => {
-              const href = normalizeHref(article.externalUrl, "/articles");
-              const isExternal = isExternalHref(href);
-
-              return (
-                <div
-                  key={`${article.id}-${columnIndex}-${rowIndex}`}
-                  className={styles.topicRowWrap}
-                >
-                  <a
-                    href={href}
-                    target={isExternal ? "_blank" : undefined}
-                    rel={isExternal ? "noopener noreferrer" : undefined}
-                    className={styles.topicRow}
-                  >
-                    <div className={styles.topicThumb}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={article.imageUrl}
-                        alt={article.title}
-                        className={styles.thumbImage}
-                        loading="lazy"
-                        onError={(event) =>
-                          attachImageFallback(event, "/images/placeholders/article.svg")
-                        }
-                      />
-                    </div>
-                    <div className={styles.topicMeta}>
-                      <h4>{article.title}</h4>
-                      <p>
-                        {formatDate(article.publishedAt)}
-                        <span>|</span>
-                        {article.readTime}
-                        {article.sourceName && (
-                          <>
-                            <span>|</span>
-                            {article.sourceName}
-                          </>
-                        )}
-                      </p>
-                    </div>
-                    <CommentBubble count={commentCounts[article.id]} />
-                  </a>
-                  {canEdit && onEditArticle && (
-                    <EditActionButton
-                      label="Edit article"
-                      onClick={() => onEditArticle(article)}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-interface MediaItem {
-  id: string;
-  title: string;
-  thumbnailUrl: string;
-  publishedAt: string;
-  groupName: string;
-  url: string;
-  kind: "video" | "podcast";
-}
-
-function GroupedMediaSection({
-  title,
-  items,
-  viewAllHref,
-  maxRows,
-  canEdit,
-  onEditItem,
-  commentCounts,
-}: {
-  title: string;
-  items: MediaItem[];
-  viewAllHref: string;
-  maxRows?: number;
-  canEdit?: boolean;
-  onEditItem?: (item: MediaItem) => void;
-  commentCounts: Record<string, number>;
-}) {
-  const groups = useMemo(() => {
-    const groupedItems: Record<string, MediaItem[]> = {};
-    items.forEach((item) => {
-      if (!groupedItems[item.groupName]) groupedItems[item.groupName] = [];
-      groupedItems[item.groupName].push(item);
-    });
-    return groupedItems;
-  }, [items]);
-
-  const displayedGroups = maxRows
-    ? Object.entries(groups).slice(0, maxRows)
-    : Object.entries(groups);
-
-  return (
-    <section className={styles.videoSection}>
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
-      </div>
-      <div className={styles.videoRows}>
-        {displayedGroups.map(([groupName, groupItems], index) => (
-          <div key={index} className={styles.channelGroup}>
-            <h3 className={styles.channelTitle}>{groupName}</h3>
-            <div className={styles.videoRow}>
-              {groupItems.map((item, itemIndex) => {
-                const href = normalizeHref(item.url, viewAllHref);
-                const isExternal = isExternalHref(href);
-
-                return (
-                  <div
-                    key={`${item.id}-${index}-${itemIndex}`}
-                    className={styles.editableCardWrap}
-                  >
-                    <a
-                      href={href}
-                      target={isExternal ? "_blank" : undefined}
-                      rel={isExternal ? "noopener noreferrer" : undefined}
-                      className={styles.videoCard}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.thumbnailUrl}
-                        alt={item.title}
-                        className={styles.videoCardImage}
-                        loading="lazy"
-                        onError={(event) =>
-                          attachImageFallback(event, "/images/placeholders/video.svg")
-                        }
-                      />
-                      <div className={styles.videoCardContent}>
-                        <h3 className={styles.videoCardTitle}>{item.title}</h3>
-                        <div className={styles.videoCardMeta}>
-                          <p className={styles.videoCardDate}>{item.publishedAt}</p>
-                          <CommentBubble count={commentCounts[item.id]} />
-                        </div>
-                      </div>
-                    </a>
-                    {canEdit && onEditItem && (
-                      <EditActionButton
-                        label={item.kind === "video" ? "Edit video" : "Edit podcast"}
-                        onClick={() => onEditItem(item)}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default function Home() {
   const [videoItems, setVideoItems] = useState<HomeVideo[]>(createFallbackVideos());
   const [articleItems, setArticleItems] = useState<HomeArticle[]>(createFallbackArticles());
   const [podcastItems, setPodcastItems] = useState<HomePodcast[]>(createFallbackPodcasts());
+  // Per-source summaries (name, real avatar/artwork image, real item count) —
+  // distinct from videoItems/podcastItems, which are the flattened per-episode
+  // lists. Empty until /api/rss resolves; no mock seed, since there's nothing
+  // honest to show before real source data exists.
+  const [channels, setChannels] = useState<TopChannel[]>([]);
+  const [podcastShows, setPodcastShows] = useState<TopPodcastShow[]>([]);
+  // Real research-type sources (rss_sources.content_type = 'research', e.g.
+  // NIH/Nature Aging) via /api/rss?type=research — not the legacy
+  // public.articles table, which ArticleGrid pulled from before.
+  const [researchArticles, setResearchArticles] = useState<HomeArticle[]>([]);
   const [overrides, setOverrides] = useState<HomepageOverrides>(() => {
     if (typeof window === "undefined") {
       return {};
@@ -362,15 +207,14 @@ export default function Home() {
       return {};
     }
   });
-  // Featured-driven Top News from /api/top-news. Null until the fetch resolves;
-  // an empty array means "resolved, but nothing is featured yet".
-  const [featuredTopNews, setFeaturedTopNews] = useState<TopNewsItem[] | null>(null);
+  // Recency-driven Top News from /api/top-news. Null until the fetch
+  // resolves; an empty array means "resolved, but the DB has nothing".
+  const [topNewsFromApi, setTopNewsFromApi] = useState<TopNewsItem[] | null>(null);
   // rss_items.id -> comment count. Missing key = not loaded yet / no comments.
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
   const [editForm, setEditForm] = useState<EditorFormState | null>(null);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  const isAdmin = useUserStore((state) => state.profile?.role === "admin");
 
   useEffect(() => {
     try {
@@ -388,10 +232,11 @@ export default function Home() {
 
     async function hydrateHomepageLinks() {
       try {
-        const [videoResponse, articleResponse, podcastResponse] = await Promise.all([
+        const [videoResponse, articleResponse, podcastResponse, researchResponse] = await Promise.all([
           fetch("/api/rss?type=video"),
           fetch("/api/rss?type=article"),
           fetch("/api/rss?type=podcast"),
+          fetch("/api/rss?type=research"),
         ]);
 
         if (!isCancelled && videoResponse.ok) {
@@ -400,6 +245,7 @@ export default function Home() {
           if (mappedVideos.length > 0) {
             setVideoItems(mappedVideos);
           }
+          setChannels(mapChannels(videoPayload.sources || []));
         }
 
         if (!isCancelled && articleResponse.ok) {
@@ -409,13 +255,18 @@ export default function Home() {
             setArticleItems(mappedArticles);
           }
         }
-
         if (!isCancelled && podcastResponse.ok) {
           const podcastPayload = (await podcastResponse.json()) as RSSAPIResponse;
           const mappedPodcasts = mapPodcastSources(podcastPayload.sources || []);
           if (mappedPodcasts.length > 0) {
             setPodcastItems(mappedPodcasts);
           }
+          setPodcastShows(mapPodcastShowSources(podcastPayload.sources || []));
+        }
+
+        if (!isCancelled && researchResponse.ok) {
+          const researchPayload = (await researchResponse.json()) as RSSAPIResponse;
+          setResearchArticles(mapArticleSources(researchPayload.sources || []));
         }
       } catch (error) {
         console.error("Homepage feed hydration failed:", error);
@@ -446,7 +297,7 @@ export default function Home() {
           (entry): entry is TopNewsAPIItem => Boolean(entry)
         );
 
-        setFeaturedTopNews(
+        setTopNewsFromApi(
           ordered.map((entry) => ({
             id: entry.id,
             title: entry.headline,
@@ -455,6 +306,7 @@ export default function Home() {
             externalUrl: entry.externalUrl,
             publishedAt: formatDate(entry.publishedAt),
             sourceName: entry.sourceName,
+            tags: entry.tags,
           }))
         );
       } catch (error) {
@@ -483,29 +335,14 @@ export default function Home() {
   );
 
   // Each named section gets its own non-overlapping slice of articles so
-  // "Trending Topics" / "Lifestyle News" / "Supplement News" don't all show
-  // the exact same cards.
+  // "Trending News" / "Lifestyle News" don't all show the exact same cards.
   const trendingArticles = useMemo(() => editableArticles.slice(0, 18), [editableArticles]);
   const lifestyleArticles = useMemo(() => editableArticles.slice(18, 36), [editableArticles]);
-  const supplementArticles = useMemo(() => editableArticles.slice(36, 54), [editableArticles]);
-  const topNewsArticles = useMemo(() => editableArticles.slice(0, 7), [editableArticles]);
-  // Featured items win. Until any item is marked featured (or if the request
-  // fails) fall back to the most recent articles so the block is never blank.
-  const topNewsItems = useMemo<TopNewsItem[]>(() => {
-    if (featuredTopNews && featuredTopNews.length > 0) {
-      return featuredTopNews;
-    }
-
-    return topNewsArticles.map((article) => ({
-      id: article.id,
-      title: article.title,
-      excerpt: article.excerpt,
-      imageUrl: article.imageUrl,
-      externalUrl: article.externalUrl,
-      publishedAt: formatDate(article.publishedAt),
-      sourceName: article.sourceName,
-    }));
-  }, [featuredTopNews, topNewsArticles]);
+  // /api/top-news is purely algorithmic (recency, newest first — see
+  // lib/content/topNews.ts) and never empty unless the DB genuinely has
+  // nothing. No client-side fallback needed: null/[] just means "still
+  // loading," which TopNews already renders as its own skeleton.
+  const topNewsItems = useMemo(() => topNewsFromApi ?? [], [topNewsFromApi]);
 
   // Bulk comment counts for whatever cards are currently on screen. Ids that
   // aren't real rss_items rows (fallback/mock data) are dropped server-side.
@@ -539,34 +376,6 @@ export default function Home() {
     const base = editableVideos.length > 1 ? editableVideos.slice(1) : editableVideos;
     return base.slice(0, 6);
   }, [editableVideos]);
-
-  const mediaVideos = useMemo<MediaItem[]>(
-    () =>
-      editableVideos.map((video) => ({
-        id: video.id,
-        title: video.title,
-        thumbnailUrl: video.thumbnailUrl,
-        publishedAt: video.publishedAt,
-        groupName: video.channelName,
-        url: video.videoUrl,
-        kind: "video",
-      })),
-    [editableVideos]
-  );
-
-  const mediaPodcasts = useMemo<MediaItem[]>(
-    () =>
-      editablePodcasts.map((podcast) => ({
-        id: podcast.id,
-        title: podcast.title,
-        thumbnailUrl: podcast.thumbnailUrl,
-        publishedAt: podcast.publishedAt,
-        groupName: podcast.publisher,
-        url: podcast.url,
-        kind: "podcast",
-      })),
-    [editablePodcasts]
-  );
 
   function openEditor(target: EditTarget) {
     setEditTarget(target);
@@ -726,78 +535,24 @@ export default function Home() {
             </section>
           )}
 
-          <div className={styles.adBanner}>Advertisement</div>
+          <TrendingNewsSection items={trendingArticles.slice(0, 4)} viewAllHref="/topics" />
 
-          <TopicSection
-            title="Trending Topics"
-            viewAllHref="/topics"
-            articles={trendingArticles}
-            canEdit={isAuthenticated}
-            onEditArticle={(article) => openEditor({ type: "article", item: article })}
-            commentCounts={commentCounts}
-          />
+          <LifestyleNewsSection items={lifestyleArticles} viewAllHref="/articles" />
 
-          <div className={styles.adBanner}>Advertisement</div>
+          <YourLibrarySection />
 
-          <TopicSection
-            title="Lifestyle News"
-            viewAllHref="/articles"
-            articles={lifestyleArticles}
-            canEdit={isAuthenticated}
-            onEditArticle={(article) => openEditor({ type: "article", item: article })}
-            commentCounts={commentCounts}
-          />
+          <TopChannelsSection channels={channels} />
 
-        {/* Latest Articles (from DB) */}
-        <ArticleGrid initialArticles={articles} isAdmin={!!isAdmin} />
+          <TopPodcastsSection shows={podcastShows} />
 
-          <GroupedMediaSection
-            title="Top Youtube Channels"
-            items={mediaVideos}
-            viewAllHref="/videos"
-            canEdit={isAuthenticated}
-            onEditItem={(item) => {
-              const matched = editableVideos.find((video) => video.id === item.id);
-              if (matched) {
-                openEditor({ type: "video", item: matched });
-              }
-            }}
-            commentCounts={commentCounts}
-          />
+          <LatestResearchSection items={researchArticles} viewAllHref="/research" />
 
-        {/* Another Ad */}
-        <section className={styles.adSection}>
-          <div className={styles.adContainer}>
-            <AdPlaceholder size="leaderboard" />
-          </div>
-        </section>
+          <SponsoredSection />
 
-          <GroupedMediaSection
-            title="Top Podcasts"
-            items={mediaPodcasts}
-            viewAllHref="/podcasts"
-            maxRows={3}
-            canEdit={isAuthenticated}
-            onEditItem={(item) => {
-              const matched = editablePodcasts.find((podcast) => podcast.id === item.id);
-              if (matched) {
-                openEditor({ type: "podcast", item: matched });
-              }
-            }}
-            commentCounts={commentCounts}
-          />
-
-        {/* Top YouTube Channels */}
-        <TopChannels />
-
-          <TopicSection
-            title="Supplement News"
-            viewAllHref="/articles"
-            articles={supplementArticles}
-            canEdit={isAuthenticated}
-            onEditArticle={(article) => openEditor({ type: "article", item: article })}
-            commentCounts={commentCounts}
-          />
+          {/* Supplement News and Research Deep Dives intentionally not
+              rendered here — see chat for why (Supplements: told not to
+              worry about it; Research Deep Dives: deferred, not yet built
+              this pass). */}
         </div>
       </main>
 
@@ -970,6 +725,83 @@ function isExternalHref(href: string): boolean {
   return /^https?:\/\//i.test(href);
 }
 
+/**
+ * One summary row per distinct source — real name, real avatar image
+ * (rss_sources.image_url), real video count. No subscriber count: that data
+ * doesn't exist anywhere in the RSS pipeline, and a mockup showing one is not
+ * a reason to invent a number.
+ */
+/**
+ * Fabricated placeholder — see the fakeSubscriberCount doc comment. Hashes
+ * the channel name to a stable-but-arbitrary number in a plausible range so
+ * it doesn't reshuffle on every render.
+ */
+function fakeSubscriberCountFor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  const value = 50_000 + (hash % 1_950_000);
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M subscribers`;
+  return `${Math.round(value / 1000)}K subscribers`;
+}
+
+function mapChannels(sources: RSSSource[]): TopChannel[] {
+  // Two rss_sources rows can share a display name (e.g. a channel with both
+  // a curated feed and a direct YouTube feed) — merge them into one card
+  // rather than showing the same channel twice.
+  const byName = new Map<string, TopChannel>();
+
+  for (const source of sources) {
+    if (source.articles.length === 0) continue;
+    const name = source.source.title;
+    const existing = byName.get(name);
+    if (existing) {
+      existing.videoCount += source.articles.length;
+      if (!existing.avatarUrl) {
+        existing.avatarUrl = normalizeImageUrl(source.source.image) ?? undefined;
+      }
+      continue;
+    }
+    byName.set(name, {
+      id: source.source.feedUrl,
+      name,
+      avatarUrl: normalizeImageUrl(source.source.image) ?? undefined,
+      videoCount: source.articles.length,
+      fakeSubscriberCount: fakeSubscriberCountFor(name),
+      href: source.source.link || "/videos",
+    });
+  }
+
+  return Array.from(byName.values());
+}
+
+/** Same idea as mapChannels, for podcast shows. */
+function mapPodcastShowSources(sources: RSSSource[]): TopPodcastShow[] {
+  const byName = new Map<string, TopPodcastShow>();
+
+  for (const source of sources) {
+    if (source.articles.length === 0) continue;
+    const name = source.source.title;
+    const existing = byName.get(name);
+    if (existing) {
+      existing.episodeCount += source.articles.length;
+      if (!existing.artworkUrl) {
+        existing.artworkUrl = normalizeImageUrl(source.source.image) ?? undefined;
+      }
+      continue;
+    }
+    byName.set(name, {
+      id: source.source.feedUrl,
+      name,
+      artworkUrl: normalizeImageUrl(source.source.image) ?? undefined,
+      creator: source.articles[0]?.creator,
+      episodeCount: source.articles.length,
+      href: source.source.link || "/podcasts",
+    });
+  }
+
+  return Array.from(byName.values());
+}
+
 function mapVideoSources(sources: RSSSource[]): HomeVideo[] {
   const videos: HomeVideo[] = [];
 
@@ -1016,6 +848,7 @@ function mapArticleSources(sources: RSSSource[]): HomeArticle[] {
         ),
         externalUrl: item.link || "/articles",
         sourceName: item.creator || source.source.title,
+        tag: item.categories?.[0],
       });
     }
   }

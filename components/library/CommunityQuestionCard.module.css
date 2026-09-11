@@ -54,16 +54,101 @@
   color: var(--color-text-secondary);
 }
 
+.responseCount {
+  margin: 0;
+  font-size: var(--text-metadata);
+  color: var(--color-text-muted);
+}
+
 .cta {
+  display: inline-flex;
+  align-items: center;
   margin-top: 4px;
   padding: 9px 16px;
   border: none;
   border-radius: var(--radius-md);
   background: var(--color-primary);
   color: var(--color-text-white);
-  font-size: 0.85rem;
+  font-size: var(--text-button);
   font-weight: 600;
-  cursor: not-allowed;
-  opacity: 0.55;
+  text-decoration: none;
+  cursor: pointer;
   align-self: flex-start;
+  transition: background var(--transition-fast);
+}
+
+.cta:hover {
+  background: var(--color-primary-hover);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.error {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-error);
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+}
+
+.submitButton {
+  padding: 7px 14px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-text-white);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.submitButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  padding: 7px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: var(--color-bg-alt);
 }

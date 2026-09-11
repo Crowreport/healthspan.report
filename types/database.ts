@@ -606,6 +606,26 @@ export interface SubmitResponseResult {
 
 /** Max characters in an answer. Mirrors the CHECK constraint in migration 020. */
 export const RESPONSE_TEXT_MAX_LENGTH = 2000;
+
+/**
+ * A sponsored homepage placement (public.sponsors, migration 021).
+ * Authored directly, not ingested — no relationship to rss_items.
+ */
+export interface DBSponsor {
+  id: string;
+  name: string;
+  headline: string;
+  description: string;
+  image_url: string | null;
+  cta_label: string;
+  cta_url: string;
+  disclosure: string;
+  display_order: number | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 // Action result types
 export interface ActionResult<T> {
   data?: T;

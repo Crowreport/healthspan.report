@@ -1,3 +1,13 @@
+/**
+ * Community Question card — GET/POST /api/community/question routes
+ * (current + respond, backend from #29).
+ */
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useUserStore } from "@/store/useUserStore";
+import type { DBCommunityQuestion, DBQuestionResponse } from "@/types/database";
 import styles from "./CommunityQuestionCard.module.css";
 
 function ChatIcon() {
@@ -8,12 +18,97 @@ function ChatIcon() {
   );
 }
 
-/**
- * Static placeholder matching the style guide's "Community Question" card
- * (section 4.8). Not wired to a real discussion feature yet — reserves the
- * right-column space per the /library mockup.
- */
+interface CurrentQuestionResponse {
+  question: DBCommunityQuestion | null;
+  response_count: number;
+  user_response: DBQuestionResponse | null;
+}
+
+interface RespondErrorBody {
+  error: string;
+  retryAfterSec?: number;
+}
+
+type FormState = "closed" | "open" | "submitting";
+
 export default function CommunityQuestionCard() {
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+
+  const [question, setQuestion] = useState<DBCommunityQuestion | null>(null);
+  const [responseCount, setResponseCount] = useState(0);
+  const [userResponse, setUserResponse] = useState<DBQuestionResponse | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  const [formState, setFormState] = useState<FormState>("closed");
+  const [draft, setDraft] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    fetch("/api/community/question/current")
+      .then((response) => (response.ok ? (response.json() as Promise<CurrentQuestionResponse>) : null))
+      .then((payload) => {
+        if (isCancelled || !payload) return;
+        setQuestion(payload.question);
+        setResponseCount(payload.response_count);
+        setUserResponse(payload.user_response);
+        setDraft(payload.user_response?.response_text ?? "");
+      })
+      .catch((err) => console.error("Community question fetch failed:", err))
+      .finally(() => {
+        if (!isCancelled) setLoaded(true);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!question) return;
+
+    const text = draft.trim();
+    if (!text) return;
+
+    setError(null);
+    setFormState("submitting");
+
+    try {
+      const response = await fetch("/api/community/question/respond", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question_id: question.id, response_text: text }),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as RespondErrorBody | null;
+        if (response.status === 429 && body?.retryAfterSec) {
+          setError(`Too many responses — try again in ${body.retryAfterSec}s.`);
+        } else if (response.status === 409) {
+          setError("This question just closed — check back for the next one.");
+        } else {
+          setError(body?.error ?? "Couldn't submit your response.");
+        }
+        setFormState("open");
+        return;
+      }
+
+      const payload = (await response.json()) as { response: DBQuestionResponse; created: boolean };
+      if (payload.created) setResponseCount((count) => count + 1);
+      setUserResponse(payload.response);
+      setFormState("closed");
+    } catch (err) {
+      console.error("Respond failed:", err);
+      setError("Couldn't reach the server — try again.");
+      setFormState("open");
+    }
+  }
+
+  // Nothing scheduled right now — a normal state, not an error. No card to show.
+  if (!loaded || !question) return null;
+
   return (
     <section className={styles.card} aria-label="Community question">
       <div className={styles.header}>
@@ -22,11 +117,57 @@ export default function CommunityQuestionCard() {
         </span>
         <h3 className={styles.title}>Community Question</h3>
       </div>
-      <p className={styles.question}>What longevity study are you reading this week?</p>
-      <p className={styles.description}>Share your take and see what others are exploring.</p>
-      <button type="button" className={styles.cta} disabled title="Coming soon">
-        Join the discussion
-      </button>
+
+      <p className={styles.question}>{question.question_text}</p>
+      {question.description && <p className={styles.description}>{question.description}</p>}
+      <p className={styles.responseCount}>
+        {responseCount} response{responseCount === 1 ? "" : "s"} this week
+      </p>
+
+      {!isAuthenticated ? (
+        <Link href="/login" className={styles.cta}>
+          Log in to join
+        </Link>
+      ) : formState === "closed" ? (
+        <button type="button" className={styles.cta} onClick={() => setFormState("open")}>
+          {userResponse ? "Edit your response" : "Join the discussion"}
+        </button>
+      ) : (
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <textarea
+            className={styles.textarea}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Share your take…"
+            rows={3}
+            maxLength={2000}
+            autoFocus
+            disabled={formState === "submitting"}
+          />
+          {error && <p className={styles.error}>{error}</p>}
+          <div className={styles.formActions}>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={formState === "submitting" || !draft.trim()}
+            >
+              {formState === "submitting" ? "Posting…" : userResponse ? "Update" : "Post"}
+            </button>
+            <button
+              type="button"
+              className={styles.cancelButton}
+              onClick={() => {
+                setFormState("closed");
+                setError(null);
+                setDraft(userResponse?.response_text ?? "");
+              }}
+              disabled={formState === "submitting"}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </section>
   );
 }

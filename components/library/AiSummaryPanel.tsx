@@ -1,15 +1,16 @@
 /**
- * AI summary panel — POST /api/library/summarize, per the Week 5 ticket.
+ * AI summary panel — POST /api/library/summarize (docs: app/api/library/summarize/route.ts).
+ * Backend landed in #26 (lib/ai/summarize.ts).
  *
- * That endpoint doesn't exist yet, so this calls it for real (so it starts
- * working the moment a backend lands matching this contract) and shows an
- * honest "not available yet" state on failure — it never fabricates summary
- * text. Presenting invented bullet points as an "AI summary" of real health
- * content would be actively misleading, not just a placeholder.
+ * Distinguishes the backend's real error cases rather than a single generic
+ * failure: 422 (nothing to summarize — permanent) reads differently from 429
+ * (rate limited — retry later) or 502 (model failed — transient). Never
+ * fabricates summary text on failure.
  */
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ItemSummary } from "@/types/database";
 import styles from "./AiSummaryPanel.module.css";
 
 export interface SummaryTarget {
@@ -21,13 +22,16 @@ export interface SummaryTarget {
   tags: string[];
 }
 
-interface SummarizeResponse {
-  bullets?: string[];
-  summary?: { bullets: string[] };
-  disclaimer?: string;
+interface SummarizeError {
+  error: string;
+  code?: string;
+  retryAfterSec?: number;
 }
 
-type Status = "loading" | "ready" | "unavailable";
+type State =
+  | { status: "loading" }
+  | { status: "ready"; summary: ItemSummary }
+  | { status: "error"; message: string };
 
 function SparkleIcon() {
   return (
@@ -42,6 +46,19 @@ function handleImageError(event: React.SyntheticEvent<HTMLImageElement>) {
   event.currentTarget.src = "/images/placeholders/article.svg";
 }
 
+/** Maps the route's real status/code combinations to what a user should see. */
+function messageFor(status: number, body: SummarizeError | null): string {
+  if (status === 401) return "Log in to generate AI summaries.";
+  if (status === 404) return "This item couldn't be found.";
+  if (status === 422) return "There isn't enough content on this item to summarize.";
+  if (status === 429) {
+    const wait = body?.retryAfterSec ? ` Try again in ${body.retryAfterSec}s.` : "";
+    return `You've hit the summary limit for now.${wait}`;
+  }
+  if (status === 502) return "The summarizer is temporarily unavailable — try again shortly.";
+  return body?.error || "Couldn't generate a summary.";
+}
+
 export default function AiSummaryPanel({
   target,
   onClose,
@@ -49,11 +66,7 @@ export default function AiSummaryPanel({
   target: SummaryTarget;
   onClose: () => void;
 }) {
-  const [status, setStatus] = useState<Status>("loading");
-  const [bullets, setBullets] = useState<string[]>([]);
-  const [disclaimer, setDisclaimer] = useState<string>(
-    "Generated from your library — not medical advice."
-  );
+  const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
     let isCancelled = false;
@@ -63,21 +76,20 @@ export default function AiSummaryPanel({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ item_id: target.itemId }),
     })
-      .then((response) => {
-        if (!response.ok) throw new Error(`summarize failed: ${response.status}`);
-        return response.json() as Promise<SummarizeResponse>;
-      })
-      .then((payload) => {
+      .then(async (response) => {
         if (isCancelled) return;
-        const bulletList = payload.bullets ?? payload.summary?.bullets ?? [];
-        setBullets(bulletList);
-        if (payload.disclaimer) {
-          setDisclaimer(payload.disclaimer);
+        if (!response.ok) {
+          const body = (await response.json().catch(() => null)) as SummarizeError | null;
+          setState({ status: "error", message: messageFor(response.status, body) });
+          return;
         }
-        setStatus("ready");
+        const summary = (await response.json()) as ItemSummary;
+        setState({ status: "ready", summary });
       })
       .catch(() => {
-        if (!isCancelled) setStatus("unavailable");
+        if (!isCancelled) {
+          setState({ status: "error", message: "Couldn't reach the summarizer — check your connection." });
+        }
       });
 
     return () => {
@@ -125,22 +137,21 @@ export default function AiSummaryPanel({
           AI Summary
         </div>
 
-        {status === "loading" && <p className={styles.state}>Summarizing…</p>}
+        {state.status === "loading" && <p className={styles.state}>Summarizing…</p>}
 
-        {status === "unavailable" && (
-          <p className={styles.state}>
-            AI summaries aren&apos;t available yet — check back soon.
-          </p>
-        )}
+        {state.status === "error" && <p className={styles.state}>{state.message}</p>}
 
-        {status === "ready" && (
+        {state.status === "ready" && (
           <>
             <ul className={styles.bullets}>
-              {bullets.map((bullet, index) => (
+              {state.summary.bullets.map((bullet, index) => (
                 <li key={index}>{bullet}</li>
               ))}
             </ul>
-            <p className={styles.disclaimer}>{disclaimer}</p>
+            {state.summary.basis === "excerpt" && (
+              <p className={styles.basisNote}>Based on a short excerpt, not the full article.</p>
+            )}
+            <p className={styles.disclaimer}>{state.summary.disclaimer}</p>
           </>
         )}
       </div>

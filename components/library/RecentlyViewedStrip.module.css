@@ -83,7 +83,14 @@
   overflow: hidden;
 }
 
-.cardSource {
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.72rem;
   color: var(--color-text-muted);
+}
+
+.dot {
+  opacity: 0.6;
 }

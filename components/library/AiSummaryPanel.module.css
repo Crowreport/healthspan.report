@@ -133,6 +133,13 @@
   color: var(--color-text-secondary);
 }
 
+.basisNote {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
 .disclaimer {
   margin: 0;
   padding-top: 10px;
